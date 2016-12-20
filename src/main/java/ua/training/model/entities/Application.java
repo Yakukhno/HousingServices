@@ -7,7 +7,7 @@ public class Application {
     private String scaleOfProblem;
     private String desiredTime;
 
-    public int getId() {
+    public int getId()  {
         return id;
     }
 

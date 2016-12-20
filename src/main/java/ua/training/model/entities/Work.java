@@ -1,6 +1,6 @@
 package ua.training.model.entities;
 
-public class WorkPlan {
+public class Work {
     private int id;
     private Application application;
     private Brigade brigade;
