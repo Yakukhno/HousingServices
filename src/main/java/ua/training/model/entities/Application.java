@@ -1,11 +1,14 @@
 package ua.training.model.entities;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
 public class Application {
     private int id;
-    private String typeOfWork;
+    private TypeOfWork typeOfWork;
     private Tenant tenant;
     private String scaleOfProblem;
-    private String desiredTime;
+    private Timestamp desiredTime;
 
     public int getId()  {
         return id;
@@ -15,11 +18,11 @@ public class Application {
         this.id = id;
     }
 
-    public String getTypeOfWork() {
+    public TypeOfWork getTypeOfWork() {
         return typeOfWork;
     }
 
-    public void setTypeOfWork(String typeOfWork) {
+    public void setTypeOfWork(TypeOfWork typeOfWork) {
         this.typeOfWork = typeOfWork;
     }
 
@@ -39,11 +42,22 @@ public class Application {
         this.scaleOfProblem = scaleOfProblem;
     }
 
-    public String getDesiredTime() {
+    public Timestamp getDesiredTime() {
         return desiredTime;
     }
 
-    public void setDesiredTime(String desiredTime) {
+    public void setDesiredTime(Timestamp desiredTime) {
         this.desiredTime = desiredTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Application{" +
+                "id=" + id +
+                ", typeOfWork='" + typeOfWork + '\'' +
+                ", tenant=" + tenant +
+                ", scaleOfProblem='" + scaleOfProblem + '\'' +
+                ", desiredTime=" + desiredTime +
+                '}';
     }
 }

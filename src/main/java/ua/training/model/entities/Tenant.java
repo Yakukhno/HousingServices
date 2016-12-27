@@ -7,6 +7,16 @@ public class Tenant {
     private String email;
     private String password;
 
+    public Tenant() {
+    }
+
+    public Tenant(int account, String name, String email, String password) {
+        this.account = account;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
     public int getId() {
         return id;
     }
