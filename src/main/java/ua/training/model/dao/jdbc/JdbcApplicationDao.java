@@ -160,35 +160,30 @@ public class JdbcApplicationDao implements ApplicationDao {
 
     private Application getApplicationFromResultSet(ResultSet resultSet) {
         try {
-            Application application = new Application();
-            application.setId(resultSet.getInt(APPLICATION_ID));
-            application.setScaleOfProblem(resultSet
-                    .getString(APPLICATION_SCALE_OF_PROBLEM));
-            application.setDesiredTime(resultSet
-                    .getTimestamp(APPLICATION_DESIRED_TIME));
-
             TypeOfWork typeOfWork = new TypeOfWork.Builder()
                     .setId(resultSet
                             .getInt(JdbcTypeOfWorkDao.TYPE_OF_WORK_ID))
                     .setDescription(resultSet
                             .getString(JdbcTypeOfWorkDao.TYPE_OF_WORK_STRING))
                     .build();
-            application.setTypeOfWork(typeOfWork);
 
-            Tenant tenant = new Tenant();
-            tenant.setId(resultSet
-                    .getInt(JdbcTenantDao.TENANT_ID));
-            tenant.setAccount(resultSet
-                    .getInt(JdbcTenantDao.TENANT_ACCOUNT));
-            tenant.setName(resultSet
-                    .getString(JdbcTenantDao.TENANT_NAME));
-            tenant.setEmail(resultSet
-                    .getString(JdbcTenantDao.TENANT_EMAIL));
-            tenant.setPassword(resultSet
-                    .getString(JdbcTenantDao.TENANT_PASSWORD));
-            application.setTenant(tenant);
-
-            return application;
+            Tenant tenant = new Tenant.Builder()
+                    .setId(resultSet.getInt(JdbcTenantDao.TENANT_ID))
+                    .setAccount(resultSet.getInt(JdbcTenantDao.TENANT_ACCOUNT))
+                    .setName(resultSet.getString(JdbcTenantDao.TENANT_NAME))
+                    .setEmail(resultSet.getString(JdbcTenantDao.TENANT_EMAIL))
+                    .setPassword(resultSet.getString(JdbcTenantDao.TENANT_PASSWORD))
+                    .build();
+            
+            return new Application.Builder()
+                    .setId(resultSet.getInt(APPLICATION_ID))
+                    .setTypeOfWork(typeOfWork)
+                    .setTenant(tenant)
+                    .setScaleOfProblem(resultSet
+                            .getString(APPLICATION_SCALE_OF_PROBLEM))
+                    .setDesiredTime(resultSet
+                            .getTimestamp(APPLICATION_DESIRED_TIME))
+                    .build();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

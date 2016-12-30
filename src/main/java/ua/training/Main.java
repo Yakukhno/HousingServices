@@ -15,8 +15,12 @@ public class Main {
     public static void main(String[] args) {
         DaoFactory daoFactory = DaoFactory.getInstance();
         TenantDao tenantDao = daoFactory.createTenantDao();
-        Tenant tenant = new Tenant(1006, "Gerry Jantzen",
-                "Hicarrim1935@cuvox.de","s?M-L:2)6");
+        Tenant tenant = new Tenant.Builder()
+                .setAccount(1006)
+                .setName("Gerry Jantzen")
+                .setEmail("Hicarrim1935@cuvox.de")
+                .setPassword("s?M-L:2)6")
+                .build();
 //        tenantDao.add(tenant);
 //        System.out.println(tenant);
 

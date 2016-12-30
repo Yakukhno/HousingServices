@@ -1,7 +1,5 @@
 package ua.training.model.dao;
 
-import ua.training.model.entities.TypeOfWork;
-
 import java.io.IOException;
 import java.util.Properties;
 
@@ -14,7 +12,7 @@ public abstract class DaoFactory {
     public abstract ApplicationDao createApplicationDao();
     public abstract TenantDao createTenantDao();
     public abstract WorkerDao createWorkerDao();
-    public abstract WorkDao createWorkDao();
+    public abstract TaskDao createWorkDao();
     public abstract TypeOfWorkDao createTypeOfWorkDao();
 
     public static DaoFactory getInstance() {

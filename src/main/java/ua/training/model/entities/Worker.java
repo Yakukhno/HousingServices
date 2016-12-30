@@ -28,4 +28,23 @@ public class Worker {
     public void setName(String name) {
         this.name = name;
     }
+
+    public static class Builder {
+        private Worker worker = new Worker();
+
+        public Builder setId(int id) {
+            worker.id = id;
+            return this;
+        }
+
+        public Builder setTypeOfWork(String typeOfWork) {
+            worker.typeOfWork = typeOfWork;
+            return this;
+        }
+
+        public Builder setName(String name) {
+            worker.name = name;
+            return this;
+        }
+    }
 }

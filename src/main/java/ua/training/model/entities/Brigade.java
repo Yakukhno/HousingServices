@@ -18,11 +18,34 @@ public class Brigade {
         return workers;
     }
 
+    public void setWorkers(List<Worker> workers) {
+        this.workers = workers;
+    }
+
     public void addWorker(Worker worker) {
         workers.add(worker);
     }
 
     public void removeWorker(Worker worker) {
         workers.remove(worker);
+    }
+
+    public static class Builder {
+        private Brigade brigade = new Brigade();
+
+        public Builder setId(int id) {
+            brigade.id = id;
+            return this;
+        }
+
+        public Builder setWorkers(List<Worker> workers) {
+            brigade.workers = workers;
+            return this;
+        }
+
+        public Builder addWorker(Worker worker) {
+            brigade.workers.add(worker);
+            return this;
+        }
     }
 }

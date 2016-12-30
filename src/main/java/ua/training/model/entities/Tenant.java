@@ -7,16 +7,6 @@ public class Tenant {
     private String email;
     private String password;
 
-    public Tenant() {
-    }
-
-    public Tenant(int account, String name, String email, String password) {
-        this.account = account;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
-
     public int getId() {
         return id;
     }
@@ -55,6 +45,39 @@ public class Tenant {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public static class Builder {
+        private Tenant tenant = new Tenant();
+
+        public Builder setId(int id) {
+            tenant.id = id;
+            return this;
+        }
+
+        public Builder setAccount(int account) {
+            tenant.account = account;
+            return this;
+        }
+
+        public Builder setName(String name) {
+            tenant.name = name;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            tenant.email = email;
+            return this;
+        }
+
+        public Builder setPassword(String password) {
+            tenant.password = password;
+            return this;
+        }
+
+        public Tenant build() {
+            return tenant;
+        }
     }
 
     @Override

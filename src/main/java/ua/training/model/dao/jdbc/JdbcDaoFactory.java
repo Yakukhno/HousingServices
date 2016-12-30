@@ -47,7 +47,7 @@ public class JdbcDaoFactory extends DaoFactory {
     }
 
     @Override
-    public WorkDao createWorkDao() {
+    public TaskDao createWorkDao() {
         return null;
     }
 

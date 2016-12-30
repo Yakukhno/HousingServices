@@ -146,12 +146,13 @@ public class JdbcTenantDao implements TenantDao {
         Tenant tenant = null;
         try {
             while (resultSet.next()) {
-                tenant = new Tenant();
-                tenant.setId(resultSet.getInt(TENANT_ID));
-                tenant.setAccount(resultSet.getInt(TENANT_ACCOUNT));
-                tenant.setName(resultSet.getString(TENANT_NAME));
-                tenant.setEmail(resultSet.getString(TENANT_EMAIL));
-                tenant.setPassword(resultSet.getString(TENANT_PASSWORD));
+                tenant = new Tenant.Builder()
+                        .setId(resultSet.getInt(TENANT_ID))
+                        .setAccount(resultSet.getInt(TENANT_ACCOUNT))
+                        .setName(resultSet.getString(TENANT_NAME))
+                        .setEmail(resultSet.getString(TENANT_EMAIL))
+                        .setPassword(resultSet.getString(TENANT_PASSWORD))
+                        .build();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

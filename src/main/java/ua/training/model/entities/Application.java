@@ -1,6 +1,5 @@
 package ua.training.model.entities;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Application {
@@ -48,6 +47,39 @@ public class Application {
 
     public void setDesiredTime(Timestamp desiredTime) {
         this.desiredTime = desiredTime;
+    }
+
+    public static class Builder {
+        private Application application = new Application();
+
+        public Builder setId(int id) {
+            application.id = id;
+            return this;
+        }
+
+        public Builder setTypeOfWork(TypeOfWork typeOfWork) {
+            application.typeOfWork = typeOfWork;
+            return this;
+        }
+
+        public Builder setTenant(Tenant tenant) {
+            application.tenant = tenant;
+            return this;
+        }
+
+        public Builder setScaleOfProblem(String scaleOfProblem) {
+            application.scaleOfProblem = scaleOfProblem;
+            return this;
+        }
+
+        public Builder setDesiredTime(Timestamp desiredTime) {
+            application.desiredTime = desiredTime;
+            return this;
+        }
+
+        public Application build() {
+            return application;
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 package ua.training.model.entities;
 
-public class Work {
+public class Task {
     private int id;
     private Application application;
     private Brigade brigade;
@@ -27,5 +27,24 @@ public class Work {
 
     public void setBrigade(Brigade brigade) {
         this.brigade = brigade;
+    }
+
+    public static class Builder {
+        private Task task = new Task();
+
+        public Builder setId(int id) {
+            task.id = id;
+            return this;
+        }
+
+        public Builder setApplication(Application application) {
+            task.application = application;
+            return this;
+        }
+
+        public Builder setBrigade(Brigade brigade) {
+            task.brigade = brigade;
+            return this;
+        }
     }
 }
