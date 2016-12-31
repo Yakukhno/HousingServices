@@ -43,11 +43,11 @@ public class JdbcDaoFactory extends DaoFactory {
 
     @Override
     public WorkerDao createWorkerDao() {
-        return null;
+        return new JdbcWorkerDao(connection);
     }
 
     @Override
-    public TaskDao createWorkDao() {
+    public TaskDao createTaskDao() {
         return null;
     }
 

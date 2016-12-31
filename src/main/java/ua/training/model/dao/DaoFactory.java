@@ -12,7 +12,7 @@ public abstract class DaoFactory {
     public abstract ApplicationDao createApplicationDao();
     public abstract TenantDao createTenantDao();
     public abstract WorkerDao createWorkerDao();
-    public abstract TaskDao createWorkDao();
+    public abstract TaskDao createTaskDao();
     public abstract TypeOfWorkDao createTypeOfWorkDao();
 
     public static DaoFactory getInstance() {

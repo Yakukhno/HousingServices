@@ -2,6 +2,7 @@ package ua.training.model.dao.jdbc;
 
 import ua.training.model.dao.ApplicationDao;
 import ua.training.model.entities.Application;
+import ua.training.model.entities.ProblemScale;
 import ua.training.model.entities.Tenant;
 import ua.training.model.entities.TypeOfWork;
 
@@ -75,7 +76,6 @@ public class JdbcApplicationDao implements ApplicationDao {
         List<Application> applications = new ArrayList<>();
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
-
             while (resultSet.next()) {
                 applications.add(getApplicationFromResultSet(resultSet));
             }
@@ -87,7 +87,7 @@ public class JdbcApplicationDao implements ApplicationDao {
 
     @Override
     public void add(Application application) {
-        try(PreparedStatement statement = connection.prepareStatement(INSERT,
+        try (PreparedStatement statement = connection.prepareStatement(INSERT,
                 Statement.RETURN_GENERATED_KEYS)) {
             setStatementFromApplication(statement, application);
             statement.execute();
@@ -174,13 +174,13 @@ public class JdbcApplicationDao implements ApplicationDao {
                     .setEmail(resultSet.getString(JdbcTenantDao.TENANT_EMAIL))
                     .setPassword(resultSet.getString(JdbcTenantDao.TENANT_PASSWORD))
                     .build();
-            
+
             return new Application.Builder()
                     .setId(resultSet.getInt(APPLICATION_ID))
                     .setTypeOfWork(typeOfWork)
                     .setTenant(tenant)
-                    .setScaleOfProblem(resultSet
-                            .getString(APPLICATION_SCALE_OF_PROBLEM))
+                    .setScaleOfProblem(ProblemScale.valueOf(resultSet
+                            .getString(APPLICATION_SCALE_OF_PROBLEM)))
                     .setDesiredTime(resultSet
                             .getTimestamp(APPLICATION_DESIRED_TIME))
                     .build();
@@ -194,7 +194,7 @@ public class JdbcApplicationDao implements ApplicationDao {
             throws SQLException {
         statement.setInt(1, application.getTenant().getId());
         statement.setInt(2, application.getTypeOfWork().getId());
-        statement.setString(3, application.getScaleOfProblem());
+        statement.setString(3, application.getScaleOfProblem().name());
         statement.setTimestamp(4, application.getDesiredTime());
     }
 }

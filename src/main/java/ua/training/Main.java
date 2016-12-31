@@ -1,12 +1,7 @@
 package ua.training;
 
-import ua.training.model.dao.ApplicationDao;
-import ua.training.model.dao.DaoFactory;
-import ua.training.model.dao.TenantDao;
-import ua.training.model.dao.TypeOfWorkDao;
-import ua.training.model.entities.Application;
-import ua.training.model.entities.Tenant;
-import ua.training.model.entities.TypeOfWork;
+import ua.training.model.dao.*;
+import ua.training.model.entities.*;
 
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -24,7 +19,7 @@ public class Main {
 //        tenantDao.add(tenant);
 //        System.out.println(tenant);
 
-        tenantDao.delete(5);
+//        tenantDao.delete(5);
 
         ApplicationDao applicationDao = daoFactory.createApplicationDao();
 //        System.out.println(applicationDao.getApplicationsByTypeOfWork("supply"));
@@ -34,12 +29,21 @@ public class Main {
 //        Application application = new Application();
 //        tenant.setId(3);
 //        application.setTenant(tenant);
-//        application.setTypeOfWork("Gas supply");
-//        application.setScaleOfProblem("section");
+//        application.setTypesOfWork(typeOfWorkDao.getByDescription("gas supply").get(0));
+//        application.setScaleOfProblem(ProblemScale.SECTION);
 //        application.setDesiredTime(new Timestamp(System.currentTimeMillis()));
 //        applicationDao.add(application);
 
 //        System.out.println(application);
 //        applicationDao.delete(11);
+//        System.out.println(applicationDao.getAll());
+
+        WorkerDao workerDao = daoFactory.createWorkerDao();
+//        Worker worker = new Worker.Builder()
+//                .setName("Harry Kane")
+//                .addTypeOfWork(typeOfWorkDao.getByDescription("supply").get(0))
+//                .addTypeOfWork(typeOfWorkDao.getByDescription("supply").get(1))
+//                .build();
+        System.out.println(workerDao.getWorkersByTypeOfWork(typeOfWorkDao.get(3)));
     }
 }

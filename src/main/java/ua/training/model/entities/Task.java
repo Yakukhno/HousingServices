@@ -46,5 +46,9 @@ public class Task {
             task.brigade = brigade;
             return this;
         }
+
+        public Task build() {
+            return task;
+        }
     }
 }

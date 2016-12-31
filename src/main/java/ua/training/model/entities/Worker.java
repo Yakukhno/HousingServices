@@ -1,8 +1,11 @@
 package ua.training.model.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Worker {
     private int id;
-    private String typeOfWork;
+    private List<TypeOfWork> typesOfWork = new ArrayList<>();
     private String name;
 
     public int getId() {
@@ -13,12 +16,20 @@ public class Worker {
         this.id = id;
     }
 
-    public String getTypeOfWork() {
-        return typeOfWork;
+    public List<TypeOfWork> getTypesOfWork() {
+        return typesOfWork;
     }
 
-    public void setTypeOfWork(String typeOfWork) {
-        this.typeOfWork = typeOfWork;
+    public void setTypesOfWork(List<TypeOfWork> typesOfWork) {
+        this.typesOfWork = typesOfWork;
+    }
+
+    public void addTypeOfWork(TypeOfWork typeOfWork) {
+        typesOfWork.add(typeOfWork);
+    }
+
+    public void removeTypeOfWork(TypeOfWork typeOfWork) {
+        typesOfWork.remove(typeOfWork);
     }
 
     public String getName() {
@@ -29,6 +40,15 @@ public class Worker {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return "Worker{" +
+                "id=" + id +
+                ", typesOfWork=" + typesOfWork +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
     public static class Builder {
         private Worker worker = new Worker();
 
@@ -37,14 +57,23 @@ public class Worker {
             return this;
         }
 
-        public Builder setTypeOfWork(String typeOfWork) {
-            worker.typeOfWork = typeOfWork;
+        public Builder addTypeOfWork(TypeOfWork typeOfWork) {
+            worker.addTypeOfWork(typeOfWork);
+            return this;
+        }
+
+        public Builder setTypesOfWork(List<TypeOfWork> typesOfWork) {
+            worker.typesOfWork = typesOfWork;
             return this;
         }
 
         public Builder setName(String name) {
             worker.name = name;
             return this;
+        }
+
+        public Worker build() {
+            return worker;
         }
     }
 }

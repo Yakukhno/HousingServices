@@ -6,7 +6,7 @@ public class Application {
     private int id;
     private TypeOfWork typeOfWork;
     private Tenant tenant;
-    private String scaleOfProblem;
+    private ProblemScale scaleOfProblem;
     private Timestamp desiredTime;
 
     public int getId()  {
@@ -33,11 +33,11 @@ public class Application {
         this.tenant = tenant;
     }
 
-    public String getScaleOfProblem() {
+    public ProblemScale getScaleOfProblem() {
         return scaleOfProblem;
     }
 
-    public void setScaleOfProblem(String scaleOfProblem) {
+    public void setScaleOfProblem(ProblemScale scaleOfProblem) {
         this.scaleOfProblem = scaleOfProblem;
     }
 
@@ -67,7 +67,7 @@ public class Application {
             return this;
         }
 
-        public Builder setScaleOfProblem(String scaleOfProblem) {
+        public Builder setScaleOfProblem(ProblemScale scaleOfProblem) {
             application.scaleOfProblem = scaleOfProblem;
             return this;
         }

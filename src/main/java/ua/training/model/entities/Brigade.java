@@ -47,5 +47,9 @@ public class Brigade {
             brigade.workers.add(worker);
             return this;
         }
+
+        public Brigade build() {
+            return brigade;
+        }
     }
 }
