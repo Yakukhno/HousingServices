@@ -47,6 +47,11 @@ public class JdbcDaoFactory extends DaoFactory {
     }
 
     @Override
+    public BrigadeDao createBrigadeDao() {
+        return new JdbcBrigadeDao(connection);
+    }
+
+    @Override
     public TaskDao createTaskDao() {
         return null;
     }

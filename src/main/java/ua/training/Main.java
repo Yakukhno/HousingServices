@@ -44,6 +44,9 @@ public class Main {
 //                .addTypeOfWork(typeOfWorkDao.getByDescription("supply").get(0))
 //                .addTypeOfWork(typeOfWorkDao.getByDescription("supply").get(1))
 //                .build();
-        System.out.println(workerDao.getWorkersByTypeOfWork(typeOfWorkDao.get(3)));
+//        System.out.println(workerDao.getWorkersByTypeOfWork(typeOfWorkDao.get(3)));
+
+        BrigadeDao brigadeDao = daoFactory.createBrigadeDao();
+        System.out.println(brigadeDao.getAll());
     }
 }

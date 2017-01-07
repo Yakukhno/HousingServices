@@ -1,10 +1,12 @@
 package ua.training.model.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Brigade {
     private int id;
-    private List<Worker> workers;
+    private Worker manager;
+    private List<Worker> workers = new ArrayList<>();
 
     public int getId() {
         return id;
@@ -12,6 +14,14 @@ public class Brigade {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Worker getManager() {
+        return manager;
+    }
+
+    public void setManager(Worker manager) {
+        this.manager = manager;
     }
 
     public List<Worker> getWorkers() {
@@ -30,16 +40,30 @@ public class Brigade {
         workers.remove(worker);
     }
 
+    @Override
+    public String toString() {
+        return "Brigade{" +
+                "id=" + id +
+                ", manager=" + manager +
+                ", workers=" + workers +
+                '}';
+    }
+
     public static class Builder {
         private Brigade brigade = new Brigade();
 
         public Builder setId(int id) {
-            brigade.id = id;
+            brigade.setId(id);
+            return this;
+        }
+
+        public Builder setManager(Worker manager) {
+            brigade.setManager(manager);
             return this;
         }
 
         public Builder setWorkers(List<Worker> workers) {
-            brigade.workers = workers;
+            brigade.setWorkers(workers);
             return this;
         }
 

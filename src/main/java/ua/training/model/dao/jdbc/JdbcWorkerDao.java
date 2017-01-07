@@ -33,8 +33,8 @@ public class JdbcWorkerDao implements WorkerDao {
     private static final String UPDATE =
             "UPDATE worker SET name = ? WHERE id_worker = ?";
 
-    private static final String WORKER_ID = "id_worker";
-    private static final String WORKER_NAME = "name";
+    public static final String WORKER_ID = "id_worker";
+    public static final String WORKER_NAME = "name";
 
     private Connection connection;
 
@@ -170,6 +170,8 @@ public class JdbcWorkerDao implements WorkerDao {
 
             typeStatement.setInt(1, worker.getId());
             typeStatement.execute();
+
+            insertTypesOfWork(worker);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
