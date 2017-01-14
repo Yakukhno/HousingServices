@@ -38,7 +38,7 @@ public class JdbcWorkerDao implements WorkerDao {
 
     private Connection connection;
 
-    public JdbcWorkerDao(Connection connection) {
+    JdbcWorkerDao(Connection connection) {
         this.connection = connection;
     }
 
@@ -51,26 +51,7 @@ public class JdbcWorkerDao implements WorkerDao {
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.first()) {
-                Worker.Builder builder = new Worker.Builder()
-                        .setId(resultSet.getInt(WORKER_ID))
-                        .setName(resultSet.getString(WORKER_NAME));
-
-                builder.addTypeOfWork(new TypeOfWork.Builder()
-                        .setId(resultSet
-                                .getInt(JdbcTypeOfWorkDao.TYPE_OF_WORK_ID))
-                        .setDescription(resultSet
-                                .getString(JdbcTypeOfWorkDao.TYPE_OF_WORK_STRING))
-                        .build());
-                while (resultSet.next()) {
-                    builder.addTypeOfWork(new TypeOfWork.Builder()
-                            .setId(resultSet
-                                    .getInt(JdbcTypeOfWorkDao.TYPE_OF_WORK_ID))
-                            .setDescription(resultSet
-                                    .getString(JdbcTypeOfWorkDao.TYPE_OF_WORK_STRING))
-                            .build());
-                }
-
-                worker = builder.build();
+                worker = getWorkerFromResultSet(resultSet, WORKER_ID);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -83,28 +64,9 @@ public class JdbcWorkerDao implements WorkerDao {
         List<Worker> workers = new ArrayList<>();
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL_WORKERS)) {
-            int currentId = -1;
-
-            Worker worker = null;
-            while (resultSet.next()) {
-                if (currentId != resultSet.getInt(WORKER_ID)) {
-                    if (worker != null) {
-                        workers.add(worker);
-                    }
-                    worker = new Worker.Builder()
-                            .setId(resultSet.getInt(WORKER_ID))
-                            .setName(resultSet.getString(WORKER_NAME))
-                            .addTypeOfWork(getTypeOfWork(resultSet))
-                            .build();
-                } else {
-                    if (worker != null) {
-                        worker.addTypeOfWork(getTypeOfWork(resultSet));
-                    }
-                }
-                currentId = resultSet.getInt(WORKER_ID);
-            }
-            if (worker != null) {
-                workers.add(worker);
+            resultSet.next();
+            while (!resultSet.isAfterLast()) {
+                workers.add(getWorkerFromResultSet(resultSet, WORKER_ID));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -177,13 +139,19 @@ public class JdbcWorkerDao implements WorkerDao {
         }
     }
 
-    private TypeOfWork getTypeOfWork(ResultSet resultSet) throws SQLException {
-        return new TypeOfWork.Builder()
-                .setId(resultSet
-                        .getInt(JdbcTypeOfWorkDao.TYPE_OF_WORK_ID))
-                .setDescription(resultSet
-                        .getString(JdbcTypeOfWorkDao.TYPE_OF_WORK_STRING))
-                .build();
+    static Worker getWorkerFromResultSet(ResultSet resultSet, String columnId)
+            throws SQLException {
+        int currentId = resultSet.getInt(columnId);
+        Worker.Builder builder = new Worker.Builder()
+                .setId(resultSet.getInt(columnId))
+                .setName(resultSet.getString(WORKER_NAME))
+                .addTypeOfWork(JdbcTypeOfWorkDao
+                        .getTypeOfWorkFromResultSet(resultSet));
+        while (resultSet.next() && resultSet.getInt(WORKER_ID) == currentId) {
+            builder.addTypeOfWork(JdbcTypeOfWorkDao
+                    .getTypeOfWorkFromResultSet(resultSet));
+        }
+        return builder.build();
     }
 
     private void insertTypesOfWork(Worker worker) {

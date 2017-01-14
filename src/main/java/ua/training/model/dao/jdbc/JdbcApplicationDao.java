@@ -50,7 +50,7 @@ public class JdbcApplicationDao implements ApplicationDao {
 
     private Connection connection;
 
-    public JdbcApplicationDao(Connection connection) {
+    JdbcApplicationDao(Connection connection) {
         this.connection = connection;
     }
 

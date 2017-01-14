@@ -28,7 +28,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
 
     private Connection connection;
 
-    public JdbcTypeOfWorkDao(Connection connection) {
+    JdbcTypeOfWorkDao(Connection connection) {
         this.connection = connection;
     }
 
@@ -41,10 +41,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                typeOfWork = new TypeOfWork.Builder()
-                        .setId(resultSet.getInt(TYPE_OF_WORK_ID))
-                        .setDescription(resultSet.getString(TYPE_OF_WORK_STRING))
-                        .build();
+                typeOfWork = getTypeOfWorkFromResultSet(resultSet);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -57,13 +54,8 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
         List<TypeOfWork> typesOfWork = new ArrayList<>();
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
-
             while (resultSet.next()) {
-                TypeOfWork typeOfWork = new TypeOfWork.Builder()
-                        .setId(resultSet.getInt(TYPE_OF_WORK_ID))
-                        .setDescription(resultSet.getString(TYPE_OF_WORK_STRING))
-                        .build();
-                typesOfWork.add(typeOfWork);
+                typesOfWork.add(getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -104,7 +96,6 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
                      connection.prepareStatement(UPDATE)) {
             statement.setString(1, typeOfWork.getDescription());
             statement.setInt(2, typeOfWork.getId());
-
             statement.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -120,15 +111,20 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                TypeOfWork typeOfWork = new TypeOfWork.Builder()
-                        .setId(resultSet.getInt(TYPE_OF_WORK_ID))
-                        .setDescription(resultSet.getString(TYPE_OF_WORK_STRING))
-                        .build();
-                typesOfWork.add(typeOfWork);
+                typesOfWork.add(getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return typesOfWork;
     }
+
+    static TypeOfWork getTypeOfWorkFromResultSet(ResultSet resultSet)
+            throws SQLException {
+        return new TypeOfWork.Builder()
+                .setId(resultSet.getInt(TYPE_OF_WORK_ID))
+                .setDescription(resultSet.getString(TYPE_OF_WORK_STRING))
+                .build();
+    }
+
 }

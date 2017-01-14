@@ -33,7 +33,7 @@ public class JdbcTenantDao implements TenantDao {
 
     private Connection connection;
 
-    public JdbcTenantDao(Connection connection) {
+    JdbcTenantDao(Connection connection) {
         this.connection = connection;
     }
 

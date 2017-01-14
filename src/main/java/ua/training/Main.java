@@ -10,12 +10,12 @@ public class Main {
     public static void main(String[] args) {
         DaoFactory daoFactory = DaoFactory.getInstance();
         TenantDao tenantDao = daoFactory.createTenantDao();
-        Tenant tenant = new Tenant.Builder()
-                .setAccount(1006)
-                .setName("Gerry Jantzen")
-                .setEmail("Hicarrim1935@cuvox.de")
-                .setPassword("s?M-L:2)6")
-                .build();
+//        Tenant tenant = new Tenant.Builder()
+//                .setAccount(1006)
+//                .setName("Gerry Jantzen")
+//                .setEmail("Hicarrim1935@cuvox.de")
+//                .setPassword("s?M-L:2)6")
+//                .build();
 //        tenantDao.add(tenant);
 //        System.out.println(tenant);
 
@@ -44,7 +44,7 @@ public class Main {
 //                .addTypeOfWork(typeOfWorkDao.getByDescription("supply").get(0))
 //                .addTypeOfWork(typeOfWorkDao.getByDescription("supply").get(1))
 //                .build();
-//        System.out.println(workerDao.getWorkersByTypeOfWork(typeOfWorkDao.get(3)));
+        System.out.println(workerDao.getAll());
 
         BrigadeDao brigadeDao = daoFactory.createBrigadeDao();
         System.out.println(brigadeDao.getAll());

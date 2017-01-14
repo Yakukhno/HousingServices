@@ -1,7 +1,6 @@
 package ua.training.model.entities;
 
 public class TypeOfWork {
-
     private int id;
     private String description;
 
