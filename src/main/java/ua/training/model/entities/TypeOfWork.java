@@ -32,12 +32,12 @@ public class TypeOfWork {
         private TypeOfWork typeOfWork = new TypeOfWork();
 
         public Builder setId(int id) {
-            typeOfWork.id = id;
+            typeOfWork.setId(id);
             return this;
         }
 
         public Builder setDescription(String description) {
-            typeOfWork.description = description;
+            typeOfWork.setDescription(description);
             return this;
         }
 

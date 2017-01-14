@@ -2,7 +2,7 @@ package ua.training.model.dao.jdbc;
 
 import ua.training.model.dao.WorkerDao;
 import ua.training.model.entities.TypeOfWork;
-import ua.training.model.entities.Worker;
+import ua.training.model.entities.person.Worker;
 
 import java.sql.*;
 import java.util.ArrayList;

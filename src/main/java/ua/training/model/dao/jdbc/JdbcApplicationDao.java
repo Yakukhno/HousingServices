@@ -3,7 +3,7 @@ package ua.training.model.dao.jdbc;
 import ua.training.model.dao.ApplicationDao;
 import ua.training.model.entities.Application;
 import ua.training.model.entities.ProblemScale;
-import ua.training.model.entities.Tenant;
+import ua.training.model.entities.person.Tenant;
 import ua.training.model.entities.TypeOfWork;
 
 import java.sql.*;

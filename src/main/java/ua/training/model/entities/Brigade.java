@@ -1,5 +1,7 @@
 package ua.training.model.entities;
 
+import ua.training.model.entities.person.Worker;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +70,7 @@ public class Brigade {
         }
 
         public Builder addWorker(Worker worker) {
-            brigade.workers.add(worker);
+            brigade.addWorker(worker);
             return this;
         }
 

@@ -17,7 +17,7 @@ public class Main {
 //                .setPassword("s?M-L:2)6")
 //                .build();
 //        tenantDao.add(tenant);
-//        System.out.println(tenant);
+        System.out.println(tenantDao.getAll());
 
 //        tenantDao.delete(5);
 

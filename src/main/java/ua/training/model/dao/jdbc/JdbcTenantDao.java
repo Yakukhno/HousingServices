@@ -1,7 +1,7 @@
 package ua.training.model.dao.jdbc;
 
 import ua.training.model.dao.TenantDao;
-import ua.training.model.entities.Tenant;
+import ua.training.model.entities.person.Tenant;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -33,17 +33,17 @@ public class Task {
         private Task task = new Task();
 
         public Builder setId(int id) {
-            task.id = id;
+            task.setId(id);
             return this;
         }
 
         public Builder setApplication(Application application) {
-            task.application = application;
+            task.setApplication(application);
             return this;
         }
 
         public Builder setBrigade(Brigade brigade) {
-            task.brigade = brigade;
+            task.setBrigade(brigade);
             return this;
         }
 

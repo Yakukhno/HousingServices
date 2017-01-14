@@ -1,20 +1,12 @@
-package ua.training.model.entities;
+package ua.training.model.entities.person;
+
+import ua.training.model.entities.TypeOfWork;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Worker {
-    private int id;
+public class Worker extends Person {
     private List<TypeOfWork> typesOfWork = new ArrayList<>();
-    private String name;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public List<TypeOfWork> getTypesOfWork() {
         return typesOfWork;
@@ -32,14 +24,6 @@ public class Worker {
         typesOfWork.remove(typeOfWork);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public String toString() {
         return "Worker{" +
@@ -53,7 +37,7 @@ public class Worker {
         private Worker worker = new Worker();
 
         public Builder setId(int id) {
-            worker.id = id;
+            worker.setId(id);
             return this;
         }
 
@@ -63,12 +47,12 @@ public class Worker {
         }
 
         public Builder setTypesOfWork(List<TypeOfWork> typesOfWork) {
-            worker.typesOfWork = typesOfWork;
+            worker.setTypesOfWork(typesOfWork);
             return this;
         }
 
         public Builder setName(String name) {
-            worker.name = name;
+            worker.setName(name);
             return this;
         }
 

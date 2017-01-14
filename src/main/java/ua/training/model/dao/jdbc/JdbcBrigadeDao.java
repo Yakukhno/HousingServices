@@ -2,7 +2,7 @@ package ua.training.model.dao.jdbc;
 
 import ua.training.model.dao.BrigadeDao;
 import ua.training.model.entities.Brigade;
-import ua.training.model.entities.Worker;
+import ua.training.model.entities.person.Worker;
 
 import java.sql.*;
 import java.util.ArrayList;
