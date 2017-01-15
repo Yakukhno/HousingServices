@@ -42,6 +42,11 @@ public class JdbcDaoFactory extends DaoFactory {
     }
 
     @Override
+    public DispatcherDao createDispatcherDao() {
+        return new JdbcDispatcherDao(connection);
+    }
+
+    @Override
     public WorkerDao createWorkerDao() {
         return new JdbcWorkerDao(connection);
     }

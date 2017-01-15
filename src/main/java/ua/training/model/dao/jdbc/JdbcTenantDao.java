@@ -18,11 +18,13 @@ public class JdbcTenantDao implements TenantDao {
     private static final String SELECT_ALL = "SELECT * FROM tenant";
 
     private static final String INSERT =
-            "INSERT INTO tenant (account, name, email, password) VALUES (?, ?, ?, ?)";
+            "INSERT INTO tenant (account, name, email, password) " +
+                    "VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID =
             "DELETE FROM tenant WHERE id_tenant = ?";
     private static final String UPDATE =
-            "UPDATE tenant SET account = ?, name = ?, email = ?, password = ? " +
+            "UPDATE tenant " +
+                    "SET account = ?, name = ?, email = ?, password = ? " +
                     "WHERE id_tenant = ?";
 
     static final String TENANT_ID = "id_tenant";
@@ -39,17 +41,7 @@ public class JdbcTenantDao implements TenantDao {
 
     @Override
     public Tenant get(int id) {
-        Tenant tenant;
-        try (PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_ID)) {
-            statement.setInt(1, id);
-
-            ResultSet resultSet = statement.executeQuery();
-            tenant = getTenantFromResultSet(resultSet);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return tenant;
+        return getTenant(SELECT_BY_ID, id);
     }
 
     @Override
@@ -57,15 +49,8 @@ public class JdbcTenantDao implements TenantDao {
         List<Tenant> tenants = new ArrayList<>();
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
-
             while (resultSet.next()) {
-                Tenant tenant = new Tenant();
-                tenant.setId(resultSet.getInt(TENANT_ID));
-                tenant.setAccount(resultSet.getInt(TENANT_ACCOUNT));
-                tenant.setName(resultSet.getString(TENANT_NAME));
-                tenant.setEmail(resultSet.getString(TENANT_EMAIL));
-                tenant.setPassword(resultSet.getString(TENANT_PASSWORD));
-                tenants.add(tenant);
+                tenants.add(getTenantFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -114,50 +99,51 @@ public class JdbcTenantDao implements TenantDao {
 
     @Override
     public Tenant getTenantByAccount(int account) {
-        Tenant tenant;
-        try (PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_ACCOUNT)) {
-            statement.setInt(1, account);
-
-            ResultSet resultSet = statement.executeQuery();
-            tenant = getTenantFromResultSet(resultSet);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return tenant;
+        return getTenant(SELECT_BY_ACCOUNT, account);
     }
 
     @Override
     public Tenant getTenantByEmail(String email) {
-        Tenant tenant;
+        Tenant tenant = null;
         try (PreparedStatement statement =
                      connection.prepareStatement(SELECT_BY_EMAIL)) {
             statement.setString(1, email);
 
             ResultSet resultSet = statement.executeQuery();
-            tenant = getTenantFromResultSet(resultSet);
+            if (resultSet.next()) {
+                tenant = getTenantFromResultSet(resultSet);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return tenant;
     }
 
-    private Tenant getTenantFromResultSet(ResultSet resultSet) {
+    private Tenant getTenant(String query, int parameter) {
         Tenant tenant = null;
-        try {
-            while (resultSet.next()) {
-                tenant = new Tenant.Builder()
-                        .setId(resultSet.getInt(TENANT_ID))
-                        .setAccount(resultSet.getInt(TENANT_ACCOUNT))
-                        .setName(resultSet.getString(TENANT_NAME))
-                        .setEmail(resultSet.getString(TENANT_EMAIL))
-                        .setPassword(resultSet.getString(TENANT_PASSWORD))
-                        .build();
+        try (PreparedStatement statement =
+                     connection.prepareStatement(query)) {
+            statement.setInt(1, parameter);
+
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                tenant = getTenantFromResultSet(resultSet);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return tenant;
+    }
+
+    static Tenant getTenantFromResultSet(ResultSet resultSet)
+            throws SQLException {
+        return new Tenant.Builder()
+                .setId(resultSet.getInt(TENANT_ID))
+                .setAccount(resultSet.getInt(TENANT_ACCOUNT))
+                .setName(resultSet.getString(TENANT_NAME))
+                .setEmail(resultSet.getString(TENANT_EMAIL))
+                .setPassword(resultSet.getString(TENANT_PASSWORD))
+                .build();
     }
 
     private void setStatementFromTenant(PreparedStatement statement,

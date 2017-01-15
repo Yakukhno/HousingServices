@@ -1,7 +1,9 @@
 package ua.training;
 
 import ua.training.model.dao.*;
+import ua.training.model.dao.jdbc.JdbcDispatcherDao;
 import ua.training.model.entities.*;
+import ua.training.model.entities.person.Dispatcher;
 
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -17,7 +19,7 @@ public class Main {
 //                .setPassword("s?M-L:2)6")
 //                .build();
 //        tenantDao.add(tenant);
-        System.out.println(tenantDao.getAll());
+//        System.out.println(tenantDao.getAll());
 
 //        tenantDao.delete(5);
 
@@ -44,9 +46,20 @@ public class Main {
 //                .addTypeOfWork(typeOfWorkDao.getByDescription("supply").get(0))
 //                .addTypeOfWork(typeOfWorkDao.getByDescription("supply").get(1))
 //                .build();
-        System.out.println(workerDao.getAll());
+//        System.out.println(workerDao.getAll());
 
         BrigadeDao brigadeDao = daoFactory.createBrigadeDao();
-        System.out.println(brigadeDao.getAll());
+//        System.out.println(brigadeDao.getAll());
+
+        DispatcherDao dispatcherDao = daoFactory.createDispatcherDao();
+//        Dispatcher dispatcher = new Dispatcher.Builder()
+//                .setOnline(true)
+//                .setName("Gabriela Trater")
+//                .setEmail("gabi_Trater90@dayrep.com")
+//                .setPassword("2An-6N:99")
+//                .build();
+//        dispatcherDao.delete(3);
+
+        System.out.println(dispatcherDao.getAll());
     }
 }

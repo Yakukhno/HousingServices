@@ -11,6 +11,7 @@ public abstract class DaoFactory {
 
     public abstract ApplicationDao createApplicationDao();
     public abstract TenantDao createTenantDao();
+    public abstract DispatcherDao createDispatcherDao();
     public abstract WorkerDao createWorkerDao();
     public abstract BrigadeDao createBrigadeDao();
     public abstract TaskDao createTaskDao();

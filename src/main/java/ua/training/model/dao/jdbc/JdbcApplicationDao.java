@@ -158,35 +158,19 @@ public class JdbcApplicationDao implements ApplicationDao {
         return applications;
     }
 
-    private Application getApplicationFromResultSet(ResultSet resultSet) {
-        try {
-            TypeOfWork typeOfWork = new TypeOfWork.Builder()
-                    .setId(resultSet
-                            .getInt(JdbcTypeOfWorkDao.TYPE_OF_WORK_ID))
-                    .setDescription(resultSet
-                            .getString(JdbcTypeOfWorkDao.TYPE_OF_WORK_STRING))
-                    .build();
-
-            Tenant tenant = new Tenant.Builder()
-                    .setId(resultSet.getInt(JdbcTenantDao.TENANT_ID))
-                    .setAccount(resultSet.getInt(JdbcTenantDao.TENANT_ACCOUNT))
-                    .setName(resultSet.getString(JdbcTenantDao.TENANT_NAME))
-                    .setEmail(resultSet.getString(JdbcTenantDao.TENANT_EMAIL))
-                    .setPassword(resultSet.getString(JdbcTenantDao.TENANT_PASSWORD))
-                    .build();
-
-            return new Application.Builder()
+    static Application getApplicationFromResultSet(ResultSet resultSet)
+            throws SQLException {
+        return new Application.Builder()
                     .setId(resultSet.getInt(APPLICATION_ID))
-                    .setTypeOfWork(typeOfWork)
-                    .setTenant(tenant)
+                    .setTypeOfWork(JdbcTypeOfWorkDao
+                            .getTypeOfWorkFromResultSet(resultSet))
+                    .setTenant(JdbcTenantDao
+                            .getTenantFromResultSet(resultSet))
                     .setScaleOfProblem(ProblemScale.valueOf(resultSet
                             .getString(APPLICATION_SCALE_OF_PROBLEM)))
                     .setDesiredTime(resultSet
                             .getTimestamp(APPLICATION_DESIRED_TIME))
                     .build();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void setStatementFromApplication(PreparedStatement statement,
