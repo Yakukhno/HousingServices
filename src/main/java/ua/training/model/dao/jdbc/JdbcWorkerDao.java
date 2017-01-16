@@ -33,8 +33,8 @@ public class JdbcWorkerDao implements WorkerDao {
     private static final String UPDATE =
             "UPDATE worker SET name = ? WHERE id_worker = ?";
 
-    public static final String WORKER_ID = "id_worker";
-    public static final String WORKER_NAME = "name";
+    static final String WORKER_ID = "id_worker";
+    static final String WORKER_NAME = "name";
 
     private Connection connection;
 
@@ -51,7 +51,7 @@ public class JdbcWorkerDao implements WorkerDao {
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.first()) {
-                worker = getWorkerFromResultSet(resultSet, WORKER_ID);
+                worker = getWorkerFromResultSet(resultSet);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -66,7 +66,7 @@ public class JdbcWorkerDao implements WorkerDao {
              ResultSet resultSet = statement.executeQuery(SELECT_ALL_WORKERS)) {
             resultSet.next();
             while (!resultSet.isAfterLast()) {
-                workers.add(getWorkerFromResultSet(resultSet, WORKER_ID));
+                workers.add(getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -139,11 +139,11 @@ public class JdbcWorkerDao implements WorkerDao {
         }
     }
 
-    static Worker getWorkerFromResultSet(ResultSet resultSet, String columnId)
+    static Worker getWorkerFromResultSet(ResultSet resultSet)
             throws SQLException {
-        int currentId = resultSet.getInt(columnId);
+        int currentId = resultSet.getInt(WORKER_ID);
         Worker.Builder builder = new Worker.Builder()
-                .setId(resultSet.getInt(columnId))
+                .setId(resultSet.getInt(WORKER_ID))
                 .setName(resultSet.getString(WORKER_NAME))
                 .addTypeOfWork(JdbcTypeOfWorkDao
                         .getTypeOfWorkFromResultSet(resultSet));

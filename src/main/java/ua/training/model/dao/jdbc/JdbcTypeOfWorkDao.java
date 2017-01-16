@@ -23,8 +23,8 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
     private static final String UPDATE =
             "UPDATE type_of_work SET description = ? WHERE id_type_of_work = ?";
 
-    public static final String TYPE_OF_WORK_ID = "id_type_of_work";
-    public static final String TYPE_OF_WORK_STRING = "description";
+    static final String TYPE_OF_WORK_ID = "id_type_of_work";
+    static final String TYPE_OF_WORK_DESCRIPTION = "description";
 
     private Connection connection;
 
@@ -123,7 +123,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
             throws SQLException {
         return new TypeOfWork.Builder()
                 .setId(resultSet.getInt(TYPE_OF_WORK_ID))
-                .setDescription(resultSet.getString(TYPE_OF_WORK_STRING))
+                .setDescription(resultSet.getString(TYPE_OF_WORK_DESCRIPTION))
                 .build();
     }
 

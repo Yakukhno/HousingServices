@@ -4,6 +4,7 @@ public class Task {
     private int id;
     private Application application;
     private Brigade brigade;
+    private boolean isActive;
 
     public int getId() {
         return id;
@@ -25,8 +26,26 @@ public class Task {
         return brigade;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public void setBrigade(Brigade brigade) {
         this.brigade = brigade;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", application=" + application +
+                ", brigade=" + brigade +
+                ", isActive=" + isActive +
+                '}';
     }
 
     public static class Builder {
@@ -44,6 +63,11 @@ public class Task {
 
         public Builder setBrigade(Brigade brigade) {
             task.setBrigade(brigade);
+            return this;
+        }
+
+        public Builder setActive(boolean isActive) {
+            task.setActive(isActive);
             return this;
         }
 

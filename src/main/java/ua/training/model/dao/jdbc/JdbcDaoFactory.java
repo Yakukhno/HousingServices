@@ -58,7 +58,7 @@ public class JdbcDaoFactory extends DaoFactory {
 
     @Override
     public TaskDao createTaskDao() {
-        return null;
+        return new JdbcTaskDao(connection);
     }
 
     @Override

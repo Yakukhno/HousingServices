@@ -17,7 +17,11 @@ public class JdbcBrigadeDao implements BrigadeDao {
                     "JOIN worker_has_type_of_work USING (id_worker)" +
                     "JOIN type_of_work USING (id_type_of_work) " +
                     "ORDER BY id_brigade, id_worker";
-
+    private static final String SELECT_MANAGER =
+            "SELECT * FROM worker " +
+                    "JOIN worker_has_type_of_work USING (id_worker)" +
+                    "JOIN type_of_work USING (id_type_of_work) " +
+                    "WHERE id_worker = ?";
     private static final String SELECT_BY_ID =
             "SELECT * FROM brigade " +
                     "JOIN brigade_has_worker USING (id_brigade) " +
@@ -39,8 +43,8 @@ public class JdbcBrigadeDao implements BrigadeDao {
     private static final String UPDATE =
             "UPDATE brigade SET manager = ? WHERE id_brigade = ?";
 
-    private static final String BRIGADE_ID = "id_brigade";
-    private static final String MANAGER = "manager";
+    static final String BRIGADE_ID = "id_brigade";
+    static final String MANAGER = "manager";
 
     private Connection connection;
 
@@ -51,13 +55,21 @@ public class JdbcBrigadeDao implements BrigadeDao {
     @Override
     public Brigade get(int id) {
         Brigade brigade = null;
-        try (PreparedStatement statement
-                     = connection.prepareStatement(SELECT_BY_ID)) {
-            statement.setInt(1, id);
+        try (PreparedStatement brigadeStatement
+                     = connection.prepareStatement(SELECT_BY_ID);
+             PreparedStatement managerStatement
+                     = connection.prepareStatement(SELECT_MANAGER)) {
+            brigadeStatement.setInt(1, id);
 
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.first()) {
-                brigade = getBrigadeFromResultSet(resultSet);
+            ResultSet brigadeResultSet = brigadeStatement.executeQuery();
+            if (brigadeResultSet.first()) {
+                managerStatement.setInt(1, brigadeResultSet.getInt(MANAGER));
+                brigade = getBrigadeFromResultSet(brigadeResultSet);
+                ResultSet managerResultSet = managerStatement.executeQuery();
+                if (managerResultSet.next()) {
+                    brigade.setManager(JdbcWorkerDao
+                            .getWorkerFromResultSet(managerResultSet));
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -70,10 +82,20 @@ public class JdbcBrigadeDao implements BrigadeDao {
         List<Brigade> brigades = new ArrayList<>();
         try (Statement statement
                      = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
-            resultSet.next();
-            while (!resultSet.isAfterLast()) {
-                brigades.add(getBrigadeFromResultSet(resultSet));
+             ResultSet brigadeResultSet
+                     = statement.executeQuery(SELECT_ALL);
+             PreparedStatement managerStatement
+                     = connection.prepareStatement(SELECT_MANAGER)) {
+            brigadeResultSet.next();
+            while (!brigadeResultSet.isAfterLast()) {
+                managerStatement.setInt(1, brigadeResultSet.getInt(MANAGER));
+                Brigade brigade = getBrigadeFromResultSet(brigadeResultSet);
+                ResultSet managerResultSet = managerStatement.executeQuery();
+                if (managerResultSet.next()) {
+                    brigade.setManager(JdbcWorkerDao
+                            .getWorkerFromResultSet(managerResultSet));
+                }
+                brigades.add(brigade);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -134,14 +156,10 @@ public class JdbcBrigadeDao implements BrigadeDao {
         int currentId = resultSet.getInt(BRIGADE_ID);
         Brigade.Builder builder = new Brigade.Builder()
                 .setId(resultSet.getInt(BRIGADE_ID))
-                .setManager(JdbcWorkerDao.getWorkerFromResultSet(resultSet,
-                        MANAGER))
-                .addWorker(JdbcWorkerDao.getWorkerFromResultSet(resultSet,
-                        JdbcWorkerDao.WORKER_ID));
+                .addWorker(JdbcWorkerDao.getWorkerFromResultSet(resultSet));
         while ((!resultSet.isAfterLast())
                     && (resultSet.getInt(BRIGADE_ID) == currentId)) {
-            builder.addWorker(JdbcWorkerDao.getWorkerFromResultSet(resultSet,
-                    JdbcWorkerDao.WORKER_ID));
+            builder.addWorker(JdbcWorkerDao.getWorkerFromResultSet(resultSet));
         }
         return builder.build();
     }

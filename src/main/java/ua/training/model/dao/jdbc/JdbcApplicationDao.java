@@ -3,8 +3,6 @@ package ua.training.model.dao.jdbc;
 import ua.training.model.dao.ApplicationDao;
 import ua.training.model.entities.Application;
 import ua.training.model.entities.ProblemScale;
-import ua.training.model.entities.person.Tenant;
-import ua.training.model.entities.TypeOfWork;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -42,10 +40,10 @@ public class JdbcApplicationDao implements ApplicationDao {
                     "scale_of_problem = ?, desired_time = ? " +
                     "WHERE id_application = ?";
 
-    private static final String APPLICATION_ID = "id_application";
-    private static final String APPLICATION_SCALE_OF_PROBLEM =
+    static final String APPLICATION_ID = "id_application";
+    static final String APPLICATION_SCALE_OF_PROBLEM =
             "scale_of_problem";
-    private static final String APPLICATION_DESIRED_TIME =
+    static final String APPLICATION_DESIRED_TIME =
             "desired_time";
 
     private Connection connection;
@@ -62,7 +60,7 @@ public class JdbcApplicationDao implements ApplicationDao {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
+            if (resultSet.next()) {
                 application = getApplicationFromResultSet(resultSet);
             }
         } catch (SQLException e) {

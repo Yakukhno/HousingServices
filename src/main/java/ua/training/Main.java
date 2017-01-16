@@ -1,12 +1,6 @@
 package ua.training;
 
 import ua.training.model.dao.*;
-import ua.training.model.dao.jdbc.JdbcDispatcherDao;
-import ua.training.model.entities.*;
-import ua.training.model.entities.person.Dispatcher;
-
-import java.sql.Time;
-import java.sql.Timestamp;
 
 public class Main {
     public static void main(String[] args) {
@@ -60,6 +54,9 @@ public class Main {
 //                .build();
 //        dispatcherDao.delete(3);
 
-        System.out.println(dispatcherDao.getAll());
+//        System.out.println(dispatcherDao.getAll());
+
+        TaskDao taskDao = daoFactory.createTaskDao();
+        System.out.println(taskDao.getActiveTasks());
     }
 }

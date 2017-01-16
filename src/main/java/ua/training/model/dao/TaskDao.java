@@ -1,8 +1,9 @@
 package ua.training.model.dao;
 
-import ua.training.model.entities.Application;
 import ua.training.model.entities.Task;
 
+import java.util.List;
+
 public interface TaskDao extends GenericDao<Task> {
-    Task getByApplication(Application application);
+    List<Task> getActiveTasks();
 }
