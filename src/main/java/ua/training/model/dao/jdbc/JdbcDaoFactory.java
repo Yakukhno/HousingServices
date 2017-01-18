@@ -1,5 +1,6 @@
 package ua.training.model.dao.jdbc;
 
+import com.mysql.jdbc.Driver;
 import ua.training.model.dao.*;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class JdbcDaoFactory extends DaoFactory {
             Properties properties = new Properties();
             properties.load(JdbcTenantDao.class
                     .getResourceAsStream(DB_PROPERTIES_FILE));
+            new Driver();
             connection = DriverManager.getConnection(
                     properties.getProperty(DB_URL),
                     properties.getProperty(DB_USER),
