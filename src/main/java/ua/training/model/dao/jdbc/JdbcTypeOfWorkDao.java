@@ -6,6 +6,7 @@ import ua.training.model.entities.TypeOfWork;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
 
@@ -33,15 +34,15 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
     }
 
     @Override
-    public TypeOfWork get(int id) {
-        TypeOfWork typeOfWork = null;
+    public Optional<TypeOfWork> get(int id) {
+        Optional<TypeOfWork> typeOfWork = Optional.empty();
         try (PreparedStatement statement =
                      connection.prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                typeOfWork = getTypeOfWorkFromResultSet(resultSet);
+                typeOfWork = Optional.of(getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

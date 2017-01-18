@@ -6,6 +6,7 @@ import ua.training.model.entities.Task;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JdbcTaskDao implements TaskDao {
 
@@ -36,24 +37,15 @@ public class JdbcTaskDao implements TaskDao {
     }
 
     @Override
-    public Task get(int id) {
-        Task task = null;
+    public Optional<Task> get(int id) {
+        Optional<Task> task = Optional.empty();
         try (PreparedStatement statement =
                      connection.prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                task = new Task.Builder()
-                        .setId(resultSet.getInt(TASK_ID))
-                        .setApplication(new JdbcApplicationDao(connection)
-                                .get(resultSet.getInt(JdbcApplicationDao
-                                        .APPLICATION_ID)))
-                        .setBrigade(new JdbcBrigadeDao(connection)
-                                .get(resultSet.getInt(JdbcBrigadeDao
-                                        .BRIGADE_ID)))
-                        .setActive(resultSet.getBoolean(IS_ACTIVE))
-                        .build();
+                task = Optional.of(getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -134,10 +126,10 @@ public class JdbcTaskDao implements TaskDao {
                 .setId(resultSet.getInt(TASK_ID))
                 .setApplication(new JdbcApplicationDao(connection)
                         .get(resultSet.getInt(JdbcApplicationDao
-                                .APPLICATION_ID)))
+                                .APPLICATION_ID)).orElse(null))
                 .setBrigade(new JdbcBrigadeDao(connection)
                         .get(resultSet.getInt(JdbcBrigadeDao
-                                .BRIGADE_ID)))
+                                .BRIGADE_ID)).orElse(null))
                 .setActive(resultSet.getBoolean(IS_ACTIVE))
                 .build();
     }

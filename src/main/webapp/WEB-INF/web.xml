@@ -6,11 +6,15 @@
          metadata-complete="true">
     <display-name>Archetype Created Web Application</display-name>
     <servlet>
-        <servlet-name>Controller</servlet-name>
-        <servlet-class>ua.training.controller.servlet.MainServlet</servlet-class>
+        <servlet-name>FrontController</servlet-name>
+        <servlet-class>ua.training.controller.servlet.FrontController</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Controller</servlet-name>
-        <url-pattern>/housing-services</url-pattern>
+        <servlet-name>FrontController</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
+    
+    <welcome-file-list>
+        <welcome-file>/WEB-INF/view/index.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>

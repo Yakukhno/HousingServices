@@ -6,6 +6,7 @@ import ua.training.model.entities.person.Tenant;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JdbcTenantDao implements TenantDao {
 
@@ -40,7 +41,7 @@ public class JdbcTenantDao implements TenantDao {
     }
 
     @Override
-    public Tenant get(int id) {
+    public Optional<Tenant> get(int id) {
         return getTenant(SELECT_BY_ID, id);
     }
 
@@ -98,20 +99,20 @@ public class JdbcTenantDao implements TenantDao {
     }
 
     @Override
-    public Tenant getTenantByAccount(int account) {
+    public Optional<Tenant> getTenantByAccount(int account) {
         return getTenant(SELECT_BY_ACCOUNT, account);
     }
 
     @Override
-    public Tenant getTenantByEmail(String email) {
-        Tenant tenant = null;
+    public Optional<Tenant> getTenantByEmail(String email) {
+        Optional<Tenant> tenant = Optional.empty();
         try (PreparedStatement statement =
                      connection.prepareStatement(SELECT_BY_EMAIL)) {
             statement.setString(1, email);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                tenant = getTenantFromResultSet(resultSet);
+                tenant = Optional.of(getTenantFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -119,15 +120,15 @@ public class JdbcTenantDao implements TenantDao {
         return tenant;
     }
 
-    private Tenant getTenant(String query, int parameter) {
-        Tenant tenant = null;
+    private Optional<Tenant> getTenant(String query, int parameter) {
+        Optional<Tenant> tenant = Optional.empty();
         try (PreparedStatement statement =
                      connection.prepareStatement(query)) {
             statement.setInt(1, parameter);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                tenant = getTenantFromResultSet(resultSet);
+                tenant = Optional.of(getTenantFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

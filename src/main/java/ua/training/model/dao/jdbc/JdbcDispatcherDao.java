@@ -6,6 +6,7 @@ import ua.training.model.entities.person.Dispatcher;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JdbcDispatcherDao implements DispatcherDao {
 
@@ -38,14 +39,16 @@ public class JdbcDispatcherDao implements DispatcherDao {
     }
 
     @Override
-    public Dispatcher get(int id) {
-        Dispatcher dispatcher;
+    public Optional<Dispatcher> get(int id) {
+        Optional<Dispatcher> dispatcher = Optional.empty();
         try (PreparedStatement statement
                      = connection.prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
-            dispatcher = getDispatcherFromResultSet(resultSet);
+            if (resultSet.first()) {
+                dispatcher = Optional.of(getDispatcherFromResultSet(resultSet));
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

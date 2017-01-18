@@ -7,6 +7,7 @@ import ua.training.model.entities.ProblemScale;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JdbcApplicationDao implements ApplicationDao {
 
@@ -53,15 +54,15 @@ public class JdbcApplicationDao implements ApplicationDao {
     }
 
     @Override
-    public Application get(int id) {
-        Application application = null;
+    public Optional<Application> get(int id) {
+        Optional<Application> application = Optional.empty();
         try (PreparedStatement statement =
                      connection.prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                application = getApplicationFromResultSet(resultSet);
+                application = Optional.of(getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

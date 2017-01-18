@@ -2,6 +2,8 @@ package ua.training.controller.servlet;
 
 import ua.training.controller.command.Command;
 import ua.training.controller.command.GetTenants;
+import ua.training.controller.command.Login;
+import ua.training.controller.command.MainPage;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,13 +13,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainServlet extends HttpServlet {
+public class FrontController extends HttpServlet {
 
-    private final Map<String, Command> commmands = new HashMap<>();
+    private final Map<String, Command> commands = new HashMap<>();
 
     @Override
     public void init() throws ServletException {
-        commmands.put("GET:/tenant", new GetTenants());
+        commands.put("GET:/", new MainPage());
+        commands.put("GET:/tenant", new GetTenants());
+        commands.put("POST:/login", new Login());
         super.init();
     }
 
@@ -36,9 +40,9 @@ public class MainServlet extends HttpServlet {
     private void processRequest(HttpServletRequest request,
                                 HttpServletResponse response)
             throws ServletException, IOException {
-//        String command = request.getMethod().toUpperCase() + ":"
-//                + request.getRequestURI().replaceAll("/housing-services", "");
-//        String jspPath = commmands.get(command).execute(request, response);
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        String command = request.getMethod().toUpperCase() + ":"
+                + request.getRequestURI().replaceAll(".*/rest", "");
+        String jspPath = commands.get(command).execute(request, response);
+        request.getRequestDispatcher(jspPath).forward(request, response);
     }
 }

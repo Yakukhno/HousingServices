@@ -7,6 +7,7 @@ import ua.training.model.entities.person.Worker;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JdbcBrigadeDao implements BrigadeDao {
 
@@ -53,8 +54,8 @@ public class JdbcBrigadeDao implements BrigadeDao {
     }
 
     @Override
-    public Brigade get(int id) {
-        Brigade brigade = null;
+    public Optional<Brigade> get(int id) {
+        Optional<Brigade> brigade = Optional.empty();
         try (PreparedStatement brigadeStatement
                      = connection.prepareStatement(SELECT_BY_ID);
              PreparedStatement managerStatement
@@ -64,12 +65,13 @@ public class JdbcBrigadeDao implements BrigadeDao {
             ResultSet brigadeResultSet = brigadeStatement.executeQuery();
             if (brigadeResultSet.first()) {
                 managerStatement.setInt(1, brigadeResultSet.getInt(MANAGER));
-                brigade = getBrigadeFromResultSet(brigadeResultSet);
+                Brigade tempBrigade = getBrigadeFromResultSet(brigadeResultSet);
                 ResultSet managerResultSet = managerStatement.executeQuery();
                 if (managerResultSet.next()) {
-                    brigade.setManager(JdbcWorkerDao
+                    tempBrigade.setManager(JdbcWorkerDao
                             .getWorkerFromResultSet(managerResultSet));
                 }
+                brigade = Optional.of(tempBrigade);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -7,6 +7,7 @@ import ua.training.model.entities.person.Worker;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JdbcWorkerDao implements WorkerDao {
 
@@ -43,15 +44,15 @@ public class JdbcWorkerDao implements WorkerDao {
     }
 
     @Override
-    public Worker get(int id) {
-        Worker worker = null;
+    public Optional<Worker> get(int id) {
+        Optional<Worker> worker = Optional.empty();
         try (PreparedStatement statement =
                      connection.prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.first()) {
-                worker = getWorkerFromResultSet(resultSet);
+                worker = Optional.of(getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -112,7 +113,7 @@ public class JdbcWorkerDao implements WorkerDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                workers.add(get(resultSet.getInt(WORKER_ID)));
+                workers.add(getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

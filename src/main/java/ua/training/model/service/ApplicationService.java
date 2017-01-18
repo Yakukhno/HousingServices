@@ -3,9 +3,10 @@ package ua.training.model.service;
 import ua.training.model.entities.Application;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ApplicationService {
-    Application getApplicationById(int id);
+    Optional<Application> getApplicationById(int id);
     List<Application> getApplicationsByTypeOfWork(String typeOfWork);
     List<Application> getApplicationsByTenantId(int tenantId);
     List<Application> getAllApplications();
