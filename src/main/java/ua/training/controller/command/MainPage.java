@@ -10,6 +10,6 @@ public class MainPage implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        return "index.jsp";
+        return "/WEB-INF/view/index.jsp";
     }
 }

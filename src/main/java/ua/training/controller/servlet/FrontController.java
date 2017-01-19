@@ -1,9 +1,6 @@
 package ua.training.controller.servlet;
 
-import ua.training.controller.command.Command;
-import ua.training.controller.command.GetTenants;
-import ua.training.controller.command.Login;
-import ua.training.controller.command.MainPage;
+import ua.training.controller.command.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,7 +18,9 @@ public class FrontController extends HttpServlet {
     public void init() throws ServletException {
         commands.put("GET:/", new MainPage());
         commands.put("GET:/tenant", new GetTenants());
-        commands.put("POST:/login", new Login());
+        commands.put("GET:/login", new Login());
+        commands.put("GET:/task", new GetTasks());
+//        commands.put("GET:/brigade", new GetBrigade());
         super.init();
     }
 
