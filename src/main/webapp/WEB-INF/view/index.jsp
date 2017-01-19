@@ -1,19 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c"
-           uri="http://java.sun.com/jsp/jstl/core" %>
-<html>
-<head>
-    <title>Housing services</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
-</head>
-<form method="get" action="/rest/login">
-    <input type="text" name="email"/><br/>
-    <input type="password" name="password"/><br/>
-    <input type="submit">
-</form>
-<body>
-    <h1 align="center">Housing services</h1>
+<%@ include file="header.jsp"%>
     <h2 align="center">Planned tasks</h2>
     <table class="table table-striped" align="center">
         <thead>
@@ -37,7 +22,4 @@
             </c:forEach>
         </tbody>
     </table>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-</body>
-</html>
+<%@ include file="footer.jsp"%>

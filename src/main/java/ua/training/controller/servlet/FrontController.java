@@ -18,7 +18,9 @@ public class FrontController extends HttpServlet {
     public void init() throws ServletException {
         commands.put("GET:/", new MainPage());
         commands.put("GET:/tenant", new GetTenants());
-        commands.put("GET:/login", new Login());
+        commands.put("GET:/login", new LoginPage());
+        commands.put("POST:/login", new Login());
+        commands.put("POST:/logout", new Logout());
         commands.put("GET:/task", new GetTasks());
 //        commands.put("GET:/brigade", new GetBrigade());
         super.init();
@@ -42,6 +44,10 @@ public class FrontController extends HttpServlet {
         String command = request.getMethod().toUpperCase() + ":"
                 + request.getRequestURI().replaceAll(".*/rest", "");
         String jspPath = commands.get(command).execute(request, response);
-        request.getRequestDispatcher(jspPath).forward(request, response);
+        if (jspPath.endsWith(".jsp")) {
+            request.getRequestDispatcher(jspPath).forward(request, response);
+        } else {
+            response.sendRedirect(jspPath);
+        }
     }
 }

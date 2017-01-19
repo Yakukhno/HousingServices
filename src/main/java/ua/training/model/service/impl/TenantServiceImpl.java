@@ -41,9 +41,16 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
-    public Optional<Tenant> login(String email, String password) {
+    public Optional<Tenant> loginEmail(String email, String password) {
         TenantDao tenantDao = daoFactory.createTenantDao();
         return tenantDao.getTenantByEmail(email)
+                .filter(tenant -> password.equals(tenant.getPassword()));
+    }
+
+    @Override
+    public Optional<Tenant> loginAccount(int account, String password) {
+        TenantDao tenantDao = daoFactory.createTenantDao();
+        return tenantDao.getTenantByAccount(account)
                 .filter(tenant -> password.equals(tenant.getPassword()));
     }
 
