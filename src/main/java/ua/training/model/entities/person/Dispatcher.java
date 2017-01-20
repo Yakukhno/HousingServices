@@ -1,6 +1,11 @@
 package ua.training.model.entities.person;
 
 public class Dispatcher extends User {
+
+    {
+        role = Role.DISPATCHER;
+    }
+
     private boolean isOnline;
 
     public boolean isOnline() {

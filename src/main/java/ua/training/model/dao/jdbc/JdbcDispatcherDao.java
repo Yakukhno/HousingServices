@@ -14,6 +14,8 @@ public class JdbcDispatcherDao implements DispatcherDao {
             "SELECT * FROM dispatcher WHERE id_dispatcher = ?";
     private static final String SELECT_BY_ONLINE =
             "SELECT * FROM dispatcher WHERE is_online = TRUE";
+    private static final String SELECT_BY_EMAIL =
+            "SELECT * FROM dispatcher WHERE email = ?";
     private static final String SELECT_ALL = "SELECT * FROM dispatcher";
 
     private static final String INSERT =
@@ -24,6 +26,10 @@ public class JdbcDispatcherDao implements DispatcherDao {
     private static final String UPDATE =
             "UPDATE dispatcher " +
                     "SET is_online = ?, name = ?, email = ?, password = ? " +
+                    "WHERE id_dispatcher = ?";
+    private static final String SET_ONLINE =
+            "UPDATE dispatcher " +
+                    "SET is_online = ? " +
                     "WHERE id_dispatcher = ?";
 
     private static final String DISPATCHER_ID = "id_dispatcher";
@@ -47,6 +53,23 @@ public class JdbcDispatcherDao implements DispatcherDao {
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.first()) {
+                dispatcher = Optional.of(getDispatcherFromResultSet(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return dispatcher;
+    }
+
+    @Override
+    public Optional<Dispatcher> getDispatcherByEmail(String email) {
+        Optional<Dispatcher> dispatcher = Optional.empty();
+        try (PreparedStatement statement =
+                     connection.prepareStatement(SELECT_BY_EMAIL)) {
+            statement.setString(1, email);
+
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
                 dispatcher = Optional.of(getDispatcherFromResultSet(resultSet));
             }
         } catch (SQLException e) {
@@ -93,6 +116,18 @@ public class JdbcDispatcherDao implements DispatcherDao {
                      = connection.prepareStatement(UPDATE)) {
             setStatementFromDispatcher(statement, dispatcher);
             statement.setInt(5, dispatcher.getId());
+            statement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void setDispatcherOnline(int dispatcherId, boolean isOnline) {
+        try (PreparedStatement statement
+                     = connection.prepareStatement(SET_ONLINE)) {
+            statement.setBoolean(1, isOnline);
+            statement.setInt(2, dispatcherId);
             statement.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);

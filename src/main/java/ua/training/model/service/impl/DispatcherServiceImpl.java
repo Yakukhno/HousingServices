@@ -41,6 +41,12 @@ public class DispatcherServiceImpl implements DispatcherService {
     }
 
     @Override
+    public void setOffline(int dispatcherId) {
+        daoFactory.createDispatcherDao()
+                .setDispatcherOnline(dispatcherId, false);
+    }
+
+    @Override
     public void createNewDispatcher(Dispatcher dispatcher) {
         DispatcherDao dispatcherDao = daoFactory.createDispatcherDao();
         dispatcherDao.add(dispatcher);

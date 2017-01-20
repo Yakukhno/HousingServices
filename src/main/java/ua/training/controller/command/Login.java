@@ -1,8 +1,8 @@
 package ua.training.controller.command;
 
-import ua.training.model.entities.person.Tenant;
-import ua.training.model.service.TenantService;
-import ua.training.model.service.impl.TenantServiceImpl;
+import ua.training.model.entities.person.User;
+import ua.training.model.service.UserService;
+import ua.training.model.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,26 +19,28 @@ public class Login implements Command {
             "+\\.[A-Za-z]{2,6}$";
     private static final String ACCOUNT_REGEXP = "[1-9]\\d{3}";
 
-    private TenantService tenantService = TenantServiceImpl.getInstance();
+    private UserService userService = UserServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        String pageToGo = "/WEB-INF/view/index.jsp";
+        String pageToGo = "/";
         String login = request.getParameter(PARAM_LOGIN);
         String password = request.getParameter(PARAM_PASSWORD);
         if (login != null && password != null) {
-            Optional<Tenant> tenant = Optional.empty();
+            Optional<User> user = Optional.empty();
             if (login.matches(EMAIL_REGEXP)) {
-                tenant = tenantService.loginEmail(login, password);
+                user = userService.loginEmail(login, password);
             } else if (login.matches(ACCOUNT_REGEXP)) {
-                tenant = tenantService.loginAccount(Integer.parseInt(login),
+                user = userService.loginAccount(Integer.parseInt(login),
                                                     password);
             }
-            if (tenant.isPresent()) {
-                request.getSession().setAttribute("user", tenant.get());
-                pageToGo = "/rest/tenant";
+            if (user.isPresent()) {
+                User sessionUser = user.get();
+                request.getSession().setAttribute("user", sessionUser);
+                request.setAttribute("id", sessionUser.getId());
+                pageToGo = "/rest/tenant/" + sessionUser.getId();
             }
         }
         return pageToGo;

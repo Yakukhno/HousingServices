@@ -11,7 +11,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-offset-3 col-lg-6">
-                <a><h1 align="center">Housing services</h1></a>
+                <h1 align="center">Housing services</h1>
             </div>
             <div class="col-lg-2">
                 <c:choose>

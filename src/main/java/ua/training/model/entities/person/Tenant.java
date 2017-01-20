@@ -1,6 +1,11 @@
 package ua.training.model.entities.person;
 
 public class Tenant extends User {
+
+    {
+        role = Role.TENANT;
+    }
+
     private int account;
 
     public int getAccount() {
