@@ -13,6 +13,14 @@
         <servlet-name>FrontController</servlet-name>
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
+
+    <listener>
+        <listener-class>ua.training.controller.session.DispatcherLogoutSessionListener</listener-class>
+    </listener>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
     
     <welcome-file-list>
         <welcome-file>/WEB-INF/view/index.jsp</welcome-file>

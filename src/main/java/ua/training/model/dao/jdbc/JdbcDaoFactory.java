@@ -1,24 +1,15 @@
 package ua.training.model.dao.jdbc;
 
-import com.mysql.jdbc.Driver;
 import ua.training.model.dao.*;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 public class JdbcDaoFactory extends DaoFactory {
-
-    private static final String DB_PROPERTIES_FILE = "/db.properties";
-    private static final String DB_URL = "url";
-    private static final String DB_USER = "user";
-    private static final String DB_PASSWORD = "password";
 
     private DataSource dataSource;
 
