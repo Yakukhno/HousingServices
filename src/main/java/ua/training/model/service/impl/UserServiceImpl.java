@@ -26,25 +26,37 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> loginEmail(String email, String password) {
-        TenantDao tenantDao = daoFactory.createTenantDao();
-        Optional<User> user = tenantDao.getTenantByEmail(email)
-                .filter(tenant -> password.equals(tenant.getPassword()))
-                .map(tenant -> tenant);
-        if (!user.isPresent()) {
-            DispatcherDao dispatcherDao = daoFactory.createDispatcherDao();
-            user = dispatcherDao.getDispatcherByEmail(email)
-                    .filter(dispatcher -> password.equals(dispatcher.getPassword()))
-                    .map(dispatcher -> dispatcher);
-            user.ifPresent(user1 -> dispatcherDao
-                    .setDispatcherOnline(user1.getId(), true));
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            connection.begin();
+
+            TenantDao tenantDao = daoFactory.createTenantDao(connection);
+            Optional<User> user = tenantDao.getTenantByEmail(email)
+                    .filter(tenant -> password.equals(tenant.getPassword()))
+                    .map(tenant -> tenant);
+
+            if (!user.isPresent()) {
+                DispatcherDao dispatcherDao
+                        = daoFactory.createDispatcherDao(connection);
+                user = dispatcherDao.getDispatcherByEmail(email)
+                        .filter(dispatcher
+                                -> password.equals(dispatcher.getPassword()))
+                        .map(dispatcher -> dispatcher);
+                user.ifPresent(user1 -> dispatcherDao
+                        .setDispatcherOnline(user1.getId(), true));
+            }
+
+            connection.commit();
+            return user;
         }
-        return user;
     }
 
     @Override
     public Optional<User> loginAccount(int account, String password) {
-        return daoFactory.createTenantDao().getTenantByAccount(account)
-                .filter(tenant -> password.equals(tenant.getPassword()))
-                .map(tenant -> tenant);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            return daoFactory.createTenantDao(connection)
+                    .getTenantByAccount(account)
+                    .filter(tenant -> password.equals(tenant.getPassword()))
+                    .map(tenant -> tenant);
+        }
     }
 }

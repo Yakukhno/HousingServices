@@ -1,6 +1,7 @@
 package ua.training.model.service.impl;
 
 import ua.training.model.dao.BrigadeDao;
+import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.entities.Brigade;
 import ua.training.model.service.BrigadeService;
@@ -24,19 +25,25 @@ public class BrigadeServiceImpl implements BrigadeService {
 
     @Override
     public Optional<Brigade> getBrigadeById(int id) {
-        BrigadeDao brigadeDao = daoFactory.createBrigadeDao();
-        return brigadeDao.get(id);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
+            return brigadeDao.get(id);
+        }
     }
 
     @Override
     public List<Brigade> getAllBrigades() {
-        BrigadeDao brigadeDao = daoFactory.createBrigadeDao();
-        return brigadeDao.getAll();
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
+            return brigadeDao.getAll();
+        }
     }
 
     @Override
     public void createNewBrigade(Brigade brigade) {
-        BrigadeDao brigadeDao = daoFactory.createBrigadeDao();
-        brigadeDao.add(brigade);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
+            brigadeDao.add(brigade);
+        }
     }
 }

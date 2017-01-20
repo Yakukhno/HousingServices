@@ -5,7 +5,7 @@ import ua.training.model.dao.*;
 public class Main {
     public static void main(String[] args) {
         DaoFactory daoFactory = DaoFactory.getInstance();
-        TenantDao tenantDao = daoFactory.createTenantDao();
+//        TenantDao tenantDao = daoFactory.createTenantDao();
 //        Tenant tenant = new Tenant.Builder()
 //                .setAccount(1006)
 //                .setName("Gerry Jantzen")
@@ -17,10 +17,10 @@ public class Main {
 
 //        tenantDao.delete(5);
 
-        ApplicationDao applicationDao = daoFactory.createApplicationDao();
+//        ApplicationDao applicationDao = daoFactory.createApplicationDao();
 //        System.out.println(applicationDao.getApplicationsByTypeOfWork("supply"));
 
-        TypeOfWorkDao typeOfWorkDao = daoFactory.createTypeOfWorkDao();
+//        TypeOfWorkDao typeOfWorkDao = daoFactory.createTypeOfWorkDao();
 
 //        Application application = new Application();
 //        tenant.setId(3);
@@ -34,7 +34,7 @@ public class Main {
 //        applicationDao.delete(11);
 //        System.out.println(applicationDao.getAll());
 
-        WorkerDao workerDao = daoFactory.createWorkerDao();
+//        WorkerDao workerDao = daoFactory.createWorkerDao();
 //        Worker worker = new Worker.Builder()
 //                .setName("Harry Kane")
 //                .addTypeOfWork(typeOfWorkDao.getByDescription("supply").get(0))
@@ -42,10 +42,10 @@ public class Main {
 //                .build();
 //        System.out.println(workerDao.getAll());
 
-        BrigadeDao brigadeDao = daoFactory.createBrigadeDao();
+//        BrigadeDao brigadeDao = daoFactory.createBrigadeDao();
 //        System.out.println(brigadeDao.getAll());
 
-        DispatcherDao dispatcherDao = daoFactory.createDispatcherDao();
+//        DispatcherDao dispatcherDao = daoFactory.createDispatcherDao();
 //        Dispatcher dispatcher = new Dispatcher.Builder()
 //                .setOnline(true)
 //                .setName("Gabriela Trater")
@@ -56,7 +56,7 @@ public class Main {
 
 //        System.out.println(dispatcherDao.getAll());
 
-        TaskDao taskDao = daoFactory.createTaskDao();
-        System.out.println(taskDao.getActiveTasks());
+//        TaskDao taskDao = daoFactory.createTaskDao();
+//        System.out.println(taskDao.getActiveTasks());
     }
 }

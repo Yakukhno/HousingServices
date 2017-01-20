@@ -1,6 +1,7 @@
 package ua.training.model.service.impl;
 
 import ua.training.model.dao.ApplicationDao;
+import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.entities.Application;
 import ua.training.model.service.ApplicationService;
@@ -24,31 +25,46 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Optional<Application> getApplicationById(int id) {
-        ApplicationDao applicationDao = daoFactory.createApplicationDao();
-        return applicationDao.get(id);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            ApplicationDao applicationDao
+                    = daoFactory.createApplicationDao(connection);
+            return applicationDao.get(id);
+        }
     }
 
     @Override
     public List<Application> getApplicationsByTypeOfWork(String typeOfWork) {
-        ApplicationDao applicationDao = daoFactory.createApplicationDao();
-        return applicationDao.getApplicationsByTypeOfWork(typeOfWork);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            ApplicationDao applicationDao
+                    = daoFactory.createApplicationDao(connection);
+            return applicationDao.getApplicationsByTypeOfWork(typeOfWork);
+        }
     }
 
     @Override
     public List<Application> getApplicationsByTenantId(int tenantId) {
-        ApplicationDao applicationDao = daoFactory.createApplicationDao();
-        return applicationDao.getApplicationsByTenantId(tenantId);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            ApplicationDao applicationDao
+                    = daoFactory.createApplicationDao(connection);
+            return applicationDao.getApplicationsByTenantId(tenantId);
+        }
     }
 
     @Override
     public List<Application> getAllApplications() {
-        ApplicationDao applicationDao = daoFactory.createApplicationDao();
-        return applicationDao.getAll();
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            ApplicationDao applicationDao
+                    = daoFactory.createApplicationDao(connection);
+            return applicationDao.getAll();
+        }
     }
 
     @Override
     public void createNewApplication(Application application) {
-        ApplicationDao applicationDao = daoFactory.createApplicationDao();
-        applicationDao.add(application);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            ApplicationDao applicationDao
+                    = daoFactory.createApplicationDao(connection);
+            applicationDao.add(application);
+        }
     }
 }

@@ -9,13 +9,15 @@ public abstract class DaoFactory {
 
     private static DaoFactory daoFactory;
 
-    public abstract ApplicationDao createApplicationDao();
-    public abstract TenantDao createTenantDao();
-    public abstract DispatcherDao createDispatcherDao();
-    public abstract WorkerDao createWorkerDao();
-    public abstract BrigadeDao createBrigadeDao();
-    public abstract TaskDao createTaskDao();
-    public abstract TypeOfWorkDao createTypeOfWorkDao();
+    public abstract DaoConnection getConnection();
+
+    public abstract ApplicationDao createApplicationDao(DaoConnection daoConnection);
+    public abstract TenantDao createTenantDao(DaoConnection daoConnection);
+    public abstract DispatcherDao createDispatcherDao(DaoConnection daoConnection);
+    public abstract WorkerDao createWorkerDao(DaoConnection daoConnection);
+    public abstract BrigadeDao createBrigadeDao(DaoConnection daoConnection);
+    public abstract TaskDao createTaskDao(DaoConnection daoConnection);
+    public abstract TypeOfWorkDao createTypeOfWorkDao(DaoConnection daoConnection);
 
     public static DaoFactory getInstance() {
         if (daoFactory == null) {

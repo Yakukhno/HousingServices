@@ -1,5 +1,6 @@
 package ua.training.model.service.impl;
 
+import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.TaskDao;
 import ua.training.model.entities.Task;
@@ -24,25 +25,33 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Optional<Task> getTaskById(int id) {
-        TaskDao taskDao = daoFactory.createTaskDao();
-        return taskDao.get(id);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            TaskDao taskDao = daoFactory.createTaskDao(connection);
+            return taskDao.get(id);
+        }
     }
 
     @Override
     public List<Task> getActiveTasks() {
-        TaskDao taskDao = daoFactory.createTaskDao();
-        return taskDao.getActiveTasks();
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            TaskDao taskDao = daoFactory.createTaskDao(connection);
+            return taskDao.getActiveTasks();
+        }
     }
 
     @Override
     public List<Task> getAllTasks() {
-        TaskDao taskDao = daoFactory.createTaskDao();
-        return taskDao.getAll();
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            TaskDao taskDao = daoFactory.createTaskDao(connection);
+            return taskDao.getAll();
+        }
     }
 
     @Override
     public void createNewTask(Task task) {
-        TaskDao taskDao = daoFactory.createTaskDao();
-        taskDao.add(task);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            TaskDao taskDao = daoFactory.createTaskDao(connection);
+            taskDao.add(task);
+        }
     }
 }

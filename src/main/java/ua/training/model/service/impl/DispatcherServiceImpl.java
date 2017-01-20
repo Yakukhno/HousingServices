@@ -1,5 +1,6 @@
 package ua.training.model.service.impl;
 
+import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.DispatcherDao;
 import ua.training.model.entities.person.Dispatcher;
@@ -24,31 +25,45 @@ public class DispatcherServiceImpl implements DispatcherService {
 
     @Override
     public Optional<Dispatcher> getDispatcherById(int id) {
-        DispatcherDao dispatcherDao = daoFactory.createDispatcherDao();
-        return dispatcherDao.get(id);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            DispatcherDao dispatcherDao
+                    = daoFactory.createDispatcherDao(connection);
+            return dispatcherDao.get(id);
+        }
     }
 
     @Override
     public List<Dispatcher> getOnlineDispatchers() {
-        DispatcherDao dispatcherDao = daoFactory.createDispatcherDao();
-        return dispatcherDao.getOnlineDispatchers();
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            DispatcherDao dispatcherDao
+                    = daoFactory.createDispatcherDao(connection);
+            return dispatcherDao.getOnlineDispatchers();
+        }
     }
 
     @Override
     public List<Dispatcher> getAllDispatchers() {
-        DispatcherDao dispatcherDao = daoFactory.createDispatcherDao();
-        return dispatcherDao.getAll();
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            DispatcherDao dispatcherDao
+                    = daoFactory.createDispatcherDao(connection);
+            return dispatcherDao.getAll();
+        }
     }
 
     @Override
     public void setOffline(int dispatcherId) {
-        daoFactory.createDispatcherDao()
-                .setDispatcherOnline(dispatcherId, false);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            daoFactory.createDispatcherDao(connection)
+                    .setDispatcherOnline(dispatcherId, false);
+        }
     }
 
     @Override
     public void createNewDispatcher(Dispatcher dispatcher) {
-        DispatcherDao dispatcherDao = daoFactory.createDispatcherDao();
-        dispatcherDao.add(dispatcher);
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            DispatcherDao dispatcherDao
+                    = daoFactory.createDispatcherDao(connection);
+            dispatcherDao.add(dispatcher);
+        }
     }
 }
