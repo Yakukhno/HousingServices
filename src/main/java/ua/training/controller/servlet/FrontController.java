@@ -18,9 +18,10 @@ public class FrontController extends HttpServlet {
     public void init() throws ServletException {
         commands.put("GET:/", new MainPage());
         commands.put("GET:/tenant", new GetTenants());
-        commands.put("GET:/tenant/", new GetTenant());
+        commands.put("GET:/tenant/[\\d]+", new GetTenant());
+        commands.put("GET:/tenant/[\\d]+/application", new GetApplications());
         commands.put("POST:/tenant", new PostTenant());
-        commands.put("GET:/dispatcher/", new GetDispatcher());
+        commands.put("GET:/dispatcher/[\\d]+", new GetDispatcher());
         commands.put("POST:/dispatcher", new PostDispatcher());
         commands.put("GET:/login", new LoginPage());
         commands.put("POST:/login", new Login());
@@ -47,11 +48,13 @@ public class FrontController extends HttpServlet {
     private void processRequest(HttpServletRequest request,
                                 HttpServletResponse response)
             throws ServletException, IOException {
-        String command = request.getMethod().toUpperCase() + ":"
+        String tempCommand = request.getMethod().toUpperCase() + ":"
                 + request.getRequestURI().replaceAll(".*/rest", "");
-        if (command.substring(command.length() - 1).matches("\\d")) {
-            command = command.substring(0, command.lastIndexOf('/') + 1);
-        }
+        String command = commands.keySet()
+                .stream()
+                .filter(tempCommand::matches)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Invalid URL"));
         String jspPath = commands.get(command).execute(request, response);
         if (jspPath.endsWith(".jsp")) {
             request.getRequestDispatcher(jspPath).forward(request, response);
