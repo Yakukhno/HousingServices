@@ -19,8 +19,13 @@ public class FrontController extends HttpServlet {
         commands.put("GET:/", new MainPage());
         commands.put("GET:/tenant", new GetTenants());
         commands.put("GET:/tenant/", new GetTenant());
+        commands.put("POST:/tenant", new PostTenant());
+        commands.put("GET:/dispatcher/", new GetDispatcher());
+        commands.put("POST:/dispatcher", new PostDispatcher());
         commands.put("GET:/login", new LoginPage());
         commands.put("POST:/login", new Login());
+        commands.put("GET:/register_tenant", new TenantRegisterPage());
+        commands.put("GET:/register_dispatcher", new DispatcherRegisterPage());
         commands.put("POST:/logout", new Logout());
         commands.put("GET:/task", new GetTasks());
 //        commands.put("GET:/brigade", new GetBrigade());
