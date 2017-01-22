@@ -1,7 +1,9 @@
 package ua.training.controller.servlet;
 
 import ua.training.controller.command.*;
+import ua.training.model.entities.person.User;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,8 @@ import java.util.Map;
 public class FrontController extends HttpServlet {
 
     private final Map<String, Command> commands = new HashMap<>();
+
+    private static boolean isInit = false;
 
     @Override
     public void init() throws ServletException {
@@ -53,6 +57,13 @@ public class FrontController extends HttpServlet {
     private void processRequest(HttpServletRequest request,
                                 HttpServletResponse response)
             throws ServletException, IOException {
+        if (!isInit) {
+            ServletContext servletContext = request.getServletContext();
+            servletContext.setAttribute("tenant", User.Role.TENANT);
+            servletContext.setAttribute("dispatcher", User.Role.DISPATCHER);
+            isInit = true;
+        }
+
         String tempCommand = request.getMethod().toUpperCase() + ":"
                 + request.getRequestURI().replaceAll(".*/rest", "");
         String command = commands.keySet()

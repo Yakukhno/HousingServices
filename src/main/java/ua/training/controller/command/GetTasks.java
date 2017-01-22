@@ -19,6 +19,6 @@ public class GetTasks implements Command {
             throws ServletException, IOException {
         request.setAttribute("tasks",
                 taskService.getAllTasks());
-        return "/WEB-INF/view/index.jsp";
+        return "/WEB-INF/view/tasks.jsp";
     }
 }
