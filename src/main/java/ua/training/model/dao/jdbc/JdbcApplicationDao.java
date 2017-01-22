@@ -5,6 +5,7 @@ import ua.training.model.entities.Application;
 import ua.training.model.entities.ProblemScale;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -159,6 +160,11 @@ public class JdbcApplicationDao implements ApplicationDao {
 
     static Application getApplicationFromResultSet(ResultSet resultSet)
             throws SQLException {
+        LocalDateTime localDateTime = null;
+        if (resultSet.getTimestamp(APPLICATION_DESIRED_TIME) != null) {
+            localDateTime = resultSet.getTimestamp(APPLICATION_DESIRED_TIME)
+                    .toLocalDateTime();
+        }
         return new Application.Builder()
                     .setId(resultSet.getInt(APPLICATION_ID))
                     .setTypeOfWork(JdbcTypeOfWorkDao
@@ -167,17 +173,19 @@ public class JdbcApplicationDao implements ApplicationDao {
                             .getTenantFromResultSet(resultSet))
                     .setScaleOfProblem(ProblemScale.valueOf(resultSet
                             .getString(APPLICATION_SCALE_OF_PROBLEM)))
-                    .setDesiredTime(resultSet
-                            .getTimestamp(APPLICATION_DESIRED_TIME))
+                    .setDesiredTime(localDateTime)
                     .build();
     }
 
     private void setStatementFromApplication(PreparedStatement statement,
                                             Application application)
             throws SQLException {
+        Timestamp timestamp = (application.getDesiredTime() != null)
+                ? Timestamp.valueOf(application.getDesiredTime())
+                : null;
         statement.setInt(1, application.getTenant().getId());
         statement.setInt(2, application.getTypeOfWork().getId());
         statement.setString(3, application.getScaleOfProblem().name());
-        statement.setTimestamp(4, application.getDesiredTime());
+        statement.setTimestamp(4, timestamp);
     }
 }

@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class PostApplication implements Command {
 
@@ -22,7 +23,12 @@ public class PostApplication implements Command {
         User user = (User) request.getSession().getAttribute("user");
         String typeOfWork = request.getParameter("typeOfWork");
         String problemScale = request.getParameter("problemScale");
-        if ((user != null) && (typeOfWork != null) && (problemScale != null)) {
+        String dateTime = request.getParameter("dateTime");
+        if ((user != null) && (typeOfWork != null)
+                && (problemScale != null) && (dateTime != null)) {
+            LocalDateTime localDateTime = dateTime.isEmpty()
+                    ? null
+                    : LocalDateTime.parse(dateTime);
             Application application = new Application.Builder()
                     .setTenant(
                             TenantServiceImpl.getInstance()
@@ -33,9 +39,8 @@ public class PostApplication implements Command {
                             TypeOfWorkServiceImpl.getInstance()
                                     .getTypeOfWorkByDescription(typeOfWork).get(0)
                     )
-                    .setScaleOfProblem(
-                            ProblemScale.valueOf(problemScale)
-                    )
+                    .setScaleOfProblem(ProblemScale.valueOf(problemScale))
+                    .setDesiredTime(localDateTime)
                     .build();
             ApplicationServiceImpl.getInstance().createNewApplication(application);
             pageToGo = String.format("/rest/tenant/%s/application", user.getId());
