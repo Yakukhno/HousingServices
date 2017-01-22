@@ -10,4 +10,5 @@ public interface TaskService {
     List<Task> getActiveTasks();
     List<Task> getAllTasks();
     void createNewTask(Task task);
+    void createNewTask(int applicationId, int managerId, List<Integer> workersIds);
 }

@@ -22,7 +22,8 @@ public class FrontController extends HttpServlet {
         commands.put("POST:/tenant", new PostTenant());
         commands.put("GET:/dispatcher/[\\d]+", new GetDispatcher());
         commands.put("POST:/dispatcher", new PostDispatcher());
-        commands.put("GET:/tenant/[\\d]+/application", new GetApplications());
+        commands.put("GET:/tenant/[\\d]+/application", new GetTenantApplications());
+        commands.put("GET:/application", new GetApplications());
         commands.put("POST:/application", new PostApplication());
         commands.put("POST:/login", new Login());
         commands.put("POST:/logout", new Logout());
@@ -30,7 +31,9 @@ public class FrontController extends HttpServlet {
         commands.put("GET:/register_tenant", new TenantRegisterPage());
         commands.put("GET:/register_dispatcher", new DispatcherRegisterPage());
         commands.put("GET:/add_application", new AddApplicationPage());
+        commands.put("GET:/application/[\\d]+/add_brigade", new AddBrigadePage());
         commands.put("GET:/task", new GetTasks());
+        commands.put("POST:/brigade", new PostBrigade());
 //        commands.put("GET:/brigade", new GetBrigade());
         super.init();
     }
