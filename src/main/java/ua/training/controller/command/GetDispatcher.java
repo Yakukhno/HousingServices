@@ -13,8 +13,14 @@ import java.util.regex.Pattern;
 
 public class GetDispatcher implements Command {
 
-    private DispatcherService dispatcherService = DispatcherServiceImpl.getInstance();
-    private static final String DISPATCHER_URI_REGEXP = "(?<=/dispatcher/)[\\d]+";
+    private static final String DISPATCHER_JSP_PATH
+            = "/WEB-INF/view/dispatcher.jsp";
+
+    private static final String DISPATCHER_URI_REGEXP
+            = "(?<=/dispatcher/)[\\d]+";
+
+    private DispatcherService dispatcherService
+            = DispatcherServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
@@ -24,12 +30,13 @@ public class GetDispatcher implements Command {
         Matcher matcher = pattern.matcher(request.getRequestURI());
         if (matcher.find()) {
             int dispatcherId = Integer.parseInt(matcher.group());
-            Dispatcher dispatcher = dispatcherService.getDispatcherById(dispatcherId)
+            Dispatcher dispatcher = dispatcherService
+                    .getDispatcherById(dispatcherId)
                     .orElseThrow(
                             () -> new RuntimeException("Invalid tenant id")
                     );
             request.setAttribute("dispatcher", dispatcher);
-            return "/WEB-INF/view/dispatcher.jsp";
+            return DISPATCHER_JSP_PATH;
         } else {
             throw new RuntimeException("Invalid URL");
         }

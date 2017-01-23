@@ -6,10 +6,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class DispatcherRegisterPage implements Command {
+
+    private static final String REGISTER_DISPATCHER_JSP_PATH
+            = "/WEB-INF/view/register_dispatcher.jsp";
+
     @Override
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        return "/WEB-INF/view/register_dispatcher.jsp";
+        return REGISTER_DISPATCHER_JSP_PATH;
     }
 }

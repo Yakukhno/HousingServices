@@ -13,8 +13,14 @@ import java.util.regex.Pattern;
 
 public class UpdateTenant implements Command {
 
-    private TenantService tenantService = TenantServiceImpl.getInstance();
+    private static final String PARAM_EMAIL = "newEmail";
+    private static final String PARAM_PASSWORD = "newPassword";
+
+    private static final String TENANT_PATH = "/rest/tenant/%s";
+
     private static final String TENANT_URI_REGEXP = "(?<=/tenant/)[\\d]+";
+
+    private TenantService tenantService = TenantServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
@@ -23,8 +29,8 @@ public class UpdateTenant implements Command {
         Pattern pattern = Pattern.compile(TENANT_URI_REGEXP);
         Matcher matcher = pattern.matcher(request.getRequestURI());
 
-        String newEmail = request.getParameter("newEmail");
-        String newPassword = request.getParameter("newPassword");
+        String newEmail = request.getParameter(PARAM_EMAIL);
+        String newPassword = request.getParameter(PARAM_PASSWORD);
         if (matcher.find() && (newEmail != null) && (newPassword != null)) {
             int tenantId = Integer.parseInt(matcher.group());
             Tenant tenant = tenantService.getTenantById(tenantId)
@@ -42,7 +48,7 @@ public class UpdateTenant implements Command {
             tenantService.updateTenant(tenant);
 
             request.setAttribute("tenant", tenant);
-            return "/rest/tenant/" + tenant.getId();
+            return String.format(TENANT_PATH, tenant.getId());
         } else {
             throw new RuntimeException("Invalid URL");
         }

@@ -10,14 +10,18 @@ import java.io.IOException;
 
 public class GetApplications implements Command {
 
+    private static final String APPLICATIONS_JSP_PATH
+            = "/WEB-INF/view/applications.jsp";
+
+    private ApplicationService applicationService
+            = ApplicationServiceImpl.getInstance();
+
     @Override
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        ApplicationService applicationService
-                = ApplicationServiceImpl.getInstance();
         request.setAttribute("applications",
                 applicationService.getAllApplications());
-        return "/WEB-INF/view/applications.jsp";
+        return APPLICATIONS_JSP_PATH;
     }
 }

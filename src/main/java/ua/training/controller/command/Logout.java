@@ -7,11 +7,13 @@ import java.io.IOException;
 
 public class Logout implements Command {
 
+    private static final String LOGIN_PATH = "/rest/login";
+
     @Override
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
         request.getSession().invalidate();
-        return "/rest/login";
+        return LOGIN_PATH;
     }
 }

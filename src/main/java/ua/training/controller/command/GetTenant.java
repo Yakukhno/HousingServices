@@ -13,8 +13,11 @@ import java.util.regex.Pattern;
 
 public class GetTenant implements Command {
 
-    private TenantService tenantService = TenantServiceImpl.getInstance();
+    private static final String TENANT_JSP_PATH = "/WEB-INF/view/tenant.jsp";
+
     private static final String TENANT_URI_REGEXP = "(?<=/tenant/)[\\d]+";
+
+    private TenantService tenantService = TenantServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
@@ -29,7 +32,7 @@ public class GetTenant implements Command {
                             () -> new RuntimeException("Invalid tenant id")
                     );
             request.setAttribute("tenant", tenant);
-            return "/WEB-INF/view/tenant.jsp";
+            return TENANT_JSP_PATH;
         } else {
             throw new RuntimeException("Invalid URL");
         }

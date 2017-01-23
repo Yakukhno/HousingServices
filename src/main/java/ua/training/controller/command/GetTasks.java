@@ -10,6 +10,8 @@ import java.io.IOException;
 
 public class GetTasks implements Command {
 
+    private static final String TASKS_JSP_PATH = "/WEB-INF/view/tasks.jsp";
+
     private TaskService taskService = TaskServiceImpl.getInstance();
 
     @Override
@@ -17,6 +19,6 @@ public class GetTasks implements Command {
                           HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("tasks", taskService.getAllTasks());
-        return "/WEB-INF/view/tasks.jsp";
+        return TASKS_JSP_PATH;
     }
 }

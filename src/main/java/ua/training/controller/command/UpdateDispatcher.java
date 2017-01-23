@@ -13,8 +13,17 @@ import java.util.regex.Pattern;
 
 public class UpdateDispatcher implements Command {
 
-    private DispatcherService dispatcherService = DispatcherServiceImpl.getInstance();
-    private static final String DISPATCHER_URI_REGEXP = "(?<=/dispatcher/)[\\d]+";
+    private static final String PARAM_NAME = "newName";
+    private static final String PARAM_EMAIL = "newEmail";
+    private static final String PARAM_PASSWORD = "newPassword";
+
+    private static final String DISPATCHER_PATH = "/rest/dispatcher/%s";
+
+    private static final String DISPATCHER_URI_REGEXP
+            = "(?<=/dispatcher/)[\\d]+";
+
+    private DispatcherService dispatcherService
+            = DispatcherServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
@@ -23,9 +32,9 @@ public class UpdateDispatcher implements Command {
         Pattern pattern = Pattern.compile(DISPATCHER_URI_REGEXP);
         Matcher matcher = pattern.matcher(request.getRequestURI());
 
-        String newName = request.getParameter("newName");
-        String newEmail = request.getParameter("newEmail");
-        String newPassword = request.getParameter("newPassword");
+        String newName = request.getParameter(PARAM_NAME);
+        String newEmail = request.getParameter(PARAM_EMAIL);
+        String newPassword = request.getParameter(PARAM_PASSWORD);
         if (matcher.find() && (newEmail != null) && (newPassword != null)) {
             int dispatcherId = Integer.parseInt(matcher.group());
             Dispatcher dispatcher = dispatcherService
@@ -47,7 +56,7 @@ public class UpdateDispatcher implements Command {
             dispatcherService.updateDispatcher(dispatcher);
 
             request.setAttribute("dispatcher", dispatcher);
-            return "/rest/dispatcher/" + dispatcher.getId();
+            return String.format(DISPATCHER_PATH, dispatcher.getId());
         } else {
             throw new RuntimeException("Invalid URL");
         }

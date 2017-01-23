@@ -12,7 +12,14 @@ import java.util.regex.Pattern;
 
 public class GetTenantApplications implements Command {
 
-    private static final String TENANT_ID_REGEXP = "(?<=/tenant/)[\\d]+(?=/application)";
+    private static final String TENANT_APPLICATIONS_JSP_PATH
+            = "/WEB-INF/view/tenant_applications.jsp";
+
+    private static final String TENANT_ID_REGEXP
+            = "(?<=/tenant/)[\\d]+(?=/application)";
+
+    private ApplicationService applicationService
+            = ApplicationServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
@@ -22,11 +29,9 @@ public class GetTenantApplications implements Command {
         Matcher matcher = pattern.matcher(request.getRequestURI());
         if (matcher.find()) {
             int tenantId = Integer.parseInt(matcher.group());
-            ApplicationService applicationService
-                    = ApplicationServiceImpl.getInstance();
             request.setAttribute("applications",
                     applicationService.getApplicationsByTenantId(tenantId));
-            return "/WEB-INF/view/tenant_applications.jsp";
+            return TENANT_APPLICATIONS_JSP_PATH;
         } else {
             throw new RuntimeException("Invalid URL");
         }

@@ -11,25 +11,29 @@ import java.io.IOException;
 
 public class PostTenant implements Command {
 
-    private static final String ACCOUNT = "account";
-    private static final String NAME = "name";
-    private static final String EMAIL = "email";
-    private static final String PASSWORD = "password";
+    private static final String PARAM_ACCOUNT = "account";
+    private static final String PARAM_NAME = "name";
+    private static final String PARAM_EMAIL = "email";
+    private static final String PARAM_PASSWORD = "password";
+
+    private static final String REGISTER_TENANT_PATH = "/rest/register_tenant";
+    private static final String LOGIN_PATH = "/rest/login";
+
+    private TenantService tenantService = TenantServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        String pageToGo = "/rest/register_tenant";
-        String name = request.getParameter(NAME);
-        String email = request.getParameter(EMAIL);
-        String password = request.getParameter(PASSWORD);
-        if ((request.getParameter(ACCOUNT) != null)
+        String pageToGo = REGISTER_TENANT_PATH;
+        String name = request.getParameter(PARAM_NAME);
+        String email = request.getParameter(PARAM_EMAIL);
+        String password = request.getParameter(PARAM_PASSWORD);
+        if ((request.getParameter(PARAM_ACCOUNT) != null)
                 && (name != null)
                 && (email != null)
                 && (password != null)) {
-            int account = Integer.parseInt(request.getParameter(ACCOUNT));
-            TenantService tenantService = TenantServiceImpl.getInstance();
+            int account = Integer.parseInt(request.getParameter(PARAM_ACCOUNT));
             tenantService.createNewTenant(new Tenant.Builder()
                     .setAccount(account)
                     .setName(name)
@@ -37,7 +41,7 @@ public class PostTenant implements Command {
                     .setPassword(password)
                     .build()
             );
-            pageToGo = "/rest/login";
+            pageToGo = LOGIN_PATH;
         }
         return pageToGo;
     }

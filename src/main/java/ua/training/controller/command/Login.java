@@ -15,6 +15,10 @@ public class Login implements Command {
     private static final String PARAM_LOGIN = "login";
     private static final String PARAM_PASSWORD = "password";
 
+    private static final String HOME_PATH = "/";
+    private static final String TENANT_PATH = "/rest/tenant/%s";
+    private static final String DISPATCHER_PATH = "/rest/dispatcher/%s";
+
     private static final String EMAIL_REGEXP = "^[\\w.%+-]+@[A-Za-z0-9.-]" +
             "+\\.[A-Za-z]{2,6}$";
     private static final String ACCOUNT_REGEXP = "[1-9]\\d{3}";
@@ -25,25 +29,27 @@ public class Login implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        String pageToGo = "/";
-        String login = request.getParameter(PARAM_LOGIN);
-        String password = request.getParameter(PARAM_PASSWORD);
-        if (login != null && password != null) {
+        String pageToGo = HOME_PATH;
+        String paramLogin = request.getParameter(PARAM_LOGIN);
+        String paramPassword = request.getParameter(PARAM_PASSWORD);
+        if ((paramLogin != null) && (paramPassword != null)) {
             Optional<User> user = Optional.empty();
-            if (login.matches(EMAIL_REGEXP)) {
-                user = userService.loginEmail(login, password);
-            } else if (login.matches(ACCOUNT_REGEXP)) {
-                user = userService.loginAccount(Integer.parseInt(login),
-                                                    password);
+            if (paramLogin.matches(EMAIL_REGEXP)) {
+                user = userService.loginEmail(paramLogin, paramPassword);
+            } else if (paramLogin.matches(ACCOUNT_REGEXP)) {
+                user = userService.loginAccount(Integer.parseInt(paramLogin),
+                                                    paramPassword);
             }
             if (user.isPresent()) {
                 User sessionUser = user.get();
                 request.getSession().setAttribute("user", sessionUser);
                 request.setAttribute("id", sessionUser.getId());
                 if (sessionUser.getRole().equals(User.Role.TENANT)) {
-                    pageToGo = "/rest/tenant/" + sessionUser.getId();
+                    pageToGo = String.format(TENANT_PATH,
+                            sessionUser.getId());
                 } else if (sessionUser.getRole().equals(User.Role.DISPATCHER)) {
-                    pageToGo = "/rest/dispatcher/" + sessionUser.getId();
+                    pageToGo = String.format(DISPATCHER_PATH,
+                            sessionUser.getId());
                 }
             }
         }

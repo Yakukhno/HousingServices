@@ -12,32 +12,32 @@ import java.util.List;
 
 public class PostBrigade implements Command {
 
-    private static final String MANAGER = "manager";
-    private static final String APPLICATION = "application";
-    private static final String WORKER = "worker";
+    private static final String PARAM_MANAGER = "manager";
+    private static final String PARAM_APPLICATION = "application";
+    private static final String PARAM_WORKER = "worker";
+
+    private static final String APPLICATIONS_PATH = "/rest/application";
+
+    private TaskService taskService = TaskServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        String pageToGo = "/rest/application";
-        String applicationIdParam = request.getParameter(APPLICATION);
-        String managerIdParam = request.getParameter(MANAGER);
-        String[] workersIds = request.getParameterValues(WORKER);
-        if ((managerIdParam != null) && (workersIds != null)) {
-            TaskService taskService = TaskServiceImpl.getInstance();
-
-            int applicationId = Integer.parseInt(applicationIdParam);
-            int managerId = Integer.parseInt(managerIdParam);
+        String paramApplication = request.getParameter(PARAM_APPLICATION);
+        String paramManager = request.getParameter(PARAM_MANAGER);
+        String[] paramWorkers = request.getParameterValues(PARAM_WORKER);
+        if ((paramManager != null) && (paramWorkers != null)) {
+            int applicationId = Integer.parseInt(paramApplication);
+            int managerId = Integer.parseInt(paramManager);
             List<Integer> workersIdsList = new ArrayList<>();
-            for (String string : workersIds) {
+            for (String string : paramWorkers) {
                 workersIdsList.add(Integer.parseInt(string));
             }
 
-            taskService.createNewTask(applicationId, managerId, workersIdsList);
-
-            pageToGo = "/rest/application";
+            taskService.createNewTask(applicationId, managerId,
+                    workersIdsList);
         }
-        return pageToGo;
+        return APPLICATIONS_PATH;
     }
 }

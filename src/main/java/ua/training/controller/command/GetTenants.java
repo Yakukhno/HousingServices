@@ -10,6 +10,9 @@ import java.io.IOException;
 
 public class GetTenants implements Command {
 
+    private static final String TENANTS_JSP_PATH
+            = "/WEB-INF/view/tenants.jsp";
+
     private TenantService tenantService = TenantServiceImpl.getInstance();
 
     @Override
@@ -17,6 +20,6 @@ public class GetTenants implements Command {
                           HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("tenants", tenantService.getAllTenants());
-        return "/WEB-INF/view/tenant_list.jsp";
+        return TENANTS_JSP_PATH;
     }
 }
