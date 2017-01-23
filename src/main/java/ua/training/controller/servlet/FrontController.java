@@ -39,8 +39,8 @@ public class FrontController extends HttpServlet {
         commands.put("GET:/add_application", new AddApplicationPage());
         commands.put("GET:/application/[\\d]+/add_brigade", new AddBrigadePage());
         commands.put("GET:/task", new GetTasks());
+        commands.put("GET:/brigade/[\\d]+", new GetBrigade());
         commands.put("POST:/brigade", new PostBrigade());
-//        commands.put("GET:/brigade", new GetBrigade());
         super.init();
     }
 

@@ -23,7 +23,9 @@
                     <td>${task.application.typeOfWork.description}</td>
                     <td>${task.application.scaleOfProblem}</td>
                     <td>${task.application.desiredTime}</td>
-                    <td>${task.brigade.id}</td>
+                    <td>
+                        ${task.brigade.id} <a href="/rest/brigade/${task.brigade.id}">Show</a>
+                    </td>
                 </tr>
             </c:forEach>
             </tbody>
