@@ -59,6 +59,15 @@ public class DispatcherServiceImpl implements DispatcherService {
     }
 
     @Override
+    public void updateDispatcher(Dispatcher dispatcher) {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            DispatcherDao dispatcherDao
+                    = daoFactory.createDispatcherDao(connection);
+            dispatcherDao.update(dispatcher);
+        }
+    }
+
+    @Override
     public void createNewDispatcher(Dispatcher dispatcher) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             DispatcherDao dispatcherDao

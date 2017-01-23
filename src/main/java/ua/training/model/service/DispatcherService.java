@@ -10,5 +10,6 @@ public interface DispatcherService {
     List<Dispatcher> getOnlineDispatchers();
     List<Dispatcher> getAllDispatchers();
     void setOffline(int dispatcherId);
+    void updateDispatcher(Dispatcher dispatcher);
     void createNewDispatcher(Dispatcher dispatcher);
 }

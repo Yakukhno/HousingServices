@@ -12,5 +12,6 @@ public interface TenantService {
     Optional<Tenant> loginEmail(String email, String password);
     Optional<Tenant> loginAccount(int account, String password);
     List<Tenant> getAllTenants();
+    void updateTenant(Tenant tenant);
     void createNewTenant(Tenant tenant);
 }

@@ -74,6 +74,14 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
+    public void updateTenant(Tenant tenant) {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            TenantDao tenantDao = daoFactory.createTenantDao(connection);
+            tenantDao.update(tenant);
+        }
+    }
+
+    @Override
     public void createNewTenant(Tenant tenant) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             TenantDao tenantDao = daoFactory.createTenantDao(connection);

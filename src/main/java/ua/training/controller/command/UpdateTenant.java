@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GetTenant implements Command {
+public class UpdateTenant implements Command {
 
     private TenantService tenantService = TenantServiceImpl.getInstance();
     private static final String TENANT_URI_REGEXP = "(?<=/tenant/)[\\d]+";
@@ -22,14 +22,27 @@ public class GetTenant implements Command {
             throws ServletException, IOException {
         Pattern pattern = Pattern.compile(TENANT_URI_REGEXP);
         Matcher matcher = pattern.matcher(request.getRequestURI());
-        if (matcher.find()) {
+
+        String newEmail = request.getParameter("newEmail");
+        String newPassword = request.getParameter("newPassword");
+        if (matcher.find() && (newEmail != null) && (newPassword != null)) {
             int tenantId = Integer.parseInt(matcher.group());
             Tenant tenant = tenantService.getTenantById(tenantId)
                     .orElseThrow(
                             () -> new RuntimeException("Invalid tenant id")
                     );
+
+            if (!newEmail.isEmpty()) {
+                tenant.setEmail(newEmail);
+            }
+            if (!newPassword.isEmpty()) {
+                tenant.setPassword(newPassword);
+            }
+
+            tenantService.updateTenant(tenant);
+
             request.setAttribute("tenant", tenant);
-            return "/WEB-INF/view/tenant.jsp";
+            return "/rest/tenant/" + tenant.getId();
         } else {
             throw new RuntimeException("Invalid URL");
         }

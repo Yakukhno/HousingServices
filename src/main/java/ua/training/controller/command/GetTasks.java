@@ -10,15 +10,13 @@ import java.io.IOException;
 
 public class GetTasks implements Command {
 
-    private TaskService taskService
-            = TaskServiceImpl.getInstance();
+    private TaskService taskService = TaskServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("tasks",
-                taskService.getAllTasks());
+        request.setAttribute("tasks", taskService.getAllTasks());
         return "/WEB-INF/view/tasks.jsp";
     }
 }

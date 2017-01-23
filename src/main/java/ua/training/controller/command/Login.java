@@ -40,7 +40,11 @@ public class Login implements Command {
                 User sessionUser = user.get();
                 request.getSession().setAttribute("user", sessionUser);
                 request.setAttribute("id", sessionUser.getId());
-                pageToGo = "/rest/tenant/" + sessionUser.getId();
+                if (sessionUser.getRole().equals(User.Role.TENANT)) {
+                    pageToGo = "/rest/tenant/" + sessionUser.getId();
+                } else if (sessionUser.getRole().equals(User.Role.DISPATCHER)) {
+                    pageToGo = "/rest/dispatcher/" + sessionUser.getId();
+                }
             }
         }
         return pageToGo;
