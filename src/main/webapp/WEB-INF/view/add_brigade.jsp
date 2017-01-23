@@ -6,7 +6,7 @@
 </div>
 <c:choose>
     <c:when test="${requestScope.workers.size() != 0}">
-        <form class="form-horizontal" method="post" action="/rest/brigade">
+        <form class="form-horizontal" name="brigadeForm" onsubmit="return validateBrigade()" method="post" action="/rest/brigade">
             <table class="table table-striped" style="width: 80%" align="center">
                 <thead>
                 <tr>
@@ -28,16 +28,17 @@
                                 </c:forEach>
                             </td>
                             <td>
-                                <input type="checkbox" name="worker" value="${worker.id}"/>
+                                <input type="checkbox" name="worker" id="worker" value="${worker.id}"/>
                             </td>
                             <td>
-                                <input type="radio" name="manager" value="${worker.id}"/>
+                                <input type="radio" name="manager" id="manager" value="${worker.id}"/>
                             </td>
                         </tr>
                     </c:forEach>
                 </tbody>
             </table>
             <input type="hidden" name="application" value="${requestScope.application}"/>
+            <div id="message"></div>
             <div class="form-group" align="center">
                 <button class="btn btn-default" type="submit">Form</button>
             </div>

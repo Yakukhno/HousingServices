@@ -13,8 +13,9 @@ import java.util.regex.Pattern;
 
 public class UpdateTenant implements Command {
 
-    private static final String PARAM_EMAIL = "newEmail";
-    private static final String PARAM_PASSWORD = "newPassword";
+    private static final String PARAM_EMAIL = "email";
+    private static final String PARAM_OLD_PASSWORD = "oldPassword";
+    private static final String PARAM_NEW_PASSWORD = "newPassword";
 
     private static final String TENANT_PATH = "/rest/tenant/%s";
 
@@ -30,7 +31,7 @@ public class UpdateTenant implements Command {
         Matcher matcher = pattern.matcher(request.getRequestURI());
 
         String newEmail = request.getParameter(PARAM_EMAIL);
-        String newPassword = request.getParameter(PARAM_PASSWORD);
+        String newPassword = request.getParameter(PARAM_NEW_PASSWORD);
         if (matcher.find() && (newEmail != null) && (newPassword != null)) {
             int tenantId = Integer.parseInt(matcher.group());
             Tenant tenant = tenantService.getTenantById(tenantId)
