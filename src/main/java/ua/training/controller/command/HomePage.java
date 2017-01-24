@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class MainPage implements Command {
+public class HomePage implements Command {
 
     private static final String INDEX_JSP_PATH = "/WEB-INF/view/index.jsp";
 

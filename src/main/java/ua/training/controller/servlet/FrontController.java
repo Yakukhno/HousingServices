@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static ua.training.controller.Routes.*;
+
 public class FrontController extends HttpServlet {
 
     private final Map<String, Command> commands = new HashMap<>();
@@ -20,27 +22,27 @@ public class FrontController extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        commands.put("GET:/", new MainPage());
-        commands.put("GET:/tenant", new GetTenants());
-        commands.put("GET:/tenant/[\\d]+", new GetTenant());
-        commands.put("POST:/tenant", new PostTenant());
-        commands.put("POST:/tenant/[\\d]+", new UpdateTenant());
-        commands.put("GET:/dispatcher/[\\d]+", new GetDispatcher());
-        commands.put("POST:/dispatcher", new PostDispatcher());
-        commands.put("POST:/dispatcher/[\\d]+", new UpdateDispatcher());
-        commands.put("GET:/tenant/[\\d]+/application", new GetTenantApplications());
-        commands.put("GET:/application", new GetApplications());
-        commands.put("POST:/application", new PostApplication());
-        commands.put("POST:/login", new Login());
-        commands.put("POST:/logout", new Logout());
-        commands.put("GET:/login", new LoginPage());
-        commands.put("GET:/register_tenant", new TenantRegisterPage());
-        commands.put("GET:/register_dispatcher", new DispatcherRegisterPage());
-        commands.put("GET:/add_application", new AddApplicationPage());
-        commands.put("GET:/application/[\\d]+/add_brigade", new AddBrigadePage());
-        commands.put("GET:/task", new GetTasks());
-        commands.put("GET:/brigade/[\\d]+", new GetBrigade());
-        commands.put("POST:/brigade", new PostBrigade());
+        commands.put(HOME, new HomePage());
+        commands.put(GET_TENANTS, new GetTenants());
+        commands.put(GET_TENANT, new GetTenant());
+        commands.put(POST_TENANT, new PostTenant());
+        commands.put(UPDATE_TENANT, new UpdateTenant());
+        commands.put(GET_DISPATCHER, new GetDispatcher());
+        commands.put(POST_DISPATCHER, new PostDispatcher());
+        commands.put(UPDATE_DISPATCHER, new UpdateDispatcher());
+        commands.put(GET_TENANT_APPLICATION, new GetTenantApplications());
+        commands.put(GET_APPLICATIONS, new GetApplications());
+        commands.put(POST_APPLICATION, new PostApplication());
+        commands.put(POST_LOGIN, new Login());
+        commands.put(POST_LOGOUT, new Logout());
+        commands.put(GET_LOGIN_PAGE, new LoginPage());
+        commands.put(GET_REGISTER_TENANT_PAGE, new TenantRegisterPage());
+        commands.put(GET_REGISTER_DISPATCHER_PAGE, new DispatcherRegisterPage());
+        commands.put(GET_ADD_APPLICATION_PAGE, new AddApplicationPage());
+        commands.put(GET_ADD_BRIGADE_PAGE, new AddBrigadePage());
+        commands.put(GET_TASKS, new GetTasks());
+        commands.put(GET_BRIGADE, new GetBrigade());
+        commands.put(POST_BRIGADE, new PostBrigade());
         super.init();
     }
 
