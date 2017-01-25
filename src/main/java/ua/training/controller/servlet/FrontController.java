@@ -43,6 +43,7 @@ public class FrontController extends HttpServlet {
         commands.put(GET_TASKS, new GetTasks());
         commands.put(GET_BRIGADE, new GetBrigade());
         commands.put(POST_BRIGADE, new PostBrigade());
+        commands.put(ERROR_PAGE, new ErrorPage());
         super.init();
     }
 
@@ -78,7 +79,7 @@ public class FrontController extends HttpServlet {
         String jspPath = commands.get(command).execute(request, response);
         if (jspPath.endsWith(".jsp")) {
             request.getRequestDispatcher(jspPath).forward(request, response);
-        } else {
+        } else if (!jspPath.equals("error")) {
             response.sendRedirect(jspPath);
         }
     }

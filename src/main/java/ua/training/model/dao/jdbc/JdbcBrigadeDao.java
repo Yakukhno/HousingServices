@@ -1,6 +1,7 @@
 package ua.training.model.dao.jdbc;
 
 import ua.training.model.dao.BrigadeDao;
+import ua.training.model.dao.DaoException;
 import ua.training.model.entities.Brigade;
 import ua.training.model.entities.person.Worker;
 
@@ -74,7 +75,7 @@ public class JdbcBrigadeDao implements BrigadeDao {
                 brigade = Optional.of(tempBrigade);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return brigade;
     }
@@ -100,7 +101,7 @@ public class JdbcBrigadeDao implements BrigadeDao {
                 brigades.add(brigade);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return brigades;
     }
@@ -119,7 +120,7 @@ public class JdbcBrigadeDao implements BrigadeDao {
             }
             insertWorkers(brigade);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -130,7 +131,7 @@ public class JdbcBrigadeDao implements BrigadeDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -149,7 +150,7 @@ public class JdbcBrigadeDao implements BrigadeDao {
 
             insertWorkers(brigade);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -166,7 +167,7 @@ public class JdbcBrigadeDao implements BrigadeDao {
         return builder.build();
     }
 
-    private void insertWorkers(Brigade brigade) {
+    private void insertWorkers(Brigade brigade) throws SQLException {
         try (PreparedStatement workerStatement
                      = connection.prepareStatement(INSERT_WORKER)) {
             for (Worker worker : brigade.getWorkers()) {
@@ -174,8 +175,6 @@ public class JdbcBrigadeDao implements BrigadeDao {
                 workerStatement.setInt(2, worker.getId());
                 workerStatement.execute();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 }

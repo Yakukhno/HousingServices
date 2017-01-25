@@ -1,6 +1,7 @@
 package ua.training.model.service.impl;
 
 import ua.training.model.dao.DaoConnection;
+import ua.training.model.dao.DaoException;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.DispatcherDao;
 import ua.training.model.entities.person.Dispatcher;
@@ -59,11 +60,31 @@ public class DispatcherServiceImpl implements DispatcherService {
     }
 
     @Override
-    public void updateDispatcher(Dispatcher dispatcher) {
+    public void updateDispatcher(Dispatcher dispatcher, String password) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             DispatcherDao dispatcherDao
                     = daoFactory.createDispatcherDao(connection);
-            dispatcherDao.update(dispatcher);
+            connection.begin();
+            Optional<Dispatcher> dispatcherFromDao
+                    = dispatcherDao.get(dispatcher.getId());
+            if (dispatcherFromDao.isPresent()) {
+                if (dispatcherDao.getDispatcherByEmail(dispatcher.getEmail())
+                        .filter(
+                                dispatcher1 -> !dispatcher1.getEmail()
+                                        .equals(dispatcher.getPassword())
+                        )
+                        .isPresent()) {
+                    throw new DaoException("This email is already exists");
+                }
+                if (password.equals(dispatcherFromDao.get().getPassword())) {
+                    dispatcherDao.update(dispatcher);
+                    connection.commit();
+                } else {
+                    throw new DaoException("Incorrect password");
+                }
+            } else {
+                throw new DaoException("Invalid dispatcher id");
+            }
         }
     }
 
@@ -72,7 +93,13 @@ public class DispatcherServiceImpl implements DispatcherService {
         try (DaoConnection connection = daoFactory.getConnection()) {
             DispatcherDao dispatcherDao
                     = daoFactory.createDispatcherDao(connection);
-            dispatcherDao.add(dispatcher);
+            connection.begin();
+            if (!dispatcherDao.getDispatcherByEmail(dispatcher.getEmail()).isPresent()) {
+                dispatcherDao.add(dispatcher);
+                connection.commit();
+            } else {
+                throw new DaoException("This email is already exists");
+            }
         }
     }
 }

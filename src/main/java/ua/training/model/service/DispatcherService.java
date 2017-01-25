@@ -10,6 +10,6 @@ public interface DispatcherService {
     List<Dispatcher> getOnlineDispatchers();
     List<Dispatcher> getAllDispatchers();
     void setOffline(int dispatcherId);
-    void updateDispatcher(Dispatcher dispatcher);
+    void updateDispatcher(Dispatcher dispatcher, String password);
     void createNewDispatcher(Dispatcher dispatcher);
 }

@@ -1,8 +1,6 @@
 package ua.training.model.service.impl;
 
-import ua.training.model.dao.DaoConnection;
-import ua.training.model.dao.DaoFactory;
-import ua.training.model.dao.TenantDao;
+import ua.training.model.dao.*;
 import ua.training.model.entities.person.Tenant;
 import ua.training.model.service.TenantService;
 
@@ -74,9 +72,30 @@ public class TenantServiceImpl implements TenantService {
     }
 
     @Override
-    public void updateTenant(Tenant tenant) {
+    public void updateTenant(Tenant tenant, String password) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             TenantDao tenantDao = daoFactory.createTenantDao(connection);
+            connection.begin();
+            Optional<Tenant> tenantFromDao
+                    = tenantDao.get(tenant.getId());
+            if (tenantFromDao.isPresent()) {
+                if (tenantDao.getTenantByEmail(tenant.getEmail())
+                        .filter(
+                                tenant1 -> !tenant1.getEmail()
+                                        .equals(tenant.getPassword())
+                        )
+                        .isPresent()) {
+                    throw new DaoException("This email is already exists");
+                }
+                if (password.equals(tenantFromDao.get().getPassword())) {
+                    tenantDao.update(tenant);
+                    connection.commit();
+                } else {
+                    throw new DaoException("Incorrect password");
+                }
+            } else {
+                throw new DaoException("Invalid tenant id");
+            }
             tenantDao.update(tenant);
         }
     }
@@ -84,8 +103,15 @@ public class TenantServiceImpl implements TenantService {
     @Override
     public void createNewTenant(Tenant tenant) {
         try (DaoConnection connection = daoFactory.getConnection()) {
-            TenantDao tenantDao = daoFactory.createTenantDao(connection);
-            tenantDao.add(tenant);
+            TenantDao tenantDao
+                    = daoFactory.createTenantDao(connection);
+            connection.begin();
+            if (!tenantDao.getTenantByEmail(tenant.getEmail()).isPresent()) {
+                tenantDao.add(tenant);
+                connection.commit();
+            } else {
+                throw new DaoException("This email is already exists");
+            }
         }
     }
 }

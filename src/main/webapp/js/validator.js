@@ -22,9 +22,15 @@ function validateDispatcher() {
 
 function validateUserUpdate() {
     var isValid = true;
-    isValid = validateEmail() && isValid;
+    var email = document.forms["registerForm"]["email"].value;
+    var password = document.forms["registerForm"]["newPassword"].value;
+    if (password != '') {
+        isValid = validatePassword("newPassword", "helpNewPass", "newPasswordForm") && isValid;
+    }
+    if (email != '') {
+        isValid = validateEmail() && isValid;
+    }
     isValid = validatePassword("oldPassword", "helpOldPass", "oldPasswordForm") && isValid;
-    isValid = validatePassword("newPassword", "helpNewPass", "newPasswordForm") && isValid;
     return isValid;
 }
 

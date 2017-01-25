@@ -18,6 +18,7 @@ public class Login implements Command {
     private static final String HOME_PATH = "/";
     private static final String TENANT_PATH = "/rest/tenant/%s";
     private static final String DISPATCHER_PATH = "/rest/dispatcher/%s";
+    private static final String LOGIN_JSP = "/WEB-INF/view/login.jsp";
 
     private static final String EMAIL_REGEXP = "^[\\w.%+-]+@[A-Za-z0-9.-]" +
             "+\\.[A-Za-z]{2,6}$";
@@ -51,6 +52,9 @@ public class Login implements Command {
                     pageToGo = String.format(DISPATCHER_PATH,
                             sessionUser.getId());
                 }
+            } else {
+                request.setAttribute("message", "Incorrect email or password");
+                pageToGo = LOGIN_JSP;
             }
         }
         return pageToGo;

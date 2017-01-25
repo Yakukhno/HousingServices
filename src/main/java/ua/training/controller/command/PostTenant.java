@@ -1,5 +1,6 @@
 package ua.training.controller.command;
 
+import ua.training.model.dao.DaoException;
 import ua.training.model.entities.person.Tenant;
 import ua.training.model.service.TenantService;
 import ua.training.model.service.impl.TenantServiceImpl;
@@ -16,6 +17,7 @@ public class PostTenant implements Command {
     private static final String PARAM_EMAIL = "email";
     private static final String PARAM_PASSWORD = "password";
 
+    private static final String REGISTER_TENANT_JSP = "/WEB-INF/view/register_tenant.jsp";
     private static final String REGISTER_TENANT_PATH = "/rest/register_tenant";
     private static final String LOGIN_PATH = "/rest/login";
 
@@ -34,14 +36,19 @@ public class PostTenant implements Command {
                 && (email != null)
                 && (password != null)) {
             int account = Integer.parseInt(request.getParameter(PARAM_ACCOUNT));
-            tenantService.createNewTenant(new Tenant.Builder()
-                    .setAccount(account)
-                    .setName(name)
-                    .setEmail(email)
-                    .setPassword(password)
-                    .build()
-            );
-            pageToGo = LOGIN_PATH;
+            try {
+                tenantService.createNewTenant(new Tenant.Builder()
+                        .setAccount(account)
+                        .setName(name)
+                        .setEmail(email)
+                        .setPassword(password)
+                        .build()
+                );
+                pageToGo = LOGIN_PATH;
+            } catch (DaoException e) {
+                request.setAttribute("message", e.getMessage());
+                pageToGo = REGISTER_TENANT_JSP;
+            }
         }
         return pageToGo;
     }

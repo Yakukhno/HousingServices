@@ -1,5 +1,6 @@
 package ua.training.controller.command;
 
+import ua.training.model.dao.DaoException;
 import ua.training.model.entities.person.Tenant;
 import ua.training.model.service.TenantService;
 import ua.training.model.service.impl.TenantServiceImpl;
@@ -20,6 +21,8 @@ public class UpdateTenant implements Command {
     private static final String TENANT_PATH = "/rest/tenant/%s";
 
     private static final String TENANT_URI_REGEXP = "(?<=/tenant/)[\\d]+";
+    private static final String DISPATCHER_JSP_PATH
+            = "/WEB-INF/view/tenant.jsp";
 
     private TenantService tenantService = TenantServiceImpl.getInstance();
 
@@ -30,13 +33,16 @@ public class UpdateTenant implements Command {
         Pattern pattern = Pattern.compile(TENANT_URI_REGEXP);
         Matcher matcher = pattern.matcher(request.getRequestURI());
 
+        String pageToGo;
         String newEmail = request.getParameter(PARAM_EMAIL);
+        String oldPassword = request.getParameter(PARAM_OLD_PASSWORD);
         String newPassword = request.getParameter(PARAM_NEW_PASSWORD);
-        if (matcher.find() && (newEmail != null) && (newPassword != null)) {
+        if (matcher.find() && (newEmail != null)
+                && (newPassword != null) && (oldPassword != null)) {
             int tenantId = Integer.parseInt(matcher.group());
             Tenant tenant = tenantService.getTenantById(tenantId)
                     .orElseThrow(
-                            () -> new RuntimeException("Invalid tenant id")
+                            () -> new DaoException("Invalid tenant id")
                     );
 
             if (!newEmail.isEmpty()) {
@@ -46,12 +52,19 @@ public class UpdateTenant implements Command {
                 tenant.setPassword(newPassword);
             }
 
-            tenantService.updateTenant(tenant);
-
-            request.setAttribute("tenant", tenant);
-            return String.format(TENANT_PATH, tenant.getId());
+            try {
+                tenantService.updateTenant(tenant, oldPassword);
+                pageToGo = String.format(TENANT_PATH, tenant.getId());
+            } catch (DaoException e) {
+                tenant = tenantService.getTenantById(tenantId)
+                        .orElseThrow(() -> e);
+                request.setAttribute("tenant", tenant);
+                request.setAttribute("message", e.getMessage());
+                pageToGo = DISPATCHER_JSP_PATH;
+            }
         } else {
             throw new RuntimeException("Invalid URL");
         }
+        return pageToGo;
     }
 }

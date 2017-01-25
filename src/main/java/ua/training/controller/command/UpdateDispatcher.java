@@ -1,5 +1,6 @@
 package ua.training.controller.command;
 
+import ua.training.model.dao.DaoException;
 import ua.training.model.entities.person.Dispatcher;
 import ua.training.model.service.DispatcherService;
 import ua.training.model.service.impl.DispatcherServiceImpl;
@@ -15,9 +16,12 @@ public class UpdateDispatcher implements Command {
 
     private static final String PARAM_NAME = "newName";
     private static final String PARAM_EMAIL = "newEmail";
-    private static final String PARAM_PASSWORD = "newPassword";
+    private static final String PARAM_OLD_PASSWORD = "oldPassword";
+    private static final String PARAM_NEW_PASSWORD = "newPassword";
 
     private static final String DISPATCHER_PATH = "/rest/dispatcher/%s";
+    private static final String DISPATCHER_JSP_PATH
+            = "/WEB-INF/view/dispatcher.jsp";
 
     private static final String DISPATCHER_URI_REGEXP
             = "(?<=/dispatcher/)[\\d]+";
@@ -32,15 +36,17 @@ public class UpdateDispatcher implements Command {
         Pattern pattern = Pattern.compile(DISPATCHER_URI_REGEXP);
         Matcher matcher = pattern.matcher(request.getRequestURI());
 
+        String pageToGo;
         String newName = request.getParameter(PARAM_NAME);
         String newEmail = request.getParameter(PARAM_EMAIL);
-        String newPassword = request.getParameter(PARAM_PASSWORD);
+        String oldPassword = request.getParameter(PARAM_OLD_PASSWORD);
+        String newPassword = request.getParameter(PARAM_NEW_PASSWORD);
         if (matcher.find() && (newEmail != null) && (newPassword != null)) {
             int dispatcherId = Integer.parseInt(matcher.group());
             Dispatcher dispatcher = dispatcherService
                     .getDispatcherById(dispatcherId)
                     .orElseThrow(
-                            () -> new RuntimeException("Invalid tenant id")
+                            () -> new DaoException("Invalid dispatcher id")
                     );
 
             if (!newName.isEmpty()) {
@@ -53,12 +59,19 @@ public class UpdateDispatcher implements Command {
                 dispatcher.setPassword(newPassword);
             }
 
-            dispatcherService.updateDispatcher(dispatcher);
-
-            request.setAttribute("dispatcher", dispatcher);
-            return String.format(DISPATCHER_PATH, dispatcher.getId());
+            try {
+                dispatcherService.updateDispatcher(dispatcher, oldPassword);
+                pageToGo = String.format(DISPATCHER_PATH, dispatcher.getId());
+            } catch (DaoException e) {
+                dispatcher = dispatcherService.getDispatcherById(dispatcherId)
+                        .orElseThrow(() -> e);
+                request.setAttribute("dispatcher", dispatcher);
+                request.setAttribute("message", e.getMessage());
+                pageToGo = DISPATCHER_JSP_PATH;
+            }
         } else {
             throw new RuntimeException("Invalid URL");
         }
+        return pageToGo;
     }
 }

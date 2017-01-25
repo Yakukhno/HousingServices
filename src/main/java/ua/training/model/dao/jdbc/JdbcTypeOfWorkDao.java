@@ -1,5 +1,6 @@
 package ua.training.model.dao.jdbc;
 
+import ua.training.model.dao.DaoException;
 import ua.training.model.dao.TypeOfWorkDao;
 import ua.training.model.entities.TypeOfWork;
 
@@ -45,7 +46,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
                 typeOfWork = Optional.of(getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return typeOfWork;
     }
@@ -59,7 +60,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
                 typesOfWork.add(getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return typesOfWork;
     }
@@ -76,7 +77,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
                 typeOfWork.setId(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -87,7 +88,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -99,7 +100,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
             statement.setInt(2, typeOfWork.getId());
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -115,7 +116,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
                 typesOfWork.add(getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return typesOfWork;
     }

@@ -21,5 +21,12 @@
             <button class="btn btn-default" type="submit">Login</button>
         </div>
     </div>
+    <c:if test="${requestScope.message != null}">
+        <div class="row">
+            <div class="alert alert-danger" align="center" role="alert">
+                    ${requestScope.message}
+            </div>
+        </div>
+    </c:if>
 </form>
 <%@ include file="footer.jsp"%>

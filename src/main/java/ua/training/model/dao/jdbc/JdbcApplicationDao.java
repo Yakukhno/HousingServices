@@ -1,6 +1,7 @@
 package ua.training.model.dao.jdbc;
 
 import ua.training.model.dao.ApplicationDao;
+import ua.training.model.dao.DaoException;
 import ua.training.model.entities.Application;
 import ua.training.model.entities.ProblemScale;
 
@@ -66,7 +67,7 @@ public class JdbcApplicationDao implements ApplicationDao {
                 application = Optional.of(getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return application;
     }
@@ -80,7 +81,7 @@ public class JdbcApplicationDao implements ApplicationDao {
                 applications.add(getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return applications;
     }
@@ -97,7 +98,7 @@ public class JdbcApplicationDao implements ApplicationDao {
                 application.setId(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -108,7 +109,7 @@ public class JdbcApplicationDao implements ApplicationDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -120,7 +121,7 @@ public class JdbcApplicationDao implements ApplicationDao {
             statement.setInt(5, application.getId());
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -136,7 +137,7 @@ public class JdbcApplicationDao implements ApplicationDao {
                 applications.add(getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return applications;
     }
@@ -153,7 +154,7 @@ public class JdbcApplicationDao implements ApplicationDao {
                 applications.add(getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return applications;
     }

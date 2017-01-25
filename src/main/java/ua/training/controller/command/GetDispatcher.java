@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,7 @@ public class GetDispatcher implements Command {
 
     private static final String DISPATCHER_JSP_PATH
             = "/WEB-INF/view/dispatcher.jsp";
+    private static final String ERROR = "error";
 
     private static final String DISPATCHER_URI_REGEXP
             = "(?<=/dispatcher/)[\\d]+";
@@ -30,13 +32,16 @@ public class GetDispatcher implements Command {
         Matcher matcher = pattern.matcher(request.getRequestURI());
         if (matcher.find()) {
             int dispatcherId = Integer.parseInt(matcher.group());
-            Dispatcher dispatcher = dispatcherService
-                    .getDispatcherById(dispatcherId)
-                    .orElseThrow(
-                            () -> new RuntimeException("Invalid tenant id")
-                    );
-            request.setAttribute("dispatcher", dispatcher);
-            return DISPATCHER_JSP_PATH;
+            Optional<Dispatcher> dispatcher
+                    = dispatcherService.getDispatcherById(dispatcherId);
+            if (dispatcher.isPresent()) {
+                request.setAttribute("dispatcher", dispatcher.get());
+                return DISPATCHER_JSP_PATH;
+            } else {
+                response.sendError(404,
+                        "Dispatcher with id = " + dispatcherId + " not found.");
+                return ERROR;
+            }
         } else {
             throw new RuntimeException("Invalid URL");
         }

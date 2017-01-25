@@ -39,7 +39,7 @@
         <div class="form-group" id="oldPasswordForm">
             <label for="oldPassword" class="control-label col-md-5">Old password</label>
             <div class="col-md-7">
-                <input class="form-control" type="password" id="oldPassword"/>
+                <input class="form-control" type="password" id="oldPassword" name="oldPassword"/>
                 <span id="helpOldPass" class="help-block"></span>
             </div>
         </div>
@@ -55,6 +55,13 @@
                 <button class="btn btn-default" type="submit">Change</button>
             </div>
         </div>
+        <c:if test="${requestScope.message != null}">
+            <div class="row">
+                <div class="alert alert-danger" align="center" role="alert">
+                        ${requestScope.message}
+                </div>
+            </div>
+        </c:if>
     </form>
 </div>
 <%@ include file="footer.jsp"%>

@@ -1,6 +1,8 @@
 package ua.training.controller.command;
 
+import ua.training.model.service.ApplicationService;
 import ua.training.model.service.WorkerService;
+import ua.training.model.service.impl.ApplicationServiceImpl;
 import ua.training.model.service.impl.WorkerServiceImpl;
 
 import javax.servlet.ServletException;
@@ -14,10 +16,13 @@ public class AddBrigadePage implements Command {
 
     private static final String ADD_BRIGADE_JSP_PATH
             = "/WEB-INF/view/add_brigade.jsp";
+    private static final String ERROR = "error";
 
     private static final String APPLICATION_ID_REGEXP
             = "(?<=/application/)[\\d]+(?=/add_brigade)";
 
+    private ApplicationService applicationService
+            = ApplicationServiceImpl.getInstance();
     private WorkerService workerService = WorkerServiceImpl.getInstance();
 
     @Override
@@ -28,9 +33,14 @@ public class AddBrigadePage implements Command {
         Matcher matcher = pattern.matcher(request.getRequestURI());
         if (matcher.find()) {
             int applicationId = Integer.parseInt(matcher.group());
-            request.setAttribute("application", applicationId);
-            request.setAttribute("workers", workerService.getAllWorkers());
-            return ADD_BRIGADE_JSP_PATH;
+            if (applicationService.getApplicationById(applicationId).isPresent()) {
+                request.setAttribute("application", applicationId);
+                request.setAttribute("workers", workerService.getAllWorkers());
+                return ADD_BRIGADE_JSP_PATH;
+            } else {
+                response.sendError(404);
+                return ERROR;
+            }
         } else {
             throw new RuntimeException("Invalid URL");
         }

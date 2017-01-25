@@ -1,5 +1,6 @@
 package ua.training.model.dao.jdbc;
 
+import ua.training.model.dao.DaoException;
 import ua.training.model.dao.TaskDao;
 import ua.training.model.entities.Task;
 
@@ -48,7 +49,7 @@ public class JdbcTaskDao implements TaskDao {
                 task = Optional.of(getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return task;
     }
@@ -62,7 +63,7 @@ public class JdbcTaskDao implements TaskDao {
                 tasks.add(getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return tasks;
     }
@@ -79,7 +80,7 @@ public class JdbcTaskDao implements TaskDao {
                 task.setId(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -90,7 +91,7 @@ public class JdbcTaskDao implements TaskDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -102,7 +103,7 @@ public class JdbcTaskDao implements TaskDao {
             statement.setInt(4, task.getId());
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -115,7 +116,7 @@ public class JdbcTaskDao implements TaskDao {
                 tasks.add(getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return tasks;
     }

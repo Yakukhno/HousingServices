@@ -1,5 +1,6 @@
 package ua.training.model.dao.jdbc;
 
+import ua.training.model.dao.DaoException;
 import ua.training.model.dao.TenantDao;
 import ua.training.model.entities.person.Tenant;
 
@@ -54,7 +55,7 @@ public class JdbcTenantDao implements TenantDao {
                 tenants.add(getTenantFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return tenants;
     }
@@ -71,7 +72,7 @@ public class JdbcTenantDao implements TenantDao {
                 tenant.setId(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -82,7 +83,7 @@ public class JdbcTenantDao implements TenantDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -94,7 +95,7 @@ public class JdbcTenantDao implements TenantDao {
             statement.setInt(5, tenant.getId());
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -115,7 +116,7 @@ public class JdbcTenantDao implements TenantDao {
                 tenant = Optional.of(getTenantFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return tenant;
     }
@@ -131,7 +132,7 @@ public class JdbcTenantDao implements TenantDao {
                 tenant = Optional.of(getTenantFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return tenant;
     }

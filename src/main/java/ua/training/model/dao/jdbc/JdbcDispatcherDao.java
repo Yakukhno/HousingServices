@@ -1,5 +1,6 @@
 package ua.training.model.dao.jdbc;
 
+import ua.training.model.dao.DaoException;
 import ua.training.model.dao.DispatcherDao;
 import ua.training.model.entities.person.Dispatcher;
 
@@ -56,7 +57,7 @@ public class JdbcDispatcherDao implements DispatcherDao {
                 dispatcher = Optional.of(getDispatcherFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return dispatcher;
     }
@@ -73,7 +74,7 @@ public class JdbcDispatcherDao implements DispatcherDao {
                 dispatcher = Optional.of(getDispatcherFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return dispatcher;
     }
@@ -95,7 +96,7 @@ public class JdbcDispatcherDao implements DispatcherDao {
                 dispatcher.setId(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -106,7 +107,7 @@ public class JdbcDispatcherDao implements DispatcherDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -118,7 +119,7 @@ public class JdbcDispatcherDao implements DispatcherDao {
             statement.setInt(5, dispatcher.getId());
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -130,7 +131,7 @@ public class JdbcDispatcherDao implements DispatcherDao {
             statement.setInt(2, dispatcherId);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -147,7 +148,7 @@ public class JdbcDispatcherDao implements DispatcherDao {
                 dispatchers.add(getDispatcherFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return dispatchers;
     }

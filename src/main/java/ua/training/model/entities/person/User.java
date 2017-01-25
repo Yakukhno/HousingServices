@@ -5,7 +5,7 @@ public abstract class User extends Person {
     protected String password;
     protected Role role;
 
-    public enum Role {TENANT, DISPATCHER, GUEST}
+    public enum Role {TENANT, DISPATCHER}
 
     public String getEmail() {
         return email;

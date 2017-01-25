@@ -12,6 +12,9 @@ import static ua.training.controller.Routes.*;
 
 public class AuthFilter implements Filter {
 
+    private static final String RESOURCE_NOT_FOUND = "Resource not found!";
+    private static final String ATTR_USER = "user";
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {}
 
@@ -25,8 +28,8 @@ public class AuthFilter implements Filter {
         HttpSession session = req.getSession(false);
         String uri = req.getMethod().toUpperCase() + ":"
                 + req.getRequestURI().replaceAll(".*/rest", "");
-        if (session != null && session.getAttribute("user") != null) {
-            User user = ((User) session.getAttribute("user"));
+        if (session != null && session.getAttribute(ATTR_USER) != null) {
+            User user = ((User) session.getAttribute(ATTR_USER));
             if (user.getRole().equals(User.Role.TENANT)) {
                 filterTenant(uri, req, resp, chain);
             } else if (user.getRole().equals(User.Role.DISPATCHER)) {
@@ -54,7 +57,7 @@ public class AuthFilter implements Filter {
                 || (uri.matches(GET_BRIGADE))) {
             chain.doFilter(request, response);
         } else {
-            response.sendRedirect("/rest/login");
+            response.sendError(404, RESOURCE_NOT_FOUND);
         }
     }
 
@@ -63,7 +66,7 @@ public class AuthFilter implements Filter {
                               HttpServletResponse response,
                               FilterChain chain)
             throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("user");
+        User user = (User) request.getSession().getAttribute(ATTR_USER);
         int userId = user.getId();
         if ((uri.equals(String.format(GET_TENANT_APPLICATIONS_WITH_ID, userId)))
                 || (uri.equals(POST_APPLICATION))
@@ -74,13 +77,8 @@ public class AuthFilter implements Filter {
                 || (uri.equals(String.format(UPDATE_TENANT_WITH_ID, userId)))
                 || (uri.equals(GET_TASKS))) {
             chain.doFilter(request, response);
-        } else if ((uri.matches(GET_TENANT))
-                || uri.matches(UPDATE_TENANT)) {
-            response.sendRedirect("/rest/tenant/" + userId);
-        } else if ((uri.matches(GET_TENANT_APPLICATION))){
-            response.sendRedirect("/rest/tenant/" + userId + "/application");
         } else {
-            response.sendRedirect("/rest/tenant/" + userId);
+            response.sendError(404, RESOURCE_NOT_FOUND);
         }
     }
 
@@ -89,7 +87,7 @@ public class AuthFilter implements Filter {
                                   HttpServletResponse response,
                                   FilterChain chain)
             throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("user");
+        User user = (User) request.getSession().getAttribute(ATTR_USER);
         int userId = user.getId();
         if ((uri.equals(String.format(UPDATE_DISPATCHER_WITH_ID, userId)))
                 || (uri.equals(POST_LOGOUT))
@@ -100,11 +98,8 @@ public class AuthFilter implements Filter {
                 || (uri.equals(String.format(GET_DISPATCHER_WITH_ID, userId)))
                 || (uri.equals(GET_TASKS))) {
             chain.doFilter(request, response);
-        } else if ((uri.matches(GET_DISPATCHER)
-                || (uri.matches(UPDATE_DISPATCHER)))) {
-            response.sendRedirect("/rest/dispatcher/" + user.getId());
         } else {
-            response.sendRedirect("/rest/dispatcher/" + user.getId());
+            response.sendError(404, RESOURCE_NOT_FOUND);
         }
     }
 }

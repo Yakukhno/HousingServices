@@ -1,5 +1,6 @@
 package ua.training.model.dao.jdbc;
 
+import ua.training.model.dao.DaoException;
 import ua.training.model.dao.WorkerDao;
 import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.Worker;
@@ -55,7 +56,7 @@ public class JdbcWorkerDao implements WorkerDao {
                 worker = Optional.of(getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return worker;
     }
@@ -70,7 +71,7 @@ public class JdbcWorkerDao implements WorkerDao {
                 workers.add(getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return workers;
     }
@@ -89,7 +90,7 @@ public class JdbcWorkerDao implements WorkerDao {
             }
             insertTypesOfWork(worker);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -100,7 +101,7 @@ public class JdbcWorkerDao implements WorkerDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -116,7 +117,7 @@ public class JdbcWorkerDao implements WorkerDao {
                 workers.add(getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
         return workers;
     }
@@ -136,7 +137,7 @@ public class JdbcWorkerDao implements WorkerDao {
 
             insertTypesOfWork(worker);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -155,7 +156,7 @@ public class JdbcWorkerDao implements WorkerDao {
         return builder.build();
     }
 
-    private void insertTypesOfWork(Worker worker) {
+    private void insertTypesOfWork(Worker worker) throws SQLException {
         try (PreparedStatement typeStatement =
                      connection.prepareStatement(INSERT_TYPE_OF_WORK)) {
             for (TypeOfWork typeOfWork : worker.getTypesOfWork()) {
@@ -163,8 +164,6 @@ public class JdbcWorkerDao implements WorkerDao {
                 typeStatement.setInt(2, typeOfWork.getId());
                 typeStatement.execute();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 }

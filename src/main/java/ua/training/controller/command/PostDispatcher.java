@@ -1,5 +1,6 @@
 package ua.training.controller.command;
 
+import ua.training.model.dao.DaoException;
 import ua.training.model.entities.person.Dispatcher;
 import ua.training.model.service.DispatcherService;
 import ua.training.model.service.impl.DispatcherServiceImpl;
@@ -15,6 +16,8 @@ public class PostDispatcher implements Command {
     private static final String PARAM_EMAIL = "email";
     private static final String PARAM_PASSWORD = "password";
 
+    private static final String REGISTER_DISPATCHER_JSP
+            = "/WEB-INF/view/register_dispatcher.jsp";
     private static final String REGISTER_DISPATCHER_PATH
             = "/rest/register_dispatcher";
     private static final String LOGIN_PATH = "/rest/login";
@@ -32,13 +35,18 @@ public class PostDispatcher implements Command {
         String paramPassword = request.getParameter(PARAM_PASSWORD);
         if ((paramName != null) && (paramEmail != null)
                 && (paramPassword != null)) {
-            dispatcherService.createNewDispatcher(new Dispatcher.Builder()
-                    .setName(paramName)
-                    .setEmail(paramEmail)
-                    .setPassword(paramPassword)
-                    .build()
-            );
-            pageToGo = LOGIN_PATH;
+            try {
+                dispatcherService.createNewDispatcher(new Dispatcher.Builder()
+                        .setName(paramName)
+                        .setEmail(paramEmail)
+                        .setPassword(paramPassword)
+                        .build()
+                );
+                pageToGo = LOGIN_PATH;
+            } catch (DaoException e) {
+                request.setAttribute("message", e.getMessage());
+                pageToGo = REGISTER_DISPATCHER_JSP;
+            }
         }
         return pageToGo;
     }
