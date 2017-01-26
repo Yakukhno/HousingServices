@@ -10,6 +10,11 @@ public class Application {
     private User tenant;
     private ProblemScale scaleOfProblem;
     private LocalDateTime desiredTime;
+    private Status status;
+
+    public enum Status {
+        NEW, CONSIDERED
+    }
 
     public int getId()  {
         return id;
@@ -51,14 +56,23 @@ public class Application {
         this.desiredTime = desiredTime;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Application{" +
                 "id=" + id +
-                ", typeOfWork='" + typeOfWork + '\'' +
+                ", typeOfWork=" + typeOfWork +
                 ", tenant=" + tenant +
-                ", scaleOfProblem='" + scaleOfProblem + '\'' +
+                ", scaleOfProblem=" + scaleOfProblem +
                 ", desiredTime=" + desiredTime +
+                ", status=" + status +
                 '}';
     }
 
@@ -87,6 +101,11 @@ public class Application {
 
         public Builder setDesiredTime(LocalDateTime desiredTime) {
             application.setDesiredTime(desiredTime);
+            return this;
+        }
+
+        public Builder setStatus(Status status) {
+            application.setStatus(status);
             return this;
         }
 

@@ -32,22 +32,27 @@ public class JdbcApplicationDao implements ApplicationDao {
                     "JOIN type_of_work USING (id_type_of_work) " +
                     "JOIN user USING (id_user) " +
                     "WHERE id_user = ?";
+    private static final String SELECT_BY_STATUS =
+            "SELECT * FROM application " +
+                    "JOIN type_of_work USING (id_type_of_work) " +
+                    "JOIN user USING (id_user) " +
+                    "WHERE status = ?";
 
     private static final String INSERT =
-            "INSERT INTO application (id_user, id_type_of_work, " +
-                    "scale_of_problem, desired_time) VALUES (?, ?, ?, ?)";
+            "INSERT INTO application " +
+                    "(id_user, id_type_of_work, scale_of_problem, " +
+                    "desired_time, status) VALUES (?, ?, ?, ?, ?)";
     private static final String DELETE_BY_ID =
             "DELETE FROM application WHERE id_application = ?";
     private static final String UPDATE =
             "UPDATE application SET id_user = ?, id_type_of_work = ?, " +
-                    "scale_of_problem = ?, desired_time = ? " +
+                    "scale_of_problem = ?, desired_time = ?, status = ? " +
                     "WHERE id_application = ?";
 
     static final String APPLICATION_ID = "id_application";
-    static final String APPLICATION_SCALE_OF_PROBLEM =
-            "scale_of_problem";
-    static final String APPLICATION_DESIRED_TIME =
-            "desired_time";
+    static final String APPLICATION_SCALE_OF_PROBLEM = "scale_of_problem";
+    static final String APPLICATION_DESIRED_TIME = "desired_time";
+    static final String APPLICATION_STATUS = "status";
 
     private Connection connection;
 
@@ -159,6 +164,23 @@ public class JdbcApplicationDao implements ApplicationDao {
         return applications;
     }
 
+    @Override
+    public List<Application> getApplicationsByStatus(Application.Status status) {
+        List<Application> applications = new ArrayList<>();
+        try (PreparedStatement statement =
+                     connection.prepareStatement(SELECT_BY_STATUS)) {
+            statement.setString(1, status.name());
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                applications.add(getApplicationFromResultSet(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+        return applications;
+    }
+
     static Application getApplicationFromResultSet(ResultSet resultSet)
             throws SQLException {
         LocalDateTime localDateTime = null;
@@ -167,15 +189,16 @@ public class JdbcApplicationDao implements ApplicationDao {
                     .toLocalDateTime();
         }
         return new Application.Builder()
-                    .setId(resultSet.getInt(APPLICATION_ID))
-                    .setTypeOfWork(JdbcTypeOfWorkDao
-                            .getTypeOfWorkFromResultSet(resultSet))
-                    .setTenant(JdbcUserDao
-                            .getUserFromResultSet(resultSet))
-                    .setScaleOfProblem(ProblemScale.valueOf(resultSet
-                            .getString(APPLICATION_SCALE_OF_PROBLEM)))
-                    .setDesiredTime(localDateTime)
-                    .build();
+                .setId(resultSet.getInt(APPLICATION_ID))
+                .setTypeOfWork(JdbcTypeOfWorkDao
+                        .getTypeOfWorkFromResultSet(resultSet))
+                .setTenant(JdbcUserDao.getUserFromResultSet(resultSet))
+                .setScaleOfProblem(ProblemScale.valueOf(resultSet
+                        .getString(APPLICATION_SCALE_OF_PROBLEM)))
+                .setDesiredTime(localDateTime)
+                .setStatus(Application.Status.valueOf(resultSet
+                        .getString(APPLICATION_STATUS)))
+                .build();
     }
 
     private void setStatementFromApplication(PreparedStatement statement,
@@ -188,5 +211,6 @@ public class JdbcApplicationDao implements ApplicationDao {
         statement.setInt(2, application.getTypeOfWork().getId());
         statement.setString(3, application.getScaleOfProblem().name());
         statement.setTimestamp(4, timestamp);
+        statement.setString(4, application.getStatus().name());
     }
 }

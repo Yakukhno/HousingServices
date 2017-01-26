@@ -5,7 +5,9 @@ public class User extends Person {
     private String password;
     private Role role;
 
-    public enum Role {TENANT, DISPATCHER}
+    public enum Role {
+        TENANT, DISPATCHER
+    }
 
     public String getEmail() {
         return email;

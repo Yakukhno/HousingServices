@@ -7,6 +7,7 @@ import ua.training.model.entities.Task;
 import ua.training.model.entities.person.Worker;
 import ua.training.model.service.TaskService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +59,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void createNewTask(int applicationId, int managerId, List<Integer> workersIds) {
+    public void createNewTask(int applicationId, int managerId,
+                              LocalDateTime dateTime, List<Integer> workersIds) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             connection.begin();
             BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
@@ -91,6 +93,7 @@ public class TaskServiceImpl implements TaskService {
             taskDao.add(new Task.Builder()
                     .setBrigade(brigade)
                     .setApplication(application)
+                    .setScheduledTime(dateTime)
                     .build());
             connection.commit();
         }

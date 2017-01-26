@@ -51,6 +51,15 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public List<Application> getApplicationsByStatus(Application.Status status) {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            ApplicationDao applicationDao
+                    = daoFactory.createApplicationDao(connection);
+            return applicationDao.getApplicationsByStatus(status);
+        }
+    }
+
+    @Override
     public List<Application> getAllApplications() {
         try (DaoConnection connection = daoFactory.getConnection()) {
             ApplicationDao applicationDao

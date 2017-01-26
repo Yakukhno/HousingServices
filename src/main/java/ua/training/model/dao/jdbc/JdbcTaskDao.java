@@ -19,17 +19,20 @@ public class JdbcTaskDao implements TaskDao {
             "WHERE is_active = TRUE";
 
     private static final String INSERT =
-            "INSERT INTO task (id_application, id_brigade, is_active) " +
-                    "VALUES (?, ?, ?)";
+            "INSERT INTO task " +
+                    "(id_application, id_brigade, scheduled_time, is_active) " +
+                    "VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID =
             "DELETE FROM task WHERE id_task = ?";
     private static final String UPDATE =
             "UPDATE task " +
-                    "SET id_application = ?, id_brigade = ?, is_active = ? " +
+                    "SET id_application = ?, id_brigade = ?, " +
+                    "scheduled_time = ?, is_active = ? " +
                     "WHERE id_task = ?";
 
     private static final String TASK_ID = "id_task";
-    private static final String IS_ACTIVE = "is_active";
+    private static final String TASK_SCHEDULED_TIME = "scheduled_time";
+    private static final String TASK_IS_ACTIVE = "is_active";
 
     private Connection connection;
 
@@ -131,7 +134,9 @@ public class JdbcTaskDao implements TaskDao {
                 .setBrigade(new JdbcBrigadeDao(connection)
                         .get(resultSet.getInt(JdbcBrigadeDao
                                 .BRIGADE_ID)).orElse(null))
-                .setActive(resultSet.getBoolean(IS_ACTIVE))
+                .setScheduledTime(resultSet.getTimestamp(TASK_SCHEDULED_TIME)
+                        .toLocalDateTime())
+                .setActive(resultSet.getBoolean(TASK_IS_ACTIVE))
                 .build();
     }
 
@@ -140,6 +145,7 @@ public class JdbcTaskDao implements TaskDao {
             throws SQLException {
         statement.setInt(1, task.getApplication().getId());
         statement.setInt(2, task.getBrigade().getId());
-        statement.setBoolean(3, task.isActive());
+        statement.setTimestamp(3, Timestamp.valueOf(task.getScheduledTime()));
+        statement.setBoolean(4, task.isActive());
     }
 }

@@ -1,9 +1,12 @@
 package ua.training.model.entities;
 
+import java.time.LocalDateTime;
+
 public class Task {
     private int id;
     private Application application;
     private Brigade brigade;
+    private LocalDateTime scheduledTime;
     private boolean isActive;
 
     public int getId() {
@@ -26,6 +29,18 @@ public class Task {
         return brigade;
     }
 
+    public void setBrigade(Brigade brigade) {
+        this.brigade = brigade;
+    }
+
+    public LocalDateTime getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public void setScheduledTime(LocalDateTime scheduledTime) {
+        this.scheduledTime = scheduledTime;
+    }
+
     public boolean isActive() {
         return isActive;
     }
@@ -34,16 +49,13 @@ public class Task {
         isActive = active;
     }
 
-    public void setBrigade(Brigade brigade) {
-        this.brigade = brigade;
-    }
-
     @Override
     public String toString() {
         return "Task{" +
                 "id=" + id +
                 ", application=" + application +
                 ", brigade=" + brigade +
+                ", scheduledTime=" + scheduledTime +
                 ", isActive=" + isActive +
                 '}';
     }
@@ -63,6 +75,11 @@ public class Task {
 
         public Builder setBrigade(Brigade brigade) {
             task.setBrigade(brigade);
+            return this;
+        }
+
+        public Builder setScheduledTime(LocalDateTime scheduledTime) {
+            task.setScheduledTime(scheduledTime);
             return this;
         }
 

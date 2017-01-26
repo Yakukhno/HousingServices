@@ -9,6 +9,7 @@ public interface ApplicationService {
     Optional<Application> getApplicationById(int id);
     List<Application> getApplicationsByTypeOfWork(String typeOfWork);
     List<Application> getApplicationsByUserId(int userId);
+    List<Application> getApplicationsByStatus(Application.Status status);
     List<Application> getAllApplications();
     void createNewApplication(Application application);
 }
