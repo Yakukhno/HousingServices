@@ -16,16 +16,16 @@ public class JdbcApplicationDao implements ApplicationDao {
     private static final String SELECT_ALL =
             "SELECT * FROM application " +
                     "JOIN type_of_work USING (id_type_of_work) " +
-                    "JOIN tenant USING (id_tenant)";
+                    "LEFT JOIN tenant USING (id_tenant)";
     private static final String SELECT_BY_ID =
             "SELECT * FROM application " +
                     "JOIN type_of_work USING (id_type_of_work) " +
-                    "JOIN tenant USING (id_tenant) " +
+                    "LEFT JOIN tenant USING (id_tenant) " +
             "WHERE id_application = ?";
     private static final String SELECT_BY_TYPE_OF_WORK =
             "SELECT * FROM application " +
                     "JOIN type_of_work USING (id_type_of_work) " +
-                    "JOIN tenant USING (id_tenant) " +
+                    "LEFT JOIN tenant USING (id_tenant) " +
                     "WHERE type_of_work.description LIKE ?";
     private static final String SELECT_BY_TENANT =
             "SELECT * FROM application " +

@@ -9,7 +9,7 @@
         <table class="table table-striped" style="width: 80%" align="center">
             <thead>
             <tr>
-                <th>№</th>
+                <th>N</th>
                 <th>Type of task</th>
                 <th>Scale of problem</th>
                 <th>Desired date</th>

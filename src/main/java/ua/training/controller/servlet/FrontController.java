@@ -18,10 +18,12 @@ public class FrontController extends HttpServlet {
 
     private final Map<String, Command> commands = new HashMap<>();
 
-    private static boolean isInit = false;
-
     @Override
     public void init() throws ServletException {
+        super.init();
+        ServletContext servletContext = getServletContext();
+        servletContext.setAttribute("tenant", User.Role.TENANT);
+        servletContext.setAttribute("dispatcher", User.Role.DISPATCHER);
         commands.put(HOME, new HomePage());
         commands.put(GET_TENANTS, new GetTenants());
         commands.put(GET_TENANT, new GetTenant());
@@ -44,7 +46,6 @@ public class FrontController extends HttpServlet {
         commands.put(GET_BRIGADE, new GetBrigade());
         commands.put(POST_BRIGADE, new PostBrigade());
         commands.put(ERROR_PAGE, new ErrorPage());
-        super.init();
     }
 
     protected void doPost(HttpServletRequest request,
@@ -62,20 +63,13 @@ public class FrontController extends HttpServlet {
     private void processRequest(HttpServletRequest request,
                                 HttpServletResponse response)
             throws ServletException, IOException {
-        if (!isInit) {
-            ServletContext servletContext = request.getServletContext();
-            servletContext.setAttribute("tenant", User.Role.TENANT);
-            servletContext.setAttribute("dispatcher", User.Role.DISPATCHER);
-            isInit = true;
-        }
-
         String tempCommand = request.getMethod().toUpperCase() + ":"
                 + request.getRequestURI().replaceAll(".*/rest", "");
         String command = commands.keySet()
                 .stream()
                 .filter(tempCommand::matches)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Invalid URL"));
+                .orElseGet(() -> HOME);
         String jspPath = commands.get(command).execute(request, response);
         if (jspPath.endsWith(".jsp")) {
             request.getRequestDispatcher(jspPath).forward(request, response);

@@ -43,21 +43,8 @@ public class UpdateDispatcher implements Command {
         String newPassword = request.getParameter(PARAM_NEW_PASSWORD);
         if (matcher.find() && (newEmail != null) && (newPassword != null)) {
             int dispatcherId = Integer.parseInt(matcher.group());
-            Dispatcher dispatcher = dispatcherService
-                    .getDispatcherById(dispatcherId)
-                    .orElseThrow(
-                            () -> new DaoException("Invalid dispatcher id")
-                    );
-
-            if (!newName.isEmpty()) {
-                dispatcher.setName(newName);
-            }
-            if (!newEmail.isEmpty()) {
-                dispatcher.setEmail(newEmail);
-            }
-            if (!newPassword.isEmpty()) {
-                dispatcher.setPassword(newPassword);
-            }
+            Dispatcher dispatcher = getDispatcherWithSetFields(dispatcherId, newName,
+                    newEmail, newPassword);
 
             try {
                 dispatcherService.updateDispatcher(dispatcher, oldPassword);
@@ -73,5 +60,26 @@ public class UpdateDispatcher implements Command {
             throw new RuntimeException("Invalid URL");
         }
         return pageToGo;
+    }
+
+    private Dispatcher getDispatcherWithSetFields(int dispatcherId,
+                                                  String name,
+                                                  String email,
+                                                  String password) {
+        Dispatcher dispatcher = dispatcherService
+                .getDispatcherById(dispatcherId)
+                .orElseThrow(
+                        () -> new DaoException("Invalid dispatcher id")
+                );
+        if (!name.isEmpty()) {
+            dispatcher.setName(name);
+        }
+        if (!email.isEmpty()) {
+            dispatcher.setEmail(email);
+        }
+        if (!password.isEmpty()) {
+            dispatcher.setPassword(password);
+        }
+        return dispatcher;
     }
 }

@@ -25,16 +25,12 @@ public class AuthFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
-        HttpSession session = req.getSession(false);
+        HttpSession session = req.getSession();
         String uri = req.getMethod().toUpperCase() + ":"
                 + req.getRequestURI().replaceAll(".*/rest", "");
-        if (session != null && session.getAttribute(ATTR_USER) != null) {
-            User user = ((User) session.getAttribute(ATTR_USER));
-            if (user.getRole().equals(User.Role.TENANT)) {
-                filterTenant(uri, req, resp, chain);
-            } else if (user.getRole().equals(User.Role.DISPATCHER)) {
-                filterDispatcher(uri, req, resp, chain);
-            }
+        User user = ((User) session.getAttribute(ATTR_USER));
+        if (user != null) {
+            filterUser(user, uri, req, resp, chain);
         } else {
             filterGuest(uri, req, resp, chain);
         }
@@ -43,8 +39,25 @@ public class AuthFilter implements Filter {
     @Override
     public void destroy() {}
 
-    private void filterGuest(String uri,
-                             HttpServletRequest request,
+    private void filterUser(User user, String uri, HttpServletRequest request,
+                            HttpServletResponse response,
+                            FilterChain chain)
+            throws ServletException, IOException {
+        if (user != null) {
+            switch (user.getRole()) {
+                case TENANT:
+                    filterTenant(uri, request, response, chain);
+                    break;
+                case DISPATCHER:
+                    filterDispatcher(uri, request, response, chain);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown enum component");
+            }
+        }
+    }
+
+    private void filterGuest(String uri, HttpServletRequest request,
                              HttpServletResponse response,
                              FilterChain chain)
             throws ServletException, IOException {
@@ -57,12 +70,11 @@ public class AuthFilter implements Filter {
                 || (uri.matches(GET_BRIGADE))) {
             chain.doFilter(request, response);
         } else {
-            response.sendError(404, RESOURCE_NOT_FOUND);
+            response.sendRedirect("/rest/login");
         }
     }
 
-    private void filterTenant(String uri,
-                              HttpServletRequest request,
+    private void filterTenant(String uri, HttpServletRequest request,
                               HttpServletResponse response,
                               FilterChain chain)
             throws ServletException, IOException {
@@ -77,13 +89,17 @@ public class AuthFilter implements Filter {
                 || (uri.equals(String.format(UPDATE_TENANT_WITH_ID, userId)))
                 || (uri.equals(GET_TASKS))) {
             chain.doFilter(request, response);
+        } else if ((uri.matches(GET_TENANT))
+                || uri.matches(UPDATE_TENANT)) {
+            response.sendRedirect("/rest/tenant/" + userId);
+        } else if ((uri.matches(GET_TENANT_APPLICATION))){
+            response.sendRedirect("/rest/tenant/" + userId + "/application");
         } else {
-            response.sendError(404, RESOURCE_NOT_FOUND);
+            response.sendRedirect("/rest/tenant/" + userId);
         }
     }
 
-    private void filterDispatcher(String uri,
-                                  HttpServletRequest request,
+    private void filterDispatcher(String uri, HttpServletRequest request,
                                   HttpServletResponse response,
                                   FilterChain chain)
             throws ServletException, IOException {
@@ -98,8 +114,11 @@ public class AuthFilter implements Filter {
                 || (uri.equals(String.format(GET_DISPATCHER_WITH_ID, userId)))
                 || (uri.equals(GET_TASKS))) {
             chain.doFilter(request, response);
+        } else if ((uri.matches(GET_DISPATCHER)
+                || (uri.matches(UPDATE_DISPATCHER)))) {
+            response.sendRedirect("/rest/dispatcher/" + user.getId());
         } else {
-            response.sendError(404, RESOURCE_NOT_FOUND);
+            response.sendRedirect("/rest/dispatcher/" + user.getId());
         }
     }
 }

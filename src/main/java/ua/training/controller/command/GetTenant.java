@@ -1,6 +1,5 @@
 package ua.training.controller.command;
 
-import ua.training.model.entities.person.Tenant;
 import ua.training.model.service.TenantService;
 import ua.training.model.service.impl.TenantServiceImpl;
 
@@ -8,7 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,15 +27,12 @@ public class GetTenant implements Command {
         Matcher matcher = pattern.matcher(request.getRequestURI());
         if (matcher.find()) {
             int tenantId = Integer.parseInt(matcher.group());
-            Optional<Tenant> tenant = tenantService.getTenantById(tenantId);
-            if (tenant.isPresent()) {
-                request.setAttribute("tenant", tenant.get());
-                return TENANT_JSP_PATH;
-            } else {
-                response.sendError(404,
-                        "Tenant with id = " + tenantId + " not found.");
-                return ERROR;
-            }
+            return tenantService.getTenantById(tenantId)
+                    .map(tenant -> {
+                        request.setAttribute("tenant", tenant);
+                        return TENANT_JSP_PATH;
+                    })
+                    .orElse(ERROR);
         } else {
             throw new RuntimeException("Invalid URL");
         }

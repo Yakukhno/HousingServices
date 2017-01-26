@@ -84,7 +84,9 @@ function validateBrigade() {
     var message = document.getElementById("message");
     var isValid = true;
     if (manager == '') {
-        message.innerHTML = '<div class="alert alert-danger" align="center" role="alert">You should choose manager!</div>';
+        message.innerHTML = '<div class="alert alert-danger" align="center" role="alert">' +
+            'You should choose manager!' +
+            '</div>';
         isValid = false;
     } else {
         message.innerHTML = '';

@@ -40,17 +40,7 @@ public class UpdateTenant implements Command {
         if (matcher.find() && (newEmail != null)
                 && (newPassword != null) && (oldPassword != null)) {
             int tenantId = Integer.parseInt(matcher.group());
-            Tenant tenant = tenantService.getTenantById(tenantId)
-                    .orElseThrow(
-                            () -> new DaoException("Invalid tenant id")
-                    );
-
-            if (!newEmail.isEmpty()) {
-                tenant.setEmail(newEmail);
-            }
-            if (!newPassword.isEmpty()) {
-                tenant.setPassword(newPassword);
-            }
+            Tenant tenant = getTenantWithSetFields(tenantId, newEmail, newPassword);
 
             try {
                 tenantService.updateTenant(tenant, oldPassword);
@@ -66,5 +56,21 @@ public class UpdateTenant implements Command {
             throw new RuntimeException("Invalid URL");
         }
         return pageToGo;
+    }
+
+    private Tenant getTenantWithSetFields(int tenantId,
+                                          String email,
+                                          String password) {
+        Tenant tenant = tenantService.getTenantById(tenantId)
+                .orElseThrow(
+                        () -> new DaoException("Invalid tenant id")
+                );
+        if (!email.isEmpty()) {
+            tenant.setEmail(email);
+        }
+        if (!password.isEmpty()) {
+            tenant.setPassword(password);
+        }
+        return tenant;
     }
 }

@@ -17,6 +17,7 @@ public class AddBrigadePage implements Command {
     private static final String ADD_BRIGADE_JSP_PATH
             = "/WEB-INF/view/add_brigade.jsp";
     private static final String ERROR = "error";
+    private static final String RESOURCE_NOT_FOUND = "Resource not found!";
 
     private static final String APPLICATION_ID_REGEXP
             = "(?<=/application/)[\\d]+(?=/add_brigade)";
@@ -33,14 +34,15 @@ public class AddBrigadePage implements Command {
         Matcher matcher = pattern.matcher(request.getRequestURI());
         if (matcher.find()) {
             int applicationId = Integer.parseInt(matcher.group());
-            if (applicationService.getApplicationById(applicationId).isPresent()) {
-                request.setAttribute("application", applicationId);
-                request.setAttribute("workers", workerService.getAllWorkers());
-                return ADD_BRIGADE_JSP_PATH;
-            } else {
-                response.sendError(404);
-                return ERROR;
-            }
+            return applicationService.getApplicationById(applicationId)
+                    .map(application -> {
+                        request.setAttribute("application",
+                                applicationId);
+                        request.setAttribute("workers",
+                                workerService.getAllWorkers());
+                        return ADD_BRIGADE_JSP_PATH;
+                    })
+                    .orElse(ERROR);
         } else {
             throw new RuntimeException("Invalid URL");
         }

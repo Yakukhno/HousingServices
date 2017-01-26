@@ -41,23 +41,35 @@ public class Login implements Command {
                 user = userService.loginAccount(Integer.parseInt(paramLogin),
                                                     paramPassword);
             }
-            if (user.isPresent()) {
-                User sessionUser = user.get();
-                request.getSession().setAttribute("user", sessionUser);
-                request.setAttribute("id", sessionUser.getId());
-                if (sessionUser.getRole().equals(User.Role.TENANT)) {
-                    pageToGo = String.format(TENANT_PATH,
-                            sessionUser.getId());
-                } else if (sessionUser.getRole().equals(User.Role.DISPATCHER)) {
-                    pageToGo = String.format(DISPATCHER_PATH,
-                            sessionUser.getId());
-                }
-            } else {
-                request.setAttribute("message", "Incorrect email or password");
-                pageToGo = LOGIN_JSP;
-            }
+            pageToGo = getPageForRole(request, user);
         }
         return pageToGo;
+    }
+
+    private String getPageForRole(HttpServletRequest request, Optional<User> user) {
+        return user.map(sessionUser -> {
+            String pageToGo;
+            request.getSession().setAttribute("user", sessionUser);
+            request.setAttribute("id", sessionUser.getId());
+            switch (sessionUser.getRole()) {
+                case TENANT:
+                    pageToGo = String.format(TENANT_PATH,
+                            sessionUser.getId());
+                    break;
+                case DISPATCHER:
+                    pageToGo = String.format(DISPATCHER_PATH,
+                            sessionUser.getId());
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                            "Unknown enum component"
+                    );
+            }
+            return pageToGo;
+        }).orElseGet(() -> {
+            request.setAttribute("message", "Incorrect email or password");
+            return LOGIN_JSP;
+        });
     }
 }
 

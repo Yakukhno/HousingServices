@@ -1,6 +1,5 @@
 package ua.training.controller.command;
 
-import ua.training.model.entities.Brigade;
 import ua.training.model.service.BrigadeService;
 import ua.training.model.service.impl.BrigadeServiceImpl;
 
@@ -8,7 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,15 +27,12 @@ public class GetBrigade implements Command {
         Matcher matcher = pattern.matcher(request.getRequestURI());
         if (matcher.find()) {
             int brigadeId = Integer.parseInt(matcher.group());
-            Optional<Brigade> brigade = brigadeService.getBrigadeById(brigadeId);
-            if (brigade.isPresent()) {
-                request.setAttribute("brigade", brigade.get());
-                return BRIGADE_JSP_PATH;
-            } else {
-                response.sendError(404,
-                        "Brigade with id = " + brigadeId + " not found.");
-                return ERROR;
-            }
+            return brigadeService.getBrigadeById(brigadeId)
+                    .map(brigade -> {
+                        request.setAttribute("brigade", brigade);
+                        return BRIGADE_JSP_PATH;
+                    })
+                    .orElse(ERROR);
         } else {
             throw new RuntimeException("Invalid URL");
         }
