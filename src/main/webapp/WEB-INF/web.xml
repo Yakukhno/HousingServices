@@ -23,10 +23,6 @@
         <url-pattern>/rest/*</url-pattern>
     </filter-mapping>
 
-    <listener>
-        <listener-class>ua.training.controller.session.DispatcherLogoutSessionListener</listener-class>
-    </listener>
-
     <error-page>
         <error-code>404</error-code>
         <location>/rest/error</location>

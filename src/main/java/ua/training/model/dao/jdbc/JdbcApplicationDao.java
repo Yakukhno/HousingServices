@@ -16,30 +16,30 @@ public class JdbcApplicationDao implements ApplicationDao {
     private static final String SELECT_ALL =
             "SELECT * FROM application " +
                     "JOIN type_of_work USING (id_type_of_work) " +
-                    "LEFT JOIN tenant USING (id_tenant)";
+                    "LEFT JOIN user USING (id_user)";
     private static final String SELECT_BY_ID =
             "SELECT * FROM application " +
                     "JOIN type_of_work USING (id_type_of_work) " +
-                    "LEFT JOIN tenant USING (id_tenant) " +
+                    "LEFT JOIN user USING (id_user) " +
             "WHERE id_application = ?";
     private static final String SELECT_BY_TYPE_OF_WORK =
             "SELECT * FROM application " +
                     "JOIN type_of_work USING (id_type_of_work) " +
-                    "LEFT JOIN tenant USING (id_tenant) " +
+                    "LEFT JOIN user USING (id_user) " +
                     "WHERE type_of_work.description LIKE ?";
     private static final String SELECT_BY_TENANT =
             "SELECT * FROM application " +
                     "JOIN type_of_work USING (id_type_of_work) " +
-                    "JOIN tenant USING (id_tenant) " +
-                    "WHERE id_tenant = ?";
+                    "JOIN user USING (id_user) " +
+                    "WHERE id_user = ?";
 
     private static final String INSERT =
-            "INSERT INTO application (id_tenant, id_type_of_work, " +
+            "INSERT INTO application (id_user, id_type_of_work, " +
                     "scale_of_problem, desired_time) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID =
             "DELETE FROM application WHERE id_application = ?";
     private static final String UPDATE =
-            "UPDATE application SET id_tenant = ?, id_type_of_work = ?, " +
+            "UPDATE application SET id_user = ?, id_type_of_work = ?, " +
                     "scale_of_problem = ?, desired_time = ? " +
                     "WHERE id_application = ?";
 
@@ -143,7 +143,7 @@ public class JdbcApplicationDao implements ApplicationDao {
     }
 
     @Override
-    public List<Application> getApplicationsByTenantId(int tenantId) {
+    public List<Application> getApplicationsByUserId(int tenantId) {
         List<Application> applications = new ArrayList<>();
         try (PreparedStatement statement =
                      connection.prepareStatement(SELECT_BY_TENANT)) {
@@ -170,8 +170,8 @@ public class JdbcApplicationDao implements ApplicationDao {
                     .setId(resultSet.getInt(APPLICATION_ID))
                     .setTypeOfWork(JdbcTypeOfWorkDao
                             .getTypeOfWorkFromResultSet(resultSet))
-                    .setTenant(JdbcTenantDao
-                            .getTenantFromResultSet(resultSet))
+                    .setTenant(JdbcUserDao
+                            .getUserFromResultSet(resultSet))
                     .setScaleOfProblem(ProblemScale.valueOf(resultSet
                             .getString(APPLICATION_SCALE_OF_PROBLEM)))
                     .setDesiredTime(localDateTime)

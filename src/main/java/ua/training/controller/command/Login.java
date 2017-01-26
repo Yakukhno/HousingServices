@@ -16,13 +16,11 @@ public class Login implements Command {
     private static final String PARAM_PASSWORD = "password";
 
     private static final String HOME_PATH = "/";
-    private static final String TENANT_PATH = "/rest/tenant/%s";
-    private static final String DISPATCHER_PATH = "/rest/dispatcher/%s";
+    private static final String USER_PATH = "/rest/user/%s";
     private static final String LOGIN_JSP = "/WEB-INF/view/login.jsp";
 
     private static final String EMAIL_REGEXP = "^[\\w.%+-]+@[A-Za-z0-9.-]" +
             "+\\.[A-Za-z]{2,6}$";
-    private static final String ACCOUNT_REGEXP = "[1-9]\\d{3}";
 
     private UserService userService = UserServiceImpl.getInstance();
 
@@ -37,39 +35,16 @@ public class Login implements Command {
             Optional<User> user = Optional.empty();
             if (paramLogin.matches(EMAIL_REGEXP)) {
                 user = userService.loginEmail(paramLogin, paramPassword);
-            } else if (paramLogin.matches(ACCOUNT_REGEXP)) {
-                user = userService.loginAccount(Integer.parseInt(paramLogin),
-                                                    paramPassword);
             }
-            pageToGo = getPageForRole(request, user);
+            pageToGo = user.map(sessionUser -> {
+                request.getSession().setAttribute("user", sessionUser);
+                return String.format(USER_PATH, sessionUser.getId());
+            }).orElseGet(() -> {
+                request.setAttribute("message", "Incorrect email or password");
+                return LOGIN_JSP;
+            });
         }
         return pageToGo;
-    }
-
-    private String getPageForRole(HttpServletRequest request, Optional<User> user) {
-        return user.map(sessionUser -> {
-            String pageToGo;
-            request.getSession().setAttribute("user", sessionUser);
-            request.setAttribute("id", sessionUser.getId());
-            switch (sessionUser.getRole()) {
-                case TENANT:
-                    pageToGo = String.format(TENANT_PATH,
-                            sessionUser.getId());
-                    break;
-                case DISPATCHER:
-                    pageToGo = String.format(DISPATCHER_PATH,
-                            sessionUser.getId());
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            "Unknown enum component"
-                    );
-            }
-            return pageToGo;
-        }).orElseGet(() -> {
-            request.setAttribute("message", "Incorrect email or password");
-            return LOGIN_JSP;
-        });
     }
 }
 

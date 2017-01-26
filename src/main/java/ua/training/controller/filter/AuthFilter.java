@@ -63,10 +63,8 @@ public class AuthFilter implements Filter {
             throws ServletException, IOException {
         if ((uri.equals(GET_TASKS)) || (uri.equals(GET_LOGIN_PAGE))
                 || (uri.equals(POST_LOGIN))
-                || (uri.equals(GET_REGISTER_TENANT_PAGE))
-                || (uri.equals(POST_TENANT))
-                || (uri.equals(GET_REGISTER_DISPATCHER_PAGE))
-                || (uri.equals(POST_DISPATCHER))
+                || (uri.equals(GET_REGISTER_USER_PAGE))
+                || (uri.equals(POST_USER))
                 || (uri.matches(GET_BRIGADE))) {
             chain.doFilter(request, response);
         } else {
@@ -80,22 +78,22 @@ public class AuthFilter implements Filter {
             throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute(ATTR_USER);
         int userId = user.getId();
-        if ((uri.equals(String.format(GET_TENANT_APPLICATIONS_WITH_ID, userId)))
+        if ((uri.equals(String.format(GET_USER_APPLICATIONS_WITH_ID, userId)))
                 || (uri.equals(POST_APPLICATION))
                 || (uri.equals(POST_LOGOUT))
                 || (uri.equals(GET_ADD_APPLICATION_PAGE))
                 || (uri.matches(GET_BRIGADE))
-                || (uri.equals(String.format(GET_TENANT_WITH_ID, userId)))
-                || (uri.equals(String.format(UPDATE_TENANT_WITH_ID, userId)))
+                || (uri.equals(String.format(GET_USER_WITH_ID, userId)))
+                || (uri.equals(String.format(UPDATE_USER_WITH_ID, userId)))
                 || (uri.equals(GET_TASKS))) {
             chain.doFilter(request, response);
-        } else if ((uri.matches(GET_TENANT))
-                || uri.matches(UPDATE_TENANT)) {
-            response.sendRedirect("/rest/tenant/" + userId);
-        } else if ((uri.matches(GET_TENANT_APPLICATION))){
-            response.sendRedirect("/rest/tenant/" + userId + "/application");
+        } else if ((uri.matches(GET_USER))
+                || uri.matches(UPDATE_USER)) {
+            response.sendRedirect("/rest/user/" + userId);
+        } else if ((uri.matches(GET_USER_APPLICATIONS_WITH_ID))){
+            response.sendRedirect("/rest/user/" + userId + "/application");
         } else {
-            response.sendRedirect("/rest/tenant/" + userId);
+            response.sendRedirect("/rest/user/" + userId);
         }
     }
 
@@ -105,20 +103,20 @@ public class AuthFilter implements Filter {
             throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute(ATTR_USER);
         int userId = user.getId();
-        if ((uri.equals(String.format(UPDATE_DISPATCHER_WITH_ID, userId)))
-                || (uri.equals(POST_LOGOUT))
+        if ((uri.equals(POST_LOGOUT))
                 || (uri.equals(GET_APPLICATIONS))
                 || (uri.matches(GET_ADD_BRIGADE_PAGE))
                 || (uri.matches(GET_BRIGADE))
                 || (uri.equals(POST_BRIGADE))
-                || (uri.equals(String.format(GET_DISPATCHER_WITH_ID, userId)))
+                || (uri.equals(String.format(GET_USER_WITH_ID, userId)))
+                || (uri.equals(String.format(UPDATE_USER_WITH_ID, userId)))
                 || (uri.equals(GET_TASKS))) {
             chain.doFilter(request, response);
-        } else if ((uri.matches(GET_DISPATCHER)
-                || (uri.matches(UPDATE_DISPATCHER)))) {
-            response.sendRedirect("/rest/dispatcher/" + user.getId());
+        } else if ((uri.matches(GET_USER)
+                || (uri.matches(UPDATE_USER)))) {
+            response.sendRedirect("/rest/user/" + user.getId());
         } else {
-            response.sendRedirect("/rest/dispatcher/" + user.getId());
+            response.sendRedirect("/rest/user/" + user.getId());
         }
     }
 }

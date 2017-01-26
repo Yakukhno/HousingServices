@@ -1,53 +1,51 @@
 package ua.training.controller.command;
 
 import ua.training.model.dao.DaoException;
-import ua.training.model.entities.person.Tenant;
-import ua.training.model.service.TenantService;
-import ua.training.model.service.impl.TenantServiceImpl;
+import ua.training.model.entities.person.User;
+import ua.training.model.service.UserService;
+import ua.training.model.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class PostTenant implements Command {
+public class PostUser implements Command {
 
-    private static final String PARAM_ACCOUNT = "account";
     private static final String PARAM_NAME = "name";
     private static final String PARAM_EMAIL = "email";
     private static final String PARAM_PASSWORD = "password";
+    private static final String PARAM_ROLE = "role";
 
-    private static final String REGISTER_TENANT_JSP = "/WEB-INF/view/register_tenant.jsp";
-    private static final String REGISTER_TENANT_PATH = "/rest/register_tenant";
+    private static final String REGISTER_USER_JSP = "/WEB-INF/view/register_user.jsp";
+    private static final String REGISTER_USER_PATH = "/rest/register_user";
     private static final String LOGIN_PATH = "/rest/login";
 
-    private TenantService tenantService = TenantServiceImpl.getInstance();
+    private UserService userService = UserServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        String pageToGo = REGISTER_TENANT_PATH;
+        String pageToGo = REGISTER_USER_PATH;
         String name = request.getParameter(PARAM_NAME);
         String email = request.getParameter(PARAM_EMAIL);
         String password = request.getParameter(PARAM_PASSWORD);
-        if ((request.getParameter(PARAM_ACCOUNT) != null)
-                && (name != null)
-                && (email != null)
-                && (password != null)) {
-            int account = Integer.parseInt(request.getParameter(PARAM_ACCOUNT));
+        String role = request.getParameter(PARAM_ROLE);
+        if ((name != null) && (email != null)
+                && (password != null) && (role != null)) {
             try {
-                tenantService.createNewTenant(new Tenant.Builder()
-                        .setAccount(account)
+                userService.createNewUser(new User.Builder()
                         .setName(name)
                         .setEmail(email)
                         .setPassword(password)
+                        .setRole(User.Role.valueOf(role))
                         .build()
                 );
                 pageToGo = LOGIN_PATH;
             } catch (DaoException e) {
                 request.setAttribute("message", e.getMessage());
-                pageToGo = REGISTER_TENANT_JSP;
+                pageToGo = REGISTER_USER_JSP;
             }
         }
         return pageToGo;

@@ -5,6 +5,13 @@ var accountErrorText = "Must contain 4 digit";
 var emailErrorText = "Invalid email";
 var passwordErrorText = "Must have at least one digit, one lowercase and uppercase letter";
 
+function validateUser() {
+    var isValid = true;
+    isValid = validateEmail() && isValid;
+    isValid = validatePassword("password", "helpPass", "passwordForm") && isValid;
+    return isValid;
+}
+
 function validateTenant() {
     var isValid = true;
     isValid = validateAccount() && isValid;

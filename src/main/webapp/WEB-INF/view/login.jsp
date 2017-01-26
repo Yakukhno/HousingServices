@@ -5,7 +5,7 @@
 </div>
 <form class="form-horizontal col-md-offset-3 col-md-6" method="post" action="/rest/login">
     <div class="form-group">
-        <label for="login" class="control-label col-md-4">Email or account id</label>
+        <label for="login" class="control-label col-md-4">Email</label>
         <div class="col-md-8">
             <input class="form-control col-md-8" type="text" id="login" name="login"/><br/>
         </div>

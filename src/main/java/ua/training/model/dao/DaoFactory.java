@@ -12,8 +12,7 @@ public abstract class DaoFactory {
     public abstract DaoConnection getConnection();
 
     public abstract ApplicationDao createApplicationDao(DaoConnection daoConnection);
-    public abstract TenantDao createTenantDao(DaoConnection daoConnection);
-    public abstract DispatcherDao createDispatcherDao(DaoConnection daoConnection);
+    public abstract UserDao createUserDao(DaoConnection daoConnection);
     public abstract WorkerDao createWorkerDao(DaoConnection daoConnection);
     public abstract BrigadeDao createBrigadeDao(DaoConnection daoConnection);
     public abstract TaskDao createTaskDao(DaoConnection daoConnection);

@@ -16,7 +16,7 @@ public class GetTenantApplications implements Command {
             = "/WEB-INF/view/tenant_applications.jsp";
 
     private static final String TENANT_ID_REGEXP
-            = "(?<=/tenant/)[\\d]+(?=/application)";
+            = "(?<=/user/)[\\d]+(?=/application)";
 
     private ApplicationService applicationService
             = ApplicationServiceImpl.getInstance();
@@ -30,7 +30,7 @@ public class GetTenantApplications implements Command {
         if (matcher.find()) {
             int tenantId = Integer.parseInt(matcher.group());
             request.setAttribute("applications",
-                    applicationService.getApplicationsByTenantId(tenantId));
+                    applicationService.getApplicationsByUserId(tenantId));
             return TENANT_APPLICATIONS_JSP_PATH;
         } else {
             throw new RuntimeException("Invalid URL");

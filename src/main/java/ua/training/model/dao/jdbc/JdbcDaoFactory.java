@@ -39,13 +39,8 @@ public class JdbcDaoFactory extends DaoFactory {
     }
 
     @Override
-    public TenantDao createTenantDao(DaoConnection daoConnection) {
-        return new JdbcTenantDao(getSqlConnection(daoConnection));
-    }
-
-    @Override
-    public DispatcherDao createDispatcherDao(DaoConnection daoConnection) {
-        return new JdbcDispatcherDao(getSqlConnection(daoConnection));
+    public UserDao createUserDao(DaoConnection daoConnection) {
+        return new JdbcUserDao(getSqlConnection(daoConnection));
     }
 
     @Override

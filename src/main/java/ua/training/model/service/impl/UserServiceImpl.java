@@ -1,13 +1,13 @@
 package ua.training.model.service.impl;
 
 import ua.training.model.dao.DaoConnection;
+import ua.training.model.dao.DaoException;
 import ua.training.model.dao.DaoFactory;
-import ua.training.model.dao.DispatcherDao;
-import ua.training.model.dao.TenantDao;
-import ua.training.model.entities.person.Tenant;
+import ua.training.model.dao.UserDao;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
 
+import java.util.List;
 import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
@@ -25,38 +25,75 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> loginEmail(String email, String password) {
+    public Optional<User> getUserById(int id) {
         try (DaoConnection connection = daoFactory.getConnection()) {
-            connection.begin();
-
-            TenantDao tenantDao = daoFactory.createTenantDao(connection);
-            Optional<User> user = tenantDao.getTenantByEmail(email)
-                    .filter(tenant -> password.equals(tenant.getPassword()))
-                    .map(tenant -> tenant);
-
-            if (!user.isPresent()) {
-                DispatcherDao dispatcherDao
-                        = daoFactory.createDispatcherDao(connection);
-                user = dispatcherDao.getDispatcherByEmail(email)
-                        .filter(dispatcher
-                                -> password.equals(dispatcher.getPassword()))
-                        .map(dispatcher -> dispatcher);
-                user.ifPresent(user1 -> dispatcherDao
-                        .setDispatcherOnline(user1.getId(), true));
-            }
-
-            connection.commit();
-            return user;
+            UserDao userDao = daoFactory.createUserDao(connection);
+            return userDao.get(id);
         }
     }
 
     @Override
-    public Optional<User> loginAccount(int account, String password) {
+    public Optional<User> getUserByEmail(String email) {
         try (DaoConnection connection = daoFactory.getConnection()) {
-            return daoFactory.createTenantDao(connection)
-                    .getTenantByAccount(account)
-                    .filter(tenant -> password.equals(tenant.getPassword()))
-                    .map(tenant -> tenant);
+            UserDao userDao = daoFactory.createUserDao(connection);
+            return userDao.getUserByEmail(email);
+        }
+    }
+
+    @Override
+    public Optional<User> loginEmail(String email, String password) {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            UserDao userDao = daoFactory.createUserDao(connection);
+            return userDao.getUserByEmail(email)
+                    .filter(user -> password.equals(user.getPassword()));
+        }
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            UserDao userDao = daoFactory.createUserDao(connection);
+            return userDao.getAll();
+        }
+    }
+
+    @Override
+    public void updateUser(User user, String password) {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            UserDao userDao = daoFactory.createUserDao(connection);
+            connection.begin();
+            Optional<User> userFromDao = userDao.get(user.getId());
+            if (userFromDao.isPresent()) {
+                if (userDao.getUserByEmail(user.getEmail())
+                        .filter(user1 -> !user1.getEmail()
+                                        .equals(user.getPassword())
+                        )
+                        .isPresent()) {
+                    throw new DaoException("This email is already exists");
+                }
+                if (password.equals(userFromDao.get().getPassword())) {
+                    userDao.update(user);
+                    connection.commit();
+                } else {
+                    throw new DaoException("Incorrect password");
+                }
+            } else {
+                throw new DaoException("Invalid user id");
+            }
+        }
+    }
+
+    @Override
+    public void createNewUser(User user) {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            UserDao userDao = daoFactory.createUserDao(connection);
+            connection.begin();
+            if (!userDao.getUserByEmail(user.getEmail()).isPresent()) {
+                userDao.add(user);
+                connection.commit();
+            } else {
+                throw new DaoException("This email is already exists");
+            }
         }
     }
 }

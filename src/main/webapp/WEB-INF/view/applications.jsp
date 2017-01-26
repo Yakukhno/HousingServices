@@ -18,7 +18,7 @@
             </thead>
             <tbody>
             <c:forEach var="application" items="${requestScope.applications}">
-                <tr>
+               <tr>
                     <td>${application.id}</td>
                     <td>${application.typeOfWork.description}</td>
                     <td>${application.scaleOfProblem}</td>

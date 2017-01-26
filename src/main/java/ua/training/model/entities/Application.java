@@ -1,14 +1,13 @@
 package ua.training.model.entities;
 
-import ua.training.model.entities.person.Tenant;
+import ua.training.model.entities.person.User;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class Application {
     private int id;
     private TypeOfWork typeOfWork;
-    private Tenant tenant;
+    private User tenant;
     private ProblemScale scaleOfProblem;
     private LocalDateTime desiredTime;
 
@@ -28,11 +27,11 @@ public class Application {
         this.typeOfWork = typeOfWork;
     }
 
-    public Tenant getTenant() {
+    public User getTenant() {
         return tenant;
     }
 
-    public void setTenant(Tenant tenant) {
+    public void setTenant(User tenant) {
         this.tenant = tenant;
     }
 
@@ -76,7 +75,7 @@ public class Application {
             return this;
         }
 
-        public Builder setTenant(Tenant tenant) {
+        public Builder setTenant(User tenant) {
             application.setTenant(tenant);
             return this;
         }

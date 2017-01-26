@@ -42,11 +42,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<Application> getApplicationsByTenantId(int tenantId) {
+    public List<Application> getApplicationsByUserId(int userId) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             ApplicationDao applicationDao
                     = daoFactory.createApplicationDao(connection);
-            return applicationDao.getApplicationsByTenantId(tenantId);
+            return applicationDao.getApplicationsByUserId(userId);
         }
     }
 
