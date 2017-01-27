@@ -1,14 +1,10 @@
-package ua.training.controller.command;
+package ua.training.controller.command.application;
 
-import ua.training.model.entities.Application;
+import ua.training.controller.command.Command;
 import ua.training.model.entities.ProblemScale;
-import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.ApplicationService;
-import ua.training.model.service.UserService;
 import ua.training.model.service.impl.ApplicationServiceImpl;
-import ua.training.model.service.impl.TypeOfWorkServiceImpl;
-import ua.training.model.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +25,6 @@ public class PostApplication implements Command {
 
     private ApplicationService applicationService
             = ApplicationServiceImpl.getInstance();
-    private UserService userService
-            = UserServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
@@ -43,27 +37,21 @@ public class PostApplication implements Command {
         String paramDateTime = request.getParameter(PARAM_DATE_TIME);
         if ((sessionUser != null) && (paramTypeOfWork != null)
                 && (paramProblemScale != null) && (paramDateTime != null)) {
-            LocalDateTime localDateTime = paramDateTime.isEmpty()
-                    ? null
-                    : LocalDateTime.parse(paramDateTime);
-            User user = UserServiceImpl.getInstance()
-                    .getUserById(sessionUser.getId())
-                    .orElseThrow(
-                            () -> new RuntimeException("Invalid user id")
-                    );
-            TypeOfWork typeOfWork = TypeOfWorkServiceImpl.getInstance()
-                    .getTypeOfWorkByDescription(paramTypeOfWork).get(0);
+            int typeOfWorkId = Integer.parseInt(paramTypeOfWork);
+            ProblemScale problemScale = ProblemScale.valueOf(paramProblemScale);
+            LocalDateTime localDateTime = getLocalDateTime(paramDateTime);
+            applicationService.createNewApplication(sessionUser.getId(),
+                    typeOfWorkId, problemScale, localDateTime);
 
-            Application application = new Application.Builder()
-                    .setTenant(user)
-                    .setTypeOfWork(typeOfWork)
-                    .setScaleOfProblem(ProblemScale.valueOf(paramProblemScale))
-                    .setDesiredTime(localDateTime)
-                    .build();
-            applicationService.createNewApplication(application);
-
-            pageToGo = String.format(TENANT_APPLICATIONS_PATH, user.getId());
+            pageToGo = String.format(TENANT_APPLICATIONS_PATH,
+                    sessionUser.getId());
         }
         return pageToGo;
+    }
+
+    private LocalDateTime getLocalDateTime(String paramDateTime) {
+        return paramDateTime.isEmpty()
+                ? null
+                : LocalDateTime.parse(paramDateTime);
     }
 }

@@ -1,5 +1,6 @@
-package ua.training.controller.command;
+package ua.training.controller.command.application;
 
+import ua.training.controller.command.Command;
 import ua.training.model.entities.ProblemScale;
 import ua.training.model.service.TypeOfWorkService;
 import ua.training.model.service.impl.TypeOfWorkServiceImpl;

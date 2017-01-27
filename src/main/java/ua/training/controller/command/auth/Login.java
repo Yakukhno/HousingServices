@@ -1,5 +1,6 @@
-package ua.training.controller.command;
+package ua.training.controller.command.auth;
 
+import ua.training.controller.command.Command;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
 import ua.training.model.service.impl.UserServiceImpl;

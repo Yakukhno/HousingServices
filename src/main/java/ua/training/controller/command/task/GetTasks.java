@@ -1,5 +1,6 @@
-package ua.training.controller.command;
+package ua.training.controller.command.task;
 
+import ua.training.controller.command.Command;
 import ua.training.model.service.TaskService;
 import ua.training.model.service.impl.TaskServiceImpl;
 

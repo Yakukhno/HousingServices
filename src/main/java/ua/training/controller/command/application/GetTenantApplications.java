@@ -1,5 +1,6 @@
-package ua.training.controller.command;
+package ua.training.controller.command.application;
 
+import ua.training.controller.command.Command;
 import ua.training.model.service.ApplicationService;
 import ua.training.model.service.impl.ApplicationServiceImpl;
 

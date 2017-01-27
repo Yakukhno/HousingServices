@@ -1,11 +1,14 @@
 package ua.training.model.service.impl;
 
-import ua.training.model.dao.ApplicationDao;
-import ua.training.model.dao.DaoConnection;
-import ua.training.model.dao.DaoFactory;
+import ua.training.model.dao.*;
 import ua.training.model.entities.Application;
+import ua.training.model.entities.ProblemScale;
+import ua.training.model.entities.TypeOfWork;
+import ua.training.model.entities.person.User;
 import ua.training.model.service.ApplicationService;
+import ua.training.model.service.ServiceException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,5 +78,47 @@ public class ApplicationServiceImpl implements ApplicationService {
                     = daoFactory.createApplicationDao(connection);
             applicationDao.add(application);
         }
+    }
+
+    @Override
+    public void createNewApplication(int userId, int typeOfWorkId,
+                                     ProblemScale problemScale,
+                                     LocalDateTime localDateTime) {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            UserDao userDao = daoFactory.createUserDao(connection);
+            TypeOfWorkDao typeOfWorkDao
+                    = daoFactory.createTypeOfWorkDao(connection);
+            ApplicationDao applicationDao
+                    = daoFactory.createApplicationDao(connection);
+
+            connection.begin();
+            User user = getUser(userDao, userId);
+            TypeOfWork typeOfWork = getTypeOfWork(typeOfWorkDao, typeOfWorkId);
+            Application application = new Application.Builder()
+                    .setTenant(user)
+                    .setTypeOfWork(typeOfWork)
+                    .setScaleOfProblem(problemScale)
+                    .setDesiredTime(localDateTime)
+                    .setStatus(Application.Status.NEW)
+                    .build();
+            applicationDao.add(application);
+            connection.commit();
+        }
+    }
+
+    private User getUser(UserDao userDao, int userId) {
+        return userDao.get(userId)
+                .filter(user -> user.getRole().equals(User.Role.TENANT))
+                .orElseThrow(
+                        () -> new ServiceException("Invalid user id")
+                );
+    }
+
+    private TypeOfWork getTypeOfWork(TypeOfWorkDao typeOfWorkDao,
+                                     int typeOfWorkId) {
+        return typeOfWorkDao.get(typeOfWorkId)
+                .orElseThrow(
+                        () -> new ServiceException("Invalid typeOfWork id")
+                );
     }
 }

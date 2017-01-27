@@ -99,6 +99,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private Brigade getBrigade(Worker manager, List<Worker> workers) {
+        workers.removeIf(worker -> worker.equals(manager));
         return new Brigade.Builder()
                 .setManager(manager)
                 .setWorkers(workers)

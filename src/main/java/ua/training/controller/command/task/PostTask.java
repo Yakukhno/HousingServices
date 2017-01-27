@@ -1,5 +1,6 @@
-package ua.training.controller.command;
+package ua.training.controller.command.task;
 
+import ua.training.controller.command.Command;
 import ua.training.model.service.TaskService;
 import ua.training.model.service.impl.TaskServiceImpl;
 
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,15 +34,32 @@ public class PostTask implements Command {
         String paramManager = request.getParameter(PARAM_MANAGER);
         String[] paramWorkers = request.getParameterValues(PARAM_WORKER);
         if ((paramApplication != null) && (paramManager != null)
-                && (paramWorkers != null) && (paramDateTime != null)) {
+                && (paramDateTime != null)) {
             int applicationId = Integer.parseInt(paramApplication);
             int managerId = Integer.parseInt(paramManager);
-            List<Integer> workersIdsList = Arrays.stream(paramWorkers)
-                    .map(Integer::parseInt).collect(Collectors.toList());
-            LocalDateTime dateTime = LocalDateTime.parse(paramDateTime);
+            List<Integer> workersIdsList = getWorkersIds(paramWorkers);
+            LocalDateTime dateTime = getLocalDateTime(paramDateTime);
             taskService.createNewTask(applicationId, managerId,
                     workersIdsList, dateTime);
         }
         return APPLICATIONS_PATH;
     }
+
+    private List<Integer> getWorkersIds(String[] paramWorkers) {
+        List<Integer> workersIdsList = new ArrayList<>();
+        if (paramWorkers != null) {
+            workersIdsList = Arrays.stream(paramWorkers)
+                    .map(Integer::parseInt).collect(Collectors.toList());
+        }
+        return workersIdsList;
+    }
+
+    private LocalDateTime getLocalDateTime(String paramDateTime) {
+        if (!paramDateTime.isEmpty()) {
+            return LocalDateTime.parse(paramDateTime);
+        } else {
+            throw new RuntimeException("Date should be determined");
+        }
+    }
+
 }

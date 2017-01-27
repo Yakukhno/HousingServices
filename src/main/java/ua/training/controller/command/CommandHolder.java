@@ -1,5 +1,22 @@
 package ua.training.controller.command;
 
+import ua.training.controller.command.application.AddApplicationPage;
+import ua.training.controller.command.application.GetApplications;
+import ua.training.controller.command.application.GetTenantApplications;
+import ua.training.controller.command.application.PostApplication;
+import ua.training.controller.command.auth.Login;
+import ua.training.controller.command.auth.LoginPage;
+import ua.training.controller.command.auth.Logout;
+import ua.training.controller.command.brigade.GetBrigade;
+import ua.training.controller.command.error.ErrorPage;
+import ua.training.controller.command.task.AddTaskPage;
+import ua.training.controller.command.task.GetTasks;
+import ua.training.controller.command.task.PostTask;
+import ua.training.controller.command.user.GetUser;
+import ua.training.controller.command.user.PostUser;
+import ua.training.controller.command.user.RegisterUserPage;
+import ua.training.controller.command.user.UpdateUser;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,9 +24,9 @@ import static ua.training.controller.Routes.*;
 
 public final class CommandHolder {
 
-    public final static Map<String, Command> commands = new HashMap<>();
+    public final Map<String, Command> commands = new HashMap<>();
 
-    static {
+    {
         commands.put(HOME, new HomePage());
         commands.put(GET_USER, new GetUser());
         commands.put(POST_USER, new PostUser());

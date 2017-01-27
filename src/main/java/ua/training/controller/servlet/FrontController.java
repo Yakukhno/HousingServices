@@ -20,7 +20,7 @@ public class FrontController extends HttpServlet {
     private static final String FORWARD_ROUTE = ".jsp";
     private static final String REDIRECT_ROUTE = "/rest";
 
-    private final Map<String, Command> commands = CommandHolder.commands;
+    private final Map<String, Command> commands = new CommandHolder().commands;
 
     @Override
     public void init() throws ServletException {

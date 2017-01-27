@@ -1,5 +1,6 @@
-package ua.training.controller.command;
+package ua.training.controller.command.brigade;
 
+import ua.training.controller.command.Command;
 import ua.training.model.service.BrigadeService;
 import ua.training.model.service.impl.BrigadeServiceImpl;
 

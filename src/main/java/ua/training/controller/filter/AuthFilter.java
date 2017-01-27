@@ -43,17 +43,15 @@ public class AuthFilter implements Filter {
                             HttpServletResponse response,
                             FilterChain chain)
             throws ServletException, IOException {
-        if (user != null) {
-            switch (user.getRole()) {
-                case TENANT:
-                    filterTenant(uri, request, response, chain);
-                    break;
-                case DISPATCHER:
-                    filterDispatcher(uri, request, response, chain);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown enum component");
-            }
+        switch (user.getRole()) {
+            case TENANT:
+                filterTenant(uri, request, response, chain);
+                break;
+            case DISPATCHER:
+                filterDispatcher(uri, request, response, chain);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown enum component");
         }
     }
 

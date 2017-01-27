@@ -10,7 +10,7 @@
         <div class="col-md-8">
             <select id="typeOfWork" name="typeOfWork" class="form-control">
                 <c:forEach var="typeOfWork" items="${requestScope[Attributes.TYPE_OF_WORK]}">
-                    <option>${typeOfWork.description}</option>
+                    <option value="${typeOfWork.id}">${typeOfWork.description}</option>
                 </c:forEach>
             </select>
         </div>
