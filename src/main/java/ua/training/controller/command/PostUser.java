@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static ua.training.controller.Attributes.MESSAGE;
+
 public class PostUser implements Command {
 
     private static final String PARAM_NAME = "name";
@@ -44,7 +46,7 @@ public class PostUser implements Command {
                 );
                 pageToGo = LOGIN_PATH;
             } catch (DaoException e) {
-                request.setAttribute("message", e.getMessage());
+                request.setAttribute(MESSAGE, e.getMessage());
                 pageToGo = REGISTER_USER_JSP;
             }
         }

@@ -1,10 +1,10 @@
 package ua.training.model.service.impl;
 
 import ua.training.model.dao.DaoConnection;
-import ua.training.model.dao.DaoException;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.UserDao;
 import ua.training.model.entities.person.User;
+import ua.training.model.service.ServiceException;
 import ua.training.model.service.UserService;
 
 import java.util.List;
@@ -61,25 +61,18 @@ public class UserServiceImpl implements UserService {
     public void updateUser(User user, String password) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
+
             connection.begin();
             Optional<User> userFromDao = userDao.get(user.getId());
-            if (userFromDao.isPresent()) {
-                if (userDao.getUserByEmail(user.getEmail())
-                        .filter(user1 -> !user1.getEmail()
-                                        .equals(user.getPassword())
-                        )
-                        .isPresent()) {
-                    throw new DaoException("This email is already exists");
-                }
-                if (password.equals(userFromDao.get().getPassword())) {
-                    userDao.update(user);
-                    connection.commit();
-                } else {
-                    throw new DaoException("Incorrect password");
-                }
-            } else {
-                throw new DaoException("Invalid user id");
-            }
+            userFromDao.orElseThrow(() -> new ServiceException(
+                    "Invalid user id"
+            ));
+            userFromDao.filter(user1 -> user1.getPassword().equals(password))
+                    .orElseThrow(() -> new ServiceException(
+                            "Incorrect password"
+                    ));
+            userDao.update(user);
+            connection.commit();
         }
     }
 
@@ -87,13 +80,7 @@ public class UserServiceImpl implements UserService {
     public void createNewUser(User user) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
-            connection.begin();
-            if (!userDao.getUserByEmail(user.getEmail()).isPresent()) {
-                userDao.add(user);
-                connection.commit();
-            } else {
-                throw new DaoException("This email is already exists");
-            }
+            userDao.add(user);
         }
     }
 }

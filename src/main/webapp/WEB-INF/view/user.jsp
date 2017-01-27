@@ -2,10 +2,10 @@
 <div class="row">
     <h2 align="center">
         <c:choose>
-            <c:when test="${requestScope.user.role.equals(applicationScope.tenant)}">
+            <c:when test="${requestScope[Attributes.USER].role eq applicationScope[Attributes.TENANT]}">
                 Tenant profile
             </c:when>
-            <c:when test="${requestScope.user.role.equals(applicationScope.dispatcher)}">
+            <c:when test="${requestScope[Attributes.USER].role eq applicationScope[Attributes.DISPATCHER]}">
                 Dispatcher profile
             </c:when>
             <c:otherwise>
@@ -20,7 +20,7 @@
             <p>Name</p>
         </div>
         <div class="col-md-6">
-            <p>${requestScope.user.name}</p>
+            <p>${requestScope[Attributes.USER].name}</p>
         </div>
     </div>
     <div class="row">
@@ -28,7 +28,7 @@
             <p>Email</p>
         </div>
         <div class="col-md-6">
-            <p>${requestScope.user.email}</p>
+            <p>${requestScope[Attributes.USER].email}</p>
         </div>
     </div>
     <div class="row">
@@ -61,10 +61,10 @@
                 <button class="btn btn-default" type="submit">Change</button>
             </div>
         </div>
-        <c:if test="${requestScope.message != null}">
+        <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
             <div class="row">
                 <div class="alert alert-danger" align="center" role="alert">
-                        ${requestScope.message}
+                        ${requestScope[Attributes.MESSAGE]}
                 </div>
             </div>
         </c:if>

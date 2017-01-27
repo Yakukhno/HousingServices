@@ -8,7 +8,7 @@
     <div class="col-lg-offset-1 col-lg-10">
         <c:choose>
             <c:when test="${requestScope.workers.size() != 0}">
-                <form class="form-horizontal" name="brigadeForm" onsubmit="return validateBrigade()" method="post" action="/rest/brigade">
+                <form class="form-horizontal" name="brigadeForm" onsubmit="return validateBrigade()" method="post" action="/rest/task">
                     <table class="table table-striped" align="center">
                         <thead>
                         <tr>

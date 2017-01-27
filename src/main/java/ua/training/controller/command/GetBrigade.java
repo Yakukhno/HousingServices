@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ua.training.controller.Attributes.BRIGADE;
+
 public class GetBrigade implements Command {
 
     private static final String BRIGADE_JSP_PATH = "/WEB-INF/view/brigade.jsp";
@@ -29,7 +31,7 @@ public class GetBrigade implements Command {
             int brigadeId = Integer.parseInt(matcher.group());
             return brigadeService.getBrigadeById(brigadeId)
                     .map(brigade -> {
-                        request.setAttribute("brigade", brigade);
+                        request.setAttribute(BRIGADE, brigade);
                         return BRIGADE_JSP_PATH;
                     })
                     .orElse(ERROR);

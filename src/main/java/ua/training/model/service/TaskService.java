@@ -12,5 +12,5 @@ public interface TaskService {
     List<Task> getAllTasks();
     void createNewTask(Task task);
     void createNewTask(int applicationId, int managerId,
-                       LocalDateTime dateTime, List<Integer> workersIds);
+                       List<Integer> workersIds, LocalDateTime dateTime);
 }

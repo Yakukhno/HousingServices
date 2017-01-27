@@ -12,15 +12,18 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AddBrigadePage implements Command {
+import static ua.training.controller.Attributes.APPLICATION;
+import static ua.training.controller.Attributes.WORKERS;
 
-    private static final String ADD_BRIGADE_JSP_PATH
-            = "/WEB-INF/view/add_brigade.jsp";
+public class AddTaskPage implements Command {
+
+    private static final String ADD_TASK_JSP_PATH
+            = "/WEB-INF/view/add_task.jsp";
     private static final String ERROR = "error";
     private static final String RESOURCE_NOT_FOUND = "Resource not found!";
 
     private static final String APPLICATION_ID_REGEXP
-            = "(?<=/application/)[\\d]+(?=/add_brigade)";
+            = "(?<=/application/)[\\d]+(?=/add_task)";
 
     private ApplicationService applicationService
             = ApplicationServiceImpl.getInstance();
@@ -36,11 +39,11 @@ public class AddBrigadePage implements Command {
             int applicationId = Integer.parseInt(matcher.group());
             return applicationService.getApplicationById(applicationId)
                     .map(application -> {
-                        request.setAttribute("application",
+                        request.setAttribute(APPLICATION,
                                 applicationId);
-                        request.setAttribute("workers",
+                        request.setAttribute(WORKERS,
                                 workerService.getAllWorkers());
-                        return ADD_BRIGADE_JSP_PATH;
+                        return ADD_TASK_JSP_PATH;
                     })
                     .orElse(ERROR);
         } else {

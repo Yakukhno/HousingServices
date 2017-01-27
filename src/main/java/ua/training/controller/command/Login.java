@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
+import static ua.training.controller.Attributes.MESSAGE;
+import static ua.training.controller.Attributes.USER;
+
 public class Login implements Command {
 
     private static final String PARAM_LOGIN = "login";
@@ -37,10 +40,10 @@ public class Login implements Command {
                 user = userService.loginEmail(paramLogin, paramPassword);
             }
             pageToGo = user.map(sessionUser -> {
-                request.getSession().setAttribute("user", sessionUser);
+                request.getSession().setAttribute(USER, sessionUser);
                 return String.format(USER_PATH, sessionUser.getId());
             }).orElseGet(() -> {
-                request.setAttribute("message", "Incorrect email or password");
+                request.setAttribute(MESSAGE, "Incorrect email or password");
                 return LOGIN_JSP;
             });
         }

@@ -1,6 +1,6 @@
 package ua.training.controller;
 
-public class Routes {
+public class    Routes {
     public static final String HOME = "GET:/";
     public static final String GET_USER = "^GET:/user/[\\d]+$";
     public static final String POST_USER = "POST:/user";
@@ -13,10 +13,10 @@ public class Routes {
     public static final String GET_LOGIN_PAGE = "GET:/login";
     public static final String GET_REGISTER_USER_PAGE = "GET:/register_user";
     public static final String GET_ADD_APPLICATION_PAGE = "GET:/add_application";
-    public static final String GET_ADD_BRIGADE_PAGE = "^GET:/application/[\\d]+/add_brigade";
+    public static final String GET_ADD_TASK_PAGE = "^GET:/application/[\\d]+/add_task";
     public static final String GET_TASKS = "GET:/task";
+    public static final String POST_TASK = "POST:/task";
     public static final String GET_BRIGADE = "^GET:/brigade/[\\d]+$";
-    public static final String POST_BRIGADE = "POST:/brigade";
 
     public static final String GET_USER_WITH_ID = "GET:/user/%d";
     public static final String GET_USER_APPLICATIONS_WITH_ID = "GET:/user/%d/application";

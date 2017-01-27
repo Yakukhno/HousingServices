@@ -9,38 +9,25 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
+import static ua.training.controller.Attributes.DISPATCHER;
+import static ua.training.controller.Attributes.TENANT;
 import static ua.training.controller.Routes.*;
 
 public class FrontController extends HttpServlet {
 
-    private final Map<String, Command> commands = new HashMap<>();
+    private static final String FORWARD_ROUTE = ".jsp";
+    private static final String REDIRECT_ROUTE = "/rest";
+
+    private final Map<String, Command> commands = CommandHolder.commands;
 
     @Override
     public void init() throws ServletException {
         super.init();
         ServletContext servletContext = getServletContext();
-        servletContext.setAttribute("tenant", User.Role.TENANT);
-        servletContext.setAttribute("dispatcher", User.Role.DISPATCHER);
-        commands.put(HOME, new HomePage());
-        commands.put(GET_USER, new GetUser());
-        commands.put(POST_USER, new PostUser());
-        commands.put(UPDATE_USER, new UpdateUser());
-        commands.put(GET_TENANT_APPLICATION, new GetTenantApplications());
-        commands.put(GET_APPLICATIONS, new GetApplications());
-        commands.put(POST_APPLICATION, new PostApplication());
-        commands.put(POST_LOGIN, new Login());
-        commands.put(POST_LOGOUT, new Logout());
-        commands.put(GET_LOGIN_PAGE, new LoginPage());
-        commands.put(GET_REGISTER_USER_PAGE, new RegisterUserPage());
-        commands.put(GET_ADD_APPLICATION_PAGE, new AddApplicationPage());
-        commands.put(GET_ADD_BRIGADE_PAGE, new AddBrigadePage());
-        commands.put(GET_TASKS, new GetTasks());
-        commands.put(GET_BRIGADE, new GetBrigade());
-        commands.put(POST_BRIGADE, new PostBrigade());
-        commands.put(ERROR_PAGE, new ErrorPage());
+        servletContext.setAttribute(TENANT, User.Role.TENANT);
+        servletContext.setAttribute(DISPATCHER, User.Role.DISPATCHER);
     }
 
     protected void doPost(HttpServletRequest request,
@@ -58,18 +45,26 @@ public class FrontController extends HttpServlet {
     private void processRequest(HttpServletRequest request,
                                 HttpServletResponse response)
             throws ServletException, IOException {
-        String tempCommand = request.getMethod().toUpperCase() + ":"
-                + request.getRequestURI().replaceAll(".*/rest", "");
-        String command = commands.keySet()
+        String tempCommand = formCommand(request);
+        String commandStr = commands.keySet()
                 .stream()
                 .filter(tempCommand::matches)
                 .findFirst()
-                .orElseGet(() -> HOME);
-        String jspPath = commands.get(command).execute(request, response);
-        if (jspPath.endsWith(".jsp")) {
-            request.getRequestDispatcher(jspPath).forward(request, response);
-        } else if (!jspPath.equals("error")) {
-            response.sendRedirect(jspPath);
+                .orElse(HOME);
+        Command command = commands.get(commandStr);
+        String route = command.execute(request, response);
+        if (route.endsWith(FORWARD_ROUTE)) {
+            request.getRequestDispatcher(route).forward(request, response);
+        } else if (route.startsWith(REDIRECT_ROUTE)) {
+            response.sendRedirect(route);
         }
     }
+
+    private String formCommand(HttpServletRequest request) {
+        return request.getMethod().toUpperCase() + ":"
+                + request.getRequestURI().replaceAll(".*/rest", "");
+    }
+
+
+
 }

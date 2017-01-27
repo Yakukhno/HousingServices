@@ -103,7 +103,7 @@ public class JdbcTaskDao implements TaskDao {
         try (PreparedStatement statement =
                      connection.prepareStatement(UPDATE)) {
             setStatementFromTask(statement, task);
-            statement.setInt(4, task.getId());
+            statement.setInt(5, task.getId());
             statement.execute();
         } catch (SQLException e) {
             throw new DaoException(e);

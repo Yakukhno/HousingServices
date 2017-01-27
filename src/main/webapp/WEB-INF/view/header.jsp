@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="ua.training.controller.Attributes" %>
 <%@ taglib prefix="c"
            uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -17,11 +18,11 @@
             <ul class="nav navbar-nav">
                 <c:choose>
                     <c:when test="${sessionScope.user != null and sessionScope.user.role.equals(applicationScope.tenant)}">
-                        <li><a href="/rest/user/${sessionScope.user.id}">Profile</a></li>
-                        <li><a href="/rest/user/${sessionScope.user.id}/application">Applications</a></li>
+                        <li><a href="/rest/user/${sessionScope[Attributes.USER].id}">Profile</a></li>
+                        <li><a href="/rest/user/${sessionScope[Attributes.USER].id}/application">Applications</a></li>
                     </c:when>
                     <c:when test="${sessionScope.user != null and sessionScope.user.role.equals(applicationScope.dispatcher)}">
-                        <li><a href="/rest/user/${sessionScope.user.id}">Profile</a></li>
+                        <li><a href="/rest/user/${sessionScope[Attributes.USER].id}">Profile</a></li>
                         <li><a href="/rest/application">Applications</a></li>
                     </c:when>
                 </c:choose>
@@ -29,7 +30,7 @@
             </ul>
             <div class="nav navbar-nav navbar-right">
                 <c:choose>
-                    <c:when test="${sessionScope.user == null}">
+                    <c:when test="${empty sessionScope.user}">
                         <a class="btn btn-default navbar-btn" href="/rest/register_user" role="button">Sign up</a>
                         <a class="btn btn-default navbar-btn" href="/rest/login" role="button">Login</a>
                     </c:when>

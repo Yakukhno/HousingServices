@@ -21,10 +21,10 @@
             <button class="btn btn-default" type="submit">Login</button>
         </div>
     </div>
-    <c:if test="${requestScope.message != null}">
+    <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
         <div class="row">
             <div class="alert alert-danger" align="center" role="alert">
-                    ${requestScope.message}
+                    ${requestScope[Attributes.MESSAGE]}
             </div>
         </div>
     </c:if>

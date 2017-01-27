@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static ua.training.controller.Attributes.TASKS;
+
 public class GetTasks implements Command {
 
     private static final String TASKS_JSP_PATH = "/WEB-INF/view/tasks.jsp";
@@ -18,7 +20,7 @@ public class GetTasks implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("tasks", taskService.getAllTasks());
+        request.setAttribute(TASKS, taskService.getActiveTasks());
         return TASKS_JSP_PATH;
     }
 }

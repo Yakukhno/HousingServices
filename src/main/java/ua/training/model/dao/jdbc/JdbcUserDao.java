@@ -84,7 +84,7 @@ public class JdbcUserDao implements UserDao {
                 user.setId(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            throw new DaoException(Integer.toString(e.getErrorCode()), e);
         }
     }
 
@@ -107,7 +107,7 @@ public class JdbcUserDao implements UserDao {
             statement.setInt(5, user.getId());
             statement.execute();
         } catch (SQLException e) {
-            throw new DaoException(e);
+            throw new DaoException(Integer.toString(e.getErrorCode()), e);
         }
     }
 

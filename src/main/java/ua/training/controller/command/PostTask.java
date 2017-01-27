@@ -8,10 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class PostBrigade implements Command {
+public class PostTask implements Command {
 
     private static final String PARAM_MANAGER = "manager";
     private static final String PARAM_APPLICATION = "application";
@@ -30,17 +31,15 @@ public class PostBrigade implements Command {
         String paramDateTime = request.getParameter(PARAM_TIME);
         String paramManager = request.getParameter(PARAM_MANAGER);
         String[] paramWorkers = request.getParameterValues(PARAM_WORKER);
-        if ((paramManager != null) && (paramWorkers != null)) {
+        if ((paramApplication != null) && (paramManager != null)
+                && (paramWorkers != null) && (paramDateTime != null)) {
             int applicationId = Integer.parseInt(paramApplication);
             int managerId = Integer.parseInt(paramManager);
-            List<Integer> workersIdsList = new ArrayList<>();
-            for (String string : paramWorkers) {
-                workersIdsList.add(Integer.parseInt(string));
-            }
+            List<Integer> workersIdsList = Arrays.stream(paramWorkers)
+                    .map(Integer::parseInt).collect(Collectors.toList());
             LocalDateTime dateTime = LocalDateTime.parse(paramDateTime);
-
             taskService.createNewTask(applicationId, managerId,
-                    dateTime, workersIdsList);
+                    workersIdsList, dateTime);
         }
         return APPLICATIONS_PATH;
     }

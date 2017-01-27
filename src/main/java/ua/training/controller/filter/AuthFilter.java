@@ -105,9 +105,9 @@ public class AuthFilter implements Filter {
         int userId = user.getId();
         if ((uri.equals(POST_LOGOUT))
                 || (uri.equals(GET_APPLICATIONS))
-                || (uri.matches(GET_ADD_BRIGADE_PAGE))
+                || (uri.matches(GET_ADD_TASK_PAGE))
                 || (uri.matches(GET_BRIGADE))
-                || (uri.equals(POST_BRIGADE))
+                || (uri.equals(POST_TASK))
                 || (uri.equals(String.format(GET_USER_WITH_ID, userId)))
                 || (uri.equals(String.format(UPDATE_USER_WITH_ID, userId)))
                 || (uri.equals(GET_TASKS))) {

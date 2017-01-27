@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
         <c:choose>
-            <c:when test="${requestScope.applications.size() != 0}">
+            <c:when test="${requestScope[Attributes.APPLICATIONS].size() != 0}">
                 <table class="table table-striped" align="center">
                     <thead>
                     <tr>
@@ -20,7 +20,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach var="application" items="${requestScope.applications}">
+                    <c:forEach var="application" items="${requestScope[Attributes.APPLICATIONS]}">
                        <tr>
                             <td>${application.id}</td>
                             <td>${application.typeOfWork.description}</td>
@@ -28,7 +28,9 @@
                             <td>${application.desiredTime}</td>
                             <td>${application.status}</td>
                             <td>
-                                <a class="btn btn-default" href="/rest/application/${application.id}/add_brigade" role="button">Form a brigade</a>
+                                <c:if test="${application.status eq requestScope[Attributes.STATUS_NEW]}">
+                                    <a class="btn btn-default" href="/rest/application/${application.id}/add_task" role="button">Form a brigade</a>
+                                </c:if>
                             </td>
                         </tr>
                     </c:forEach>

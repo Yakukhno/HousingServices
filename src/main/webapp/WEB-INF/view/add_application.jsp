@@ -4,12 +4,12 @@
     <h3 align="center">Create a new application</h3>
 </div>
 <form class="form-horizontal col-md-offset-3 col-md-6" method="post" action="/rest/application">
-    <input type="hidden" id="tenantId" value="${sessionScope.user.id}"/>
+    <input type="hidden" id="tenantId" value="${sessionScope[Attributes.USER].id}"/>
     <div class="form-group">
         <label for="typeOfWork" class="control-label col-md-4">Type of work</label>
         <div class="col-md-8">
             <select id="typeOfWork" name="typeOfWork" class="form-control">
-                <c:forEach var="typeOfWork" items="${requestScope.typesOfWork}">
+                <c:forEach var="typeOfWork" items="${requestScope[Attributes.TYPE_OF_WORK]}">
                     <option>${typeOfWork.description}</option>
                 </c:forEach>
             </select>
@@ -19,7 +19,7 @@
         <label for="problemScale" class="control-label col-md-4">Problem scale</label>
         <div class="col-md-8">
             <select id="problemScale" name="problemScale" class="form-control">
-                <c:forEach var="problemScale" items="${requestScope.problemScales}">
+                <c:forEach var="problemScale" items="${requestScope[Attributes.PROBLEM_SCALE]}">
                     <option>${problemScale}</option>
                 </c:forEach>
             </select>

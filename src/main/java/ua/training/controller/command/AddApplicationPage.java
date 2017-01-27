@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static ua.training.controller.Attributes.PROBLEM_SCALE;
+import static ua.training.controller.Attributes.TYPE_OF_WORK;
+
 public class AddApplicationPage implements Command {
 
     private static final String ADD_APPLICATION_JSP_PATH
@@ -21,9 +24,9 @@ public class AddApplicationPage implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("typesOfWork",
+        request.setAttribute(TYPE_OF_WORK,
                 typeOfWorkService.getAllTypesOfWork());
-        request.setAttribute("problemScales", ProblemScale.values());
+        request.setAttribute(PROBLEM_SCALE, ProblemScale.values());
         return ADD_APPLICATION_JSP_PATH;
     }
 }

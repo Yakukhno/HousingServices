@@ -28,8 +28,8 @@
         <label for="role" class="control-label col-md-4">Role</label>
         <div class="col-md-8">
             <select id="role" name="role" class="form-control">
-                <option>${applicationScope.tenant}</option>
-                <option>${applicationScope.dispatcher}</option>
+                <option>${applicationScope[Attributes.TENANT]}</option>
+                <option>${applicationScope[Attributes.DISPATCHER]}</option>
             </select>
         </div>
     </div>
@@ -38,10 +38,10 @@
             <button class="btn btn-default" type="submit">Send</button>
         </div>
     </div>
-    <c:if test="${requestScope.message != null}">
+    <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
         <div class="row">
             <div class="alert alert-danger" align="center" role="alert">
-                    ${requestScope.message}
+                    ${requestScope[Attributes.MESSAGE]}
             </div>
         </div>
     </c:if>

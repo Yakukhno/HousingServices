@@ -123,7 +123,7 @@ public class JdbcApplicationDao implements ApplicationDao {
         try (PreparedStatement statement =
                      connection.prepareStatement(UPDATE)) {
             setStatementFromApplication(statement, application);
-            statement.setInt(5, application.getId());
+            statement.setInt(6, application.getId());
             statement.execute();
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -211,6 +211,6 @@ public class JdbcApplicationDao implements ApplicationDao {
         statement.setInt(2, application.getTypeOfWork().getId());
         statement.setString(3, application.getScaleOfProblem().name());
         statement.setTimestamp(4, timestamp);
-        statement.setString(4, application.getStatus().name());
+        statement.setString(5, application.getStatus().name());
     }
 }

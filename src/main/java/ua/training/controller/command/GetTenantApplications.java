@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ua.training.controller.Attributes.APPLICATIONS;
+
 public class GetTenantApplications implements Command {
 
     private static final String TENANT_APPLICATIONS_JSP_PATH
@@ -29,7 +31,7 @@ public class GetTenantApplications implements Command {
         Matcher matcher = pattern.matcher(request.getRequestURI());
         if (matcher.find()) {
             int tenantId = Integer.parseInt(matcher.group());
-            request.setAttribute("applications",
+            request.setAttribute(APPLICATIONS,
                     applicationService.getApplicationsByUserId(tenantId));
             return TENANT_APPLICATIONS_JSP_PATH;
         } else {

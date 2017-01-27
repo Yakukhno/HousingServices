@@ -2,6 +2,7 @@ package ua.training.controller.command;
 
 import ua.training.model.dao.DaoException;
 import ua.training.model.entities.person.User;
+import ua.training.model.service.ServiceException;
 import ua.training.model.service.UserService;
 import ua.training.model.service.impl.UserServiceImpl;
 
@@ -11,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static ua.training.controller.Attributes.MESSAGE;
+import static ua.training.controller.Attributes.USER;
 
 public class UpdateUser implements Command {
 
@@ -47,8 +51,8 @@ public class UpdateUser implements Command {
             } catch (DaoException e) {
                 user = userService.getUserById(userId)
                         .orElseThrow(() -> e);
-                request.setAttribute("user", user);
-                request.setAttribute("message", e.getMessage());
+                request.setAttribute(USER, user);
+                request.setAttribute(MESSAGE, e.getMessage());
                 pageToGo = USER_JSP_PATH;
             }
         } else {
@@ -62,7 +66,7 @@ public class UpdateUser implements Command {
                                       String password) {
         User user = userService.getUserById(userId)
                 .orElseThrow(
-                        () -> new DaoException("Invalid user id")
+                        () -> new ServiceException("Invalid user id")
                 );
         if (!email.isEmpty()) {
             user.setEmail(email);

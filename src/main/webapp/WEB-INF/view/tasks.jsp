@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
         <c:choose>
-            <c:when test="${requestScope.applications.size() != 0}">
+            <c:when test="${requestScope[Attributes.APPLICATIONS].size() != 0}">
                 <table class="table table-striped" align="center">
                     <thead>
                     <tr>
@@ -19,7 +19,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach var="task" items="${requestScope.tasks}">
+                    <c:forEach var="task" items="${requestScope[Attributes.TASKS]}">
                         <tr>
                             <td>${task.application.id}</td>
                             <td>${task.application.typeOfWork.description}</td>

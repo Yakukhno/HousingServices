@@ -5,6 +5,7 @@ import ua.training.model.entities.Application;
 import ua.training.model.entities.Brigade;
 import ua.training.model.entities.Task;
 import ua.training.model.entities.person.Worker;
+import ua.training.model.service.ServiceException;
 import ua.training.model.service.TaskService;
 
 import java.time.LocalDateTime;
@@ -60,42 +61,67 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void createNewTask(int applicationId, int managerId,
-                              LocalDateTime dateTime, List<Integer> workersIds) {
+                              List<Integer> workersIds, LocalDateTime dateTime) {
         try (DaoConnection connection = daoFactory.getConnection()) {
-            connection.begin();
             BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
             WorkerDao workerDao = daoFactory.createWorkerDao(connection);
-            ApplicationDao applicationDao = daoFactory.createApplicationDao(connection);
             TaskDao taskDao = daoFactory.createTaskDao(connection);
+            ApplicationDao applicationDao
+                    = daoFactory.createApplicationDao(connection);
 
-            Worker manager = workerDao.get(managerId)
-                    .orElseThrow(
-                            () -> new RuntimeException("Invalid worker id")
-                    );
-            List<Worker> workers = new ArrayList<>();
-            for (int workerId : workersIds) {
-                workers.add(workerDao.get(workerId)
-                        .orElseThrow(
-                                () -> new RuntimeException("Invalid worker id")
-                        ));
-            }
-            Brigade brigade = new Brigade.Builder()
-                    .setManager(manager)
-                    .setWorkers(workers)
-                    .build();
+            connection.begin();
+            Brigade brigade = getBrigade(getWorker(workerDao, managerId),
+                    getWorkers(workerDao, workersIds));
             brigadeDao.add(brigade);
 
-            Application application = applicationDao.get(applicationId)
-                    .orElseThrow(
-                            () -> new RuntimeException("Invalid worker id")
-                    );
+            Application application = getApplication(applicationDao,
+                    applicationId);
+            applicationDao.update(application);
 
             taskDao.add(new Task.Builder()
                     .setBrigade(brigade)
                     .setApplication(application)
                     .setScheduledTime(dateTime)
+                    .setActive(true)
                     .build());
             connection.commit();
         }
     }
+
+    private Application getApplication(ApplicationDao applicationDao,
+                                       int applicationId) {
+        Application application = applicationDao.get(applicationId)
+                .orElseThrow(
+                        () -> new ServiceException("Invalid application id")
+                );
+        application.setStatus(Application.Status.CONSIDERED);
+        return application;
+    }
+
+    private Brigade getBrigade(Worker manager, List<Worker> workers) {
+        return new Brigade.Builder()
+                .setManager(manager)
+                .setWorkers(workers)
+                .build();
+    }
+
+    private Worker getWorker(WorkerDao workerDao, int managerId) {
+        return workerDao.get(managerId)
+                .orElseThrow(
+                        () -> new ServiceException("Invalid worker id")
+                );
+    }
+
+    private List<Worker> getWorkers(WorkerDao workerDao,
+                                    List<Integer> workersIds) {
+        List<Worker> workers = new ArrayList<>();
+        for (int workerId : workersIds) {
+            workers.add(getWorker(workerDao, workerId));
+        }
+        return workers;
+    }
+
+
+
+
 }

@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ua.training.controller.Attributes.USER;
+
 public class GetUser implements Command {
 
     private static final String USER_JSP_PATH = "/WEB-INF/view/user.jsp";
@@ -29,7 +31,7 @@ public class GetUser implements Command {
             int userId = Integer.parseInt(matcher.group());
             return userService.getUserById(userId)
                     .map(user -> {
-                        request.setAttribute("user", user);
+                        request.setAttribute(USER, user);
                         return USER_JSP_PATH;
                     })
                     .orElse(ERROR);
