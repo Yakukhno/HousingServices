@@ -29,7 +29,10 @@
                             <td>${application.status}</td>
                             <td>
                                 <c:if test="${application.status eq requestScope[Attributes.STATUS_NEW]}">
-                                    <a class="btn btn-default" href="/rest/application/${application.id}/add_task" role="button">Form a brigade</a>
+                                    <form method="get" action="/rest/add_task">
+                                        <input type="hidden" name="application" value="${application.id}"/>
+                                        <button class="btn btn-default" type="submit">Form a brigade</button>
+                                    </form>
                                 </c:if>
                             </td>
                         </tr>

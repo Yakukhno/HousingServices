@@ -11,8 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static ua.training.controller.Attributes.MESSAGE;
 import static ua.training.controller.Attributes.USER;
@@ -25,7 +23,6 @@ public class UpdateUser implements Command {
 
     private static final String USER_PATH = "/rest/user/%s";
 
-    private static final String USER_URI_REGEXP = "(?<=/user/)[\\d]+";
     private static final String USER_JSP_PATH = "/WEB-INF/view/user.jsp";
 
     private UserService userService = UserServiceImpl.getInstance();
@@ -34,21 +31,17 @@ public class UpdateUser implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        Pattern pattern = Pattern.compile(USER_URI_REGEXP);
-        Matcher matcher = pattern.matcher(request.getRequestURI());
-
-        String pageToGo;
+        User sessionUser = (User) request.getSession().getAttribute("user");
+        String pageToGo = String.format(USER_PATH, sessionUser.getId());
         String newEmail = request.getParameter(PARAM_EMAIL);
         String oldPassword = request.getParameter(PARAM_OLD_PASSWORD);
         String newPassword = request.getParameter(PARAM_NEW_PASSWORD);
-        if (matcher.find() && (newEmail != null)
-                && (newPassword != null) && (oldPassword != null)) {
-            int userId = Integer.parseInt(matcher.group());
+        if ((newEmail != null) && (newPassword != null)
+                && (oldPassword != null)) {
+            int userId = Integer.parseInt(getUserIdFromRequest(request));
             User user = getUserWithSetFields(userId, newEmail, newPassword);
-
             try {
                 userService.updateUser(user, oldPassword);
-                pageToGo = String.format(USER_PATH, user.getId());
             } catch (DaoException e) {
                 user = userService.getUserById(userId)
                         .orElseThrow(() -> e);
@@ -56,8 +49,6 @@ public class UpdateUser implements Command {
                 request.setAttribute(MESSAGE, e.getMessage());
                 pageToGo = USER_JSP_PATH;
             }
-        } else {
-            throw new RuntimeException("Invalid URL");
         }
         return pageToGo;
     }
@@ -76,5 +67,11 @@ public class UpdateUser implements Command {
             user.setPassword(password);
         }
         return user;
+    }
+
+    private String getUserIdFromRequest(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        uri = uri.substring(uri.lastIndexOf('/') + 1);
+        return uri;
     }
 }

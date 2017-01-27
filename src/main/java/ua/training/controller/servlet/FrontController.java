@@ -1,6 +1,7 @@
 package ua.training.controller.servlet;
 
-import ua.training.controller.command.*;
+import ua.training.controller.command.Command;
+import ua.training.controller.command.CommandHolder;
 import ua.training.model.entities.person.User;
 
 import javax.servlet.ServletContext;
@@ -13,7 +14,6 @@ import java.util.Map;
 
 import static ua.training.controller.Attributes.DISPATCHER;
 import static ua.training.controller.Attributes.TENANT;
-import static ua.training.controller.Routes.*;
 
 public class FrontController extends HttpServlet {
 
@@ -25,6 +25,7 @@ public class FrontController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
+        System.out.println("Test");
         ServletContext servletContext = getServletContext();
         servletContext.setAttribute(TENANT, User.Role.TENANT);
         servletContext.setAttribute(DISPATCHER, User.Role.DISPATCHER);
@@ -45,13 +46,7 @@ public class FrontController extends HttpServlet {
     private void processRequest(HttpServletRequest request,
                                 HttpServletResponse response)
             throws ServletException, IOException {
-        String tempCommand = formCommand(request);
-        String commandStr = commands.keySet()
-                .stream()
-                .filter(tempCommand::matches)
-                .findFirst()
-                .orElse(HOME);
-        Command command = commands.get(commandStr);
+        Command command = commands.get(formCommand(request));
         String route = command.execute(request, response);
         if (route.endsWith(FORWARD_ROUTE)) {
             request.getRequestDispatcher(route).forward(request, response);
@@ -62,7 +57,7 @@ public class FrontController extends HttpServlet {
 
     private String formCommand(HttpServletRequest request) {
         return request.getMethod().toUpperCase() + ":"
-                + request.getRequestURI().replaceAll(".*/rest", "");
+                + request.getRequestURI().replaceAll("(.*/rest)|(\\d+)", "");
     }
 
 

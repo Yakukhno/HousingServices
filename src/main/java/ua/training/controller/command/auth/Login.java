@@ -21,6 +21,7 @@ public class Login implements Command {
 
     private static final String HOME_PATH = "/";
     private static final String USER_PATH = "/rest/user/%s";
+    private static final String LOGIN_PATH = "/rest/login";
     private static final String LOGIN_JSP = "/WEB-INF/view/login.jsp";
 
     private static final String EMAIL_REGEXP = "^[\\w.%+-]+@[A-Za-z0-9.-]" +
@@ -32,7 +33,7 @@ public class Login implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        String pageToGo = HOME_PATH;
+        String pageToGo = LOGIN_PATH;
         String paramLogin = request.getParameter(PARAM_LOGIN);
         String paramPassword = request.getParameter(PARAM_PASSWORD);
         if ((paramLogin != null) && (paramPassword != null)) {

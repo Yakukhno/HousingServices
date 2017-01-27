@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import static ua.training.controller.Routes.*;
 
@@ -15,8 +17,17 @@ public class AuthFilter implements Filter {
     private static final String RESOURCE_NOT_FOUND = "Resource not found!";
     private static final String ATTR_USER = "user";
 
+    private Set<String> guestAllowedRoutes = new HashSet<>();
+
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {}
+    public void init(FilterConfig filterConfig) throws ServletException {
+        guestAllowedRoutes.add(GET_TASKS);
+        guestAllowedRoutes.add(GET_LOGIN_PAGE);
+        guestAllowedRoutes.add(POST_LOGIN);
+        guestAllowedRoutes.add(GET_REGISTER_USER_PAGE);
+        guestAllowedRoutes.add(POST_USER);
+        guestAllowedRoutes.add(GET_BRIGADE);
+    }
 
     @Override
     public void doFilter(ServletRequest request,
@@ -27,7 +38,7 @@ public class AuthFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpSession session = req.getSession();
         String uri = req.getMethod().toUpperCase() + ":"
-                + req.getRequestURI().replaceAll(".*/rest", "");
+                + req.getRequestURI().replaceAll("(.*/rest)|(\\d+)", "");
         User user = ((User) session.getAttribute(ATTR_USER));
         if (user != null) {
             filterUser(user, uri, req, resp, chain);
@@ -59,11 +70,7 @@ public class AuthFilter implements Filter {
                              HttpServletResponse response,
                              FilterChain chain)
             throws ServletException, IOException {
-        if ((uri.equals(GET_TASKS)) || (uri.equals(GET_LOGIN_PAGE))
-                || (uri.equals(POST_LOGIN))
-                || (uri.equals(GET_REGISTER_USER_PAGE))
-                || (uri.equals(POST_USER))
-                || (uri.matches(GET_BRIGADE))) {
+        if (guestAllowedRoutes.contains(uri)) {
             chain.doFilter(request, response);
         } else {
             response.sendRedirect("/rest/login");
@@ -80,15 +87,15 @@ public class AuthFilter implements Filter {
                 || (uri.equals(POST_APPLICATION))
                 || (uri.equals(POST_LOGOUT))
                 || (uri.equals(GET_ADD_APPLICATION_PAGE))
-                || (uri.matches(GET_BRIGADE))
+                || (uri.equals(GET_BRIGADE))
                 || (uri.equals(String.format(GET_USER_WITH_ID, userId)))
                 || (uri.equals(String.format(UPDATE_USER_WITH_ID, userId)))
                 || (uri.equals(GET_TASKS))) {
             chain.doFilter(request, response);
-        } else if ((uri.matches(GET_USER))
-                || uri.matches(UPDATE_USER)) {
+        } else if ((uri.equals(GET_USER))
+                || uri.equals(UPDATE_USER)) {
             response.sendRedirect("/rest/user/" + userId);
-        } else if ((uri.matches(GET_USER_APPLICATIONS_WITH_ID))){
+        } else if ((uri.equals(GET_USER_APPLICATIONS_WITH_ID))){
             response.sendRedirect("/rest/user/" + userId + "/application");
         } else {
             response.sendRedirect("/rest/user/" + userId);
@@ -103,15 +110,15 @@ public class AuthFilter implements Filter {
         int userId = user.getId();
         if ((uri.equals(POST_LOGOUT))
                 || (uri.equals(GET_APPLICATIONS))
-                || (uri.matches(GET_ADD_TASK_PAGE))
-                || (uri.matches(GET_BRIGADE))
+                || (uri.equals(GET_ADD_TASK_PAGE))
+                || (uri.equals(GET_BRIGADE))
                 || (uri.equals(POST_TASK))
                 || (uri.equals(String.format(GET_USER_WITH_ID, userId)))
                 || (uri.equals(String.format(UPDATE_USER_WITH_ID, userId)))
                 || (uri.equals(GET_TASKS))) {
             chain.doFilter(request, response);
-        } else if ((uri.matches(GET_USER)
-                || (uri.matches(UPDATE_USER)))) {
+        } else if ((uri.equals(GET_USER)
+                || (uri.equals(UPDATE_USER)))) {
             response.sendRedirect("/rest/user/" + user.getId());
         } else {
             response.sendRedirect("/rest/user/" + user.getId());

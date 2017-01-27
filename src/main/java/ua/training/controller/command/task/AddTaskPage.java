@@ -10,21 +10,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static ua.training.controller.Attributes.APPLICATION;
 import static ua.training.controller.Attributes.WORKERS;
 
 public class AddTaskPage implements Command {
 
+    private static final String APPLICATIONS_PATH = "/rest/applications";
     private static final String ADD_TASK_JSP_PATH
             = "/WEB-INF/view/add_task.jsp";
     private static final String ERROR = "error";
     private static final String RESOURCE_NOT_FOUND = "Resource not found!";
-
-    private static final String APPLICATION_ID_REGEXP
-            = "(?<=/application/)[\\d]+(?=/add_task)";
 
     private ApplicationService applicationService
             = ApplicationServiceImpl.getInstance();
@@ -34,10 +30,9 @@ public class AddTaskPage implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        Pattern pattern = Pattern.compile(APPLICATION_ID_REGEXP);
-        Matcher matcher = pattern.matcher(request.getRequestURI());
-        if (matcher.find()) {
-            int applicationId = Integer.parseInt(matcher.group());
+        String paramApplicationId = request.getParameter(APPLICATION);
+        if (paramApplicationId != null) {
+            int applicationId = Integer.parseInt(paramApplicationId);
             return applicationService.getApplicationById(applicationId)
                     .map(application -> {
                         request.setAttribute(APPLICATION,
@@ -47,8 +42,7 @@ public class AddTaskPage implements Command {
                         return ADD_TASK_JSP_PATH;
                     })
                     .orElse(ERROR);
-        } else {
-            throw new RuntimeException("Invalid URL");
         }
+        return APPLICATIONS_PATH;
     }
 }

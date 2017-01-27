@@ -8,8 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static ua.training.controller.Attributes.USER;
 
@@ -18,26 +16,24 @@ public class GetUser implements Command {
     private static final String USER_JSP_PATH = "/WEB-INF/view/user.jsp";
     private static final String ERROR = "error";
 
-    private static final String USER_URI_REGEXP = "(?<=/user/)[\\d]+";
-
     private UserService userService = UserServiceImpl.getInstance();
 
     @Override
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        Pattern pattern = Pattern.compile(USER_URI_REGEXP);
-        Matcher matcher = pattern.matcher(request.getRequestURI());
-        if (matcher.find()) {
-            int userId = Integer.parseInt(matcher.group());
-            return userService.getUserById(userId)
-                    .map(user -> {
-                        request.setAttribute(USER, user);
-                        return USER_JSP_PATH;
-                    })
-                    .orElse(ERROR);
-        } else {
-            throw new RuntimeException("Invalid URL");
-        }
+        int userId = Integer.parseInt(getUserIdFromRequest(request));
+        return userService.getUserById(userId)
+                .map(user -> {
+                    request.setAttribute(USER, user);
+                    return USER_JSP_PATH;
+                })
+                .orElse(ERROR);
+    }
+
+    private String getUserIdFromRequest(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        uri = uri.substring(uri.lastIndexOf('/') + 1);
+        return uri;
     }
 }
