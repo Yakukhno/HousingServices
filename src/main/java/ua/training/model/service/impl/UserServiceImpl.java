@@ -41,11 +41,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> loginEmail(String email, String password) {
+    public User loginEmail(String email, String password) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
             return userDao.getUserByEmail(email)
-                    .filter(user -> password.equals(user.getPassword()));
+                    .filter(user -> password.equals(user.getPassword()))
+                    .orElseThrow(() -> new ServiceException()
+                            .setUserMessage("Incorrect email or password!"));
         }
     }
 
@@ -68,9 +70,8 @@ public class UserServiceImpl implements UserService {
                     "Invalid user id"
             ));
             userFromDao.filter(user1 -> user1.getPassword().equals(password))
-                    .orElseThrow(() -> new ServiceException(
-                            "Incorrect password"
-                    ));
+                    .orElseThrow(() -> new ServiceException()
+                            .setUserMessage("Incorrect password"));
             userDao.update(user);
             connection.commit();
         }

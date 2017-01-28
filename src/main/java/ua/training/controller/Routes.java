@@ -22,5 +22,6 @@ public class    Routes {
     public static final String GET_USER_APPLICATIONS_WITH_ID = "GET:/user/%d/application";
     public static final String UPDATE_USER_WITH_ID = "POST:/user/%d";
 
-    public static final String ERROR_PAGE = "GET:/error";
+    public static final String GET_ERROR_PAGE = "GET:/error";
+    public static final String POST_ERROR_PAGE = "POST:/error";
 }

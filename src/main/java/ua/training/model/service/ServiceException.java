@@ -1,6 +1,8 @@
 package ua.training.model.service;
 
-public class ServiceException extends RuntimeException {
+import ua.training.exception.ApplicationException;
+
+public class ServiceException extends ApplicationException {
     public ServiceException() {
         super();
     }

@@ -24,14 +24,9 @@
     </filter-mapping>
 
     <error-page>
-        <error-code>404</error-code>
+        <exception-type>java.lang.Throwable</exception-type>
         <location>/rest/error</location>
     </error-page>
-
-    <!--<error-page>-->
-        <!--<exception-type>java.lang.Throwable</exception-type>-->
-        <!--<location>/rest/error</location>-->
-    <!--</error-page>-->
 
     <session-config>
         <session-timeout>30</session-timeout>

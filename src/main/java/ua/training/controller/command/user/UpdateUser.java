@@ -1,7 +1,7 @@
 package ua.training.controller.command.user;
 
 import ua.training.controller.command.Command;
-import ua.training.model.dao.DaoException;
+import ua.training.exception.ApplicationException;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.ServiceException;
 import ua.training.model.service.UserService;
@@ -42,12 +42,16 @@ public class UpdateUser implements Command {
             User user = getUserWithSetFields(userId, newEmail, newPassword);
             try {
                 userService.updateUser(user, oldPassword);
-            } catch (DaoException e) {
-                user = userService.getUserById(userId)
-                        .orElseThrow(() -> e);
-                request.setAttribute(USER, user);
-                request.setAttribute(MESSAGE, e.getMessage());
-                pageToGo = USER_JSP_PATH;
+            } catch (ApplicationException e) {
+                if (e.isUserMessage()) {
+                    user = userService.getUserById(userId)
+                            .orElseThrow(() -> e);
+                    request.setAttribute(USER, user);
+                    request.setAttribute(MESSAGE, e.getUserMessage());
+                    pageToGo = USER_JSP_PATH;
+                } else {
+                    throw e;
+                }
             }
         }
         return pageToGo;

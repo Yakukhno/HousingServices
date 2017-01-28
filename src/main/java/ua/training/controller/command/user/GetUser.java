@@ -14,7 +14,6 @@ import static ua.training.controller.Attributes.USER;
 public class GetUser implements Command {
 
     private static final String USER_JSP_PATH = "/WEB-INF/view/user.jsp";
-    private static final String ERROR = "error";
 
     private UserService userService = UserServiceImpl.getInstance();
 
@@ -28,7 +27,7 @@ public class GetUser implements Command {
                     request.setAttribute(USER, user);
                     return USER_JSP_PATH;
                 })
-                .orElse(ERROR);
+                .orElseThrow(() -> new RuntimeException("Resource not found!"));
     }
 
     private String getUserIdFromRequest(HttpServletRequest request) {

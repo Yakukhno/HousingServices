@@ -14,7 +14,6 @@ import static ua.training.controller.Attributes.BRIGADE;
 public class GetBrigade implements Command {
 
     private static final String BRIGADE_JSP_PATH = "/WEB-INF/view/brigade.jsp";
-    private static final String ERROR = "error";
 
     private BrigadeService brigadeService = BrigadeServiceImpl.getInstance();
 
@@ -28,7 +27,7 @@ public class GetBrigade implements Command {
                     request.setAttribute(BRIGADE, brigade);
                     return BRIGADE_JSP_PATH;
                 })
-                .orElse(ERROR);
+                .orElseThrow(() -> new RuntimeException("Resource not found!"));
     }
 
     private String getBrigadeIdFromRequest(HttpServletRequest request) {

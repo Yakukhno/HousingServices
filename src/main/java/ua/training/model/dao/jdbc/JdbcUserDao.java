@@ -84,7 +84,7 @@ public class JdbcUserDao implements UserDao {
                 user.setId(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw new DaoException(Integer.toString(e.getErrorCode()), e);
+            throw getDaoException(user, e);
         }
     }
 
@@ -107,7 +107,7 @@ public class JdbcUserDao implements UserDao {
             statement.setInt(5, user.getId());
             statement.execute();
         } catch (SQLException e) {
-            throw new DaoException(Integer.toString(e.getErrorCode()), e);
+            throw getDaoException(user, e);
         }
     }
 
@@ -160,5 +160,14 @@ public class JdbcUserDao implements UserDao {
         statement.setString(2, user.getEmail());
         statement.setString(3, user.getPassword());
         statement.setString(4, user.getRole().name());
+    }
+
+    private DaoException getDaoException(User user, SQLException e) {
+        DaoException daoException = new DaoException(e);
+        if (e.getErrorCode() == 1062) {
+            daoException.setUserMessage("Email " + user.getEmail()
+                    + " is already exists!");
+        }
+        return daoException;
     }
 }

@@ -1,7 +1,7 @@
 package ua.training.controller.command.user;
 
 import ua.training.controller.command.Command;
-import ua.training.model.dao.DaoException;
+import ua.training.exception.ApplicationException;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
 import ua.training.model.service.impl.UserServiceImpl;
@@ -46,9 +46,13 @@ public class PostUser implements Command {
                         .build()
                 );
                 pageToGo = LOGIN_PATH;
-            } catch (DaoException e) {
-                request.setAttribute(MESSAGE, e.getMessage());
-                pageToGo = REGISTER_USER_JSP;
+            } catch (ApplicationException e) {
+                if (e.isUserMessage()) {
+                    request.setAttribute(MESSAGE, e.getUserMessage());
+                    pageToGo = REGISTER_USER_JSP;
+                } else {
+                    throw e;
+                }
             }
         }
         return pageToGo;

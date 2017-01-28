@@ -25,7 +25,6 @@ public class FrontController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        System.out.println("Test");
         ServletContext servletContext = getServletContext();
         servletContext.setAttribute(TENANT, User.Role.TENANT);
         servletContext.setAttribute(DISPATCHER, User.Role.DISPATCHER);
@@ -46,7 +45,8 @@ public class FrontController extends HttpServlet {
     private void processRequest(HttpServletRequest request,
                                 HttpServletResponse response)
             throws ServletException, IOException {
-        Command command = commands.get(formCommand(request));
+        String strCommand = formCommand(request);
+        Command command = commands.get(strCommand);
         String route = command.execute(request, response);
         if (route.endsWith(FORWARD_ROUTE)) {
             request.getRequestDispatcher(route).forward(request, response);
