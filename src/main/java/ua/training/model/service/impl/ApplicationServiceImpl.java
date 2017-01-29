@@ -11,15 +11,16 @@ import ua.training.model.service.ServiceException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public class ApplicationServiceImpl implements ApplicationService {
 
-    private static final String EXCEPTION_INVALID_USER_ID
-            = "User with id = %d doesn't exist";
-    private static final String EXCEPTION_INVALID_TYPE_OF_WORK_ID
-            = "Type of work with id = %d doesn't exist";
+    private static final String EXCEPTION_USER_WITH_ID_NOT_FOUND
+            = "User with id = %d not found";
+    private static final String EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND
+            = "Type of work with id = %d not found";
+    private static final String EXCEPTION_APPLICATION_WITH_ID_NOT_FOUND
+            = "Application with id = %d not found";
 
     private DaoFactory daoFactory = DaoFactory.getInstance();
     private Logger logger = Logger.getLogger(ApplicationServiceImpl.class);
@@ -35,11 +36,20 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Optional<Application> getApplicationById(int id) {
+    public Application getApplicationById(int id) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             ApplicationDao applicationDao
                     = daoFactory.createApplicationDao(connection);
-            return applicationDao.get(id);
+            return applicationDao.get(id).orElseThrow(
+                    () -> {
+                        String message = String.format(
+                                EXCEPTION_APPLICATION_WITH_ID_NOT_FOUND, id
+                        );
+                        ServiceException e = new ServiceException(message);
+                        logger.error(message, e);
+                        return e;
+                    }
+            );
         }
     }
 
@@ -117,15 +127,19 @@ public class ApplicationServiceImpl implements ApplicationService {
     private User getUser(UserDao userDao, int userId) {
         return userDao.get(userId)
                 .filter(user -> user.getRole().equals(User.Role.TENANT))
-                .orElseThrow(getServiceExceptionSupplier(userId,
-                        EXCEPTION_INVALID_USER_ID));
+                .orElseThrow(
+                        getServiceExceptionSupplier(userId,
+                                EXCEPTION_USER_WITH_ID_NOT_FOUND)
+                );
     }
 
     private TypeOfWork getTypeOfWork(TypeOfWorkDao typeOfWorkDao,
                                      int typeOfWorkId) {
         return typeOfWorkDao.get(typeOfWorkId)
-                .orElseThrow(getServiceExceptionSupplier(typeOfWorkId,
-                        EXCEPTION_INVALID_TYPE_OF_WORK_ID));
+                .orElseThrow(
+                        getServiceExceptionSupplier(typeOfWorkId,
+                                EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND)
+                );
     }
 
     private Supplier<ServiceException> getServiceExceptionSupplier(int id,

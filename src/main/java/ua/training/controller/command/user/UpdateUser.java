@@ -3,7 +3,6 @@ package ua.training.controller.command.user;
 import ua.training.controller.command.Command;
 import ua.training.exception.ApplicationException;
 import ua.training.model.entities.person.User;
-import ua.training.model.service.ServiceException;
 import ua.training.model.service.UserService;
 import ua.training.model.service.impl.UserServiceImpl;
 
@@ -44,8 +43,7 @@ public class UpdateUser implements Command {
                 userService.updateUser(user, oldPassword);
             } catch (ApplicationException e) {
                 if (e.isUserMessage()) {
-                    user = userService.getUserById(userId)
-                            .orElseThrow(() -> e);
+                    user = userService.getUserById(userId);
                     request.setAttribute(USER, user);
                     request.setAttribute(MESSAGE, e.getUserMessage());
                     pageToGo = USER_JSP_PATH;
@@ -60,10 +58,7 @@ public class UpdateUser implements Command {
     private User getUserWithSetFields(int userId,
                                       String email,
                                       String password) {
-        User user = userService.getUserById(userId)
-                .orElseThrow(
-                        () -> new ServiceException("Invalid user id")
-                );
+        User user = userService.getUserById(userId);
         if (!email.isEmpty()) {
             user.setEmail(email);
         }

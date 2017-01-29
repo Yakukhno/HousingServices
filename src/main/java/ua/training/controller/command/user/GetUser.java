@@ -1,6 +1,7 @@
 package ua.training.controller.command.user;
 
 import ua.training.controller.command.Command;
+import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
 import ua.training.model.service.impl.UserServiceImpl;
 
@@ -22,12 +23,9 @@ public class GetUser implements Command {
                           HttpServletResponse response)
             throws ServletException, IOException {
         int userId = Integer.parseInt(getUserIdFromRequest(request));
-        return userService.getUserById(userId)
-                .map(user -> {
-                    request.setAttribute(USER, user);
-                    return USER_JSP_PATH;
-                })
-                .orElseThrow(() -> new RuntimeException("Resource not found!"));
+        User user = userService.getUserById(userId);
+        request.setAttribute(USER, user);
+        return USER_JSP_PATH;
     }
 
     private String getUserIdFromRequest(HttpServletRequest request) {

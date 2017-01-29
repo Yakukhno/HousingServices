@@ -1,6 +1,7 @@
 package ua.training.controller.command.task;
 
 import ua.training.controller.command.Command;
+import ua.training.model.entities.Application;
 import ua.training.model.service.ApplicationService;
 import ua.training.model.service.WorkerService;
 import ua.training.model.service.impl.ApplicationServiceImpl;
@@ -19,7 +20,6 @@ public class AddTaskPage implements Command {
     private static final String APPLICATIONS_PATH = "/rest/applications";
     private static final String ADD_TASK_JSP_PATH
             = "/WEB-INF/view/add_task.jsp";
-    private static final String ERROR = "error";
 
     private ApplicationService applicationService
             = ApplicationServiceImpl.getInstance();
@@ -32,15 +32,11 @@ public class AddTaskPage implements Command {
         String paramApplicationId = request.getParameter(APPLICATION);
         if (paramApplicationId != null) {
             int applicationId = Integer.parseInt(paramApplicationId);
-            return applicationService.getApplicationById(applicationId)
-                    .map(application -> {
-                        request.setAttribute(APPLICATION,
-                                applicationId);
-                        request.setAttribute(WORKERS,
-                                workerService.getAllWorkers());
-                        return ADD_TASK_JSP_PATH;
-                    })
-                    .orElse(ERROR);
+            Application application = applicationService
+                    .getApplicationById(applicationId);
+            request.setAttribute(APPLICATION, application);
+            request.setAttribute(WORKERS, workerService.getAllWorkers());
+            return ADD_TASK_JSP_PATH;
         }
         return APPLICATIONS_PATH;
     }

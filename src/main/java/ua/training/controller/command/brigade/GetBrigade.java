@@ -1,6 +1,7 @@
 package ua.training.controller.command.brigade;
 
 import ua.training.controller.command.Command;
+import ua.training.model.entities.Brigade;
 import ua.training.model.service.BrigadeService;
 import ua.training.model.service.impl.BrigadeServiceImpl;
 
@@ -22,12 +23,9 @@ public class GetBrigade implements Command {
                           HttpServletResponse response)
             throws ServletException, IOException {
         int brigadeId = Integer.parseInt(getBrigadeIdFromRequest(request));
-        return brigadeService.getBrigadeById(brigadeId)
-                .map(brigade -> {
-                    request.setAttribute(BRIGADE, brigade);
-                    return BRIGADE_JSP_PATH;
-                })
-                .orElseThrow(() -> new RuntimeException("Resource not found!"));
+        Brigade brigade = brigadeService.getBrigadeById(brigadeId);
+        request.setAttribute(BRIGADE, brigade);
+        return BRIGADE_JSP_PATH;
     }
 
     private String getBrigadeIdFromRequest(HttpServletRequest request) {

@@ -1,5 +1,6 @@
 package ua.training.controller.filter;
 
+import org.apache.log4j.Logger;
 import ua.training.model.entities.person.User;
 
 import javax.servlet.*;
@@ -15,7 +16,11 @@ import static ua.training.controller.Routes.*;
 
 public class AuthFilter implements Filter {
 
+    private static final String EXCEPTION_UNKNOWN_ENUM_COMPONENT
+            = "Unknown component of Role enum";
+
     private Set<String> guestAllowedRoutes = new HashSet<>();
+    private Logger logger = Logger.getLogger(AuthFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -34,8 +39,7 @@ public class AuthFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpSession session = req.getSession();
-        String uri = req.getMethod().toUpperCase() + ":"
-                + req.getRequestURI().replaceAll(".*/rest", "");
+        String uri = getUri(req);
         User user = ((User) session.getAttribute(USER));
         if (user != null) {
             filterUser(user, uri, req, resp, chain);
@@ -43,9 +47,14 @@ public class AuthFilter implements Filter {
             filterGuest(uri, req, resp, chain);
         }
     }
-
     @Override
     public void destroy() {}
+
+    private String getUri(HttpServletRequest req) {
+        return req.getMethod().toUpperCase() + ":"
+                + req.getRequestURI().replaceAll(".*/rest", "");
+    }
+
 
     private void filterUser(User user, String uri, HttpServletRequest request,
                             HttpServletResponse response,
@@ -59,7 +68,11 @@ public class AuthFilter implements Filter {
                 filterDispatcher(uri, request, response, chain);
                 break;
             default:
-                throw new IllegalArgumentException("Unknown enum component");
+                String message = EXCEPTION_UNKNOWN_ENUM_COMPONENT;
+                IllegalArgumentException e
+                        = new IllegalArgumentException(message);
+                logger.error(message, e);
+                throw e;
         }
     }
 
