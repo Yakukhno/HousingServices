@@ -1,5 +1,6 @@
 package ua.training.model.dao.jdbc;
 
+import org.apache.log4j.Logger;
 import ua.training.model.dao.DaoException;
 import ua.training.model.dao.TaskDao;
 import ua.training.model.entities.Task;
@@ -30,11 +31,25 @@ public class JdbcTaskDao implements TaskDao {
                     "scheduled_time = ?, is_active = ? " +
                     "WHERE id_task = ?";
 
+    private static final String EXCEPTION_GET_BY_ID
+            = "Failed select from 'task' with id = %d";
+    private static final String EXCEPTION_GET_BY_ACTIVE
+            = "Failed select from 'task' with is_active = true";
+    private static final String EXCEPTION_GET_ALL
+            = "Failed select from 'task'";
+    private static final String EXCEPTION_ADD
+            = "Failed insert into 'task' value = %s";
+    private static final String EXCEPTION_DELETE
+            = "Failed delete from 'task' with id = %d";
+    private static final String EXCEPTION_UPDATE
+            = "Failed update 'task' value = %s";
+
     private static final String TASK_ID = "id_task";
     private static final String TASK_SCHEDULED_TIME = "scheduled_time";
     private static final String TASK_IS_ACTIVE = "is_active";
 
     private Connection connection;
+    private Logger logger = Logger.getLogger(JdbcTaskDao.class);
 
     JdbcTaskDao(Connection connection) {
         this.connection = connection;
@@ -52,7 +67,8 @@ public class JdbcTaskDao implements TaskDao {
                 task = Optional.of(getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_GET_BY_ID, id);
+            throw getDaoException(message, e);
         }
         return task;
     }
@@ -66,7 +82,7 @@ public class JdbcTaskDao implements TaskDao {
                 tasks.add(getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            throw getDaoException(EXCEPTION_GET_ALL, e);
         }
         return tasks;
     }
@@ -83,7 +99,8 @@ public class JdbcTaskDao implements TaskDao {
                 task.setId(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_ADD, task);
+            throw getDaoException(message, e);
         }
     }
 
@@ -94,7 +111,8 @@ public class JdbcTaskDao implements TaskDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_DELETE, id);
+            throw getDaoException(message, e);
         }
     }
 
@@ -106,7 +124,8 @@ public class JdbcTaskDao implements TaskDao {
             statement.setInt(5, task.getId());
             statement.execute();
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_UPDATE, task);
+            throw getDaoException(message, e);
         }
     }
 
@@ -119,7 +138,7 @@ public class JdbcTaskDao implements TaskDao {
                 tasks.add(getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            throw getDaoException(EXCEPTION_GET_BY_ACTIVE, e);
         }
         return tasks;
     }
@@ -147,5 +166,10 @@ public class JdbcTaskDao implements TaskDao {
         statement.setInt(2, task.getBrigade().getId());
         statement.setTimestamp(3, Timestamp.valueOf(task.getScheduledTime()));
         statement.setBoolean(4, task.isActive());
+    }
+
+    private DaoException getDaoException(String message, SQLException e) {
+        logger.error(message, e);
+        return new DaoException(e);
     }
 }

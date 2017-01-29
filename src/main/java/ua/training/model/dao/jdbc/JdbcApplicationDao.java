@@ -1,5 +1,6 @@
 package ua.training.model.dao.jdbc;
 
+import org.apache.log4j.Logger;
 import ua.training.model.dao.ApplicationDao;
 import ua.training.model.dao.DaoException;
 import ua.training.model.entities.Application;
@@ -49,12 +50,30 @@ public class JdbcApplicationDao implements ApplicationDao {
                     "scale_of_problem = ?, desired_time = ?, status = ? " +
                     "WHERE id_application = ?";
 
+    private static final String EXCEPTION_GET_BY_ID
+            = "Failed select from 'application' with id = %d";
+    private static final String EXCEPTION_GET_BY_TYPE_OF_WORK
+            = "Failed select from 'application' with type_of_work like %s";
+    private static final String EXCEPTION_GET_BY_USER_ID
+            = "Failed select from 'application' with id_user = %d";
+    private static final String EXCEPTION_GET_BY_STATUS
+            = "Failed select from 'application' with status = %s";
+    private static final String EXCEPTION_GET_ALL
+            = "Failed select from 'application'";
+    private static final String EXCEPTION_ADD
+            = "Failed insert into 'application' value = %s";
+    private static final String EXCEPTION_DELETE
+            = "Failed delete from 'application' with id = %d";
+    private static final String EXCEPTION_UPDATE
+            = "Failed update 'application' value = %s";
+
     static final String APPLICATION_ID = "id_application";
     static final String APPLICATION_SCALE_OF_PROBLEM = "scale_of_problem";
     static final String APPLICATION_DESIRED_TIME = "desired_time";
     static final String APPLICATION_STATUS = "status";
 
     private Connection connection;
+    private Logger logger = Logger.getLogger(JdbcApplicationDao.class);
 
     JdbcApplicationDao(Connection connection) {
         this.connection = connection;
@@ -72,7 +91,8 @@ public class JdbcApplicationDao implements ApplicationDao {
                 application = Optional.of(getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_GET_BY_ID, id);
+            throw getDaoException(message, e);
         }
         return application;
     }
@@ -86,7 +106,7 @@ public class JdbcApplicationDao implements ApplicationDao {
                 applications.add(getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            throw getDaoException(EXCEPTION_GET_ALL, e);
         }
         return applications;
     }
@@ -103,7 +123,8 @@ public class JdbcApplicationDao implements ApplicationDao {
                 application.setId(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_ADD, application);
+            throw getDaoException(message, e);
         }
     }
 
@@ -114,7 +135,8 @@ public class JdbcApplicationDao implements ApplicationDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_DELETE, id);
+            throw getDaoException(message, e);
         }
     }
 
@@ -126,7 +148,8 @@ public class JdbcApplicationDao implements ApplicationDao {
             statement.setInt(6, application.getId());
             statement.execute();
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_UPDATE, application);
+            throw getDaoException(message, e);
         }
     }
 
@@ -142,24 +165,27 @@ public class JdbcApplicationDao implements ApplicationDao {
                 applications.add(getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_GET_BY_TYPE_OF_WORK,
+                    typeOfWork);
+            throw getDaoException(message, e);
         }
         return applications;
     }
 
     @Override
-    public List<Application> getApplicationsByUserId(int tenantId) {
+    public List<Application> getApplicationsByUserId(int userId) {
         List<Application> applications = new ArrayList<>();
         try (PreparedStatement statement =
                      connection.prepareStatement(SELECT_BY_TENANT)) {
-            statement.setInt(1, tenantId);
+            statement.setInt(1, userId);
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 applications.add(getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_GET_BY_USER_ID, userId);
+            throw getDaoException(message, e);
         }
         return applications;
     }
@@ -176,7 +202,8 @@ public class JdbcApplicationDao implements ApplicationDao {
                 applications.add(getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_GET_BY_STATUS, status);
+            throw getDaoException(message, e);
         }
         return applications;
     }
@@ -212,5 +239,10 @@ public class JdbcApplicationDao implements ApplicationDao {
         statement.setString(3, application.getScaleOfProblem().name());
         statement.setTimestamp(4, timestamp);
         statement.setString(5, application.getStatus().name());
+    }
+
+    private DaoException getDaoException(String message, SQLException e) {
+        logger.error(message, e);
+        return new DaoException(e);
     }
 }

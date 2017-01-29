@@ -1,5 +1,6 @@
 package ua.training.model.dao.jdbc;
 
+import org.apache.log4j.Logger;
 import ua.training.model.dao.DaoException;
 import ua.training.model.dao.UserDao;
 import ua.training.model.entities.person.User;
@@ -29,12 +30,30 @@ public class JdbcUserDao implements UserDao {
                     "SET name = ?, email = ?, password = ?, role = ?" +
                     "WHERE id_user = ?";
 
+    private static final String EXCEPTION_GET_BY_ID
+            = "Failed select from 'user' with id = %d";
+    private static final String EXCEPTION_GET_BY_EMAIL
+            = "Failed select from 'user' with email = %s";
+    private static final String EXCEPTION_GET_BY_ROLE
+            = "Failed select from 'user' with role = %s";
+    private static final String EXCEPTION_GET_ALL
+            = "Failed select from 'user'";
+    private static final String EXCEPTION_ADD
+            = "Failed insert into 'user' value = %s";
+    private static final String EXCEPTION_DELETE
+            = "Failed delete from 'user' with id = %d";
+    private static final String EXCEPTION_UPDATE
+            = "Failed update 'user' value = %s";
+    private static final String EXCEPTION_DUPLICATE_EMAIL
+            = "Email %s is already exists!";
+
     static final String USER_ID = "id_user";
     static final String USER_NAME = "name";
     static final String USER_EMAIL = "email";
     static final String USER_PASSWORD = "password";
     static final String USER_ROLE = "role";
 
+    private Logger logger = Logger.getLogger(Logger.class);
     private Connection connection;
 
     JdbcUserDao(Connection connection) {
@@ -53,7 +72,8 @@ public class JdbcUserDao implements UserDao {
                 user = Optional.of(getUserFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_GET_BY_ID, id);
+            throw getDaoException(message, e);
         }
         return user;
     }
@@ -67,7 +87,7 @@ public class JdbcUserDao implements UserDao {
                 users.add(getUserFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            throw getDaoException(EXCEPTION_GET_ALL, e);
         }
         return users;
     }
@@ -84,7 +104,8 @@ public class JdbcUserDao implements UserDao {
                 user.setId(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw getDaoException(user, e);
+            String message = String.format(EXCEPTION_ADD, user);
+            throw getDaoException(message, e, user);
         }
     }
 
@@ -95,7 +116,8 @@ public class JdbcUserDao implements UserDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_DELETE, id);
+            throw getDaoException(message, e);
         }
     }
 
@@ -107,7 +129,8 @@ public class JdbcUserDao implements UserDao {
             statement.setInt(5, user.getId());
             statement.execute();
         } catch (SQLException e) {
-            throw getDaoException(user, e);
+            String message = String.format(EXCEPTION_UPDATE, user);
+            throw getDaoException(message, e, user);
         }
     }
 
@@ -123,7 +146,8 @@ public class JdbcUserDao implements UserDao {
                 user = Optional.of(getUserFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_GET_BY_EMAIL, email);
+            throw getDaoException(message, e);
         }
         return user;
     }
@@ -137,7 +161,8 @@ public class JdbcUserDao implements UserDao {
                 users.add(getUserFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_GET_BY_ROLE, role);
+            throw getDaoException(message, e);
         }
         return users;
     }
@@ -162,12 +187,22 @@ public class JdbcUserDao implements UserDao {
         statement.setString(4, user.getRole().name());
     }
 
-    private DaoException getDaoException(User user, SQLException e) {
+    private DaoException getDaoException(String message, SQLException e,
+                                         User user) {
         DaoException daoException = new DaoException(e);
         if (e.getErrorCode() == 1062) {
-            daoException.setUserMessage("Email " + user.getEmail()
-                    + " is already exists!");
+            daoException.setUserMessage(
+                    String.format(EXCEPTION_DUPLICATE_EMAIL, user.getEmail())
+            );
+            logger.info(message, e);
+        } else {
+            logger.error(message, e);
         }
         return daoException;
+    }
+
+    private DaoException getDaoException(String message, SQLException e) {
+        logger.error(message, e);
+        return new DaoException(e);
     }
 }

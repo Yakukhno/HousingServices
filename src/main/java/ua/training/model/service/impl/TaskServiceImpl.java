@@ -1,5 +1,6 @@
 package ua.training.model.service.impl;
 
+import org.apache.log4j.Logger;
 import ua.training.model.dao.*;
 import ua.training.model.entities.Application;
 import ua.training.model.entities.Brigade;
@@ -15,7 +16,11 @@ import java.util.Optional;
 
 public class TaskServiceImpl implements TaskService {
 
+    private static final String EXCEPTION_INVALID_APPLICATION_ID
+            = "Application with id = %d doesn't exist";
+
     private DaoFactory daoFactory = DaoFactory.getInstance();
+    private Logger logger = Logger.getLogger(TaskServiceImpl.class);
 
     private TaskServiceImpl() {}
 
@@ -108,9 +113,12 @@ public class TaskServiceImpl implements TaskService {
 
     private Worker getWorker(WorkerDao workerDao, int managerId) {
         return workerDao.get(managerId)
-                .orElseThrow(
-                        () -> new ServiceException("Invalid worker id")
-                );
+                .orElseThrow(() -> {
+            String message = String.format(EXCEPTION_INVALID_APPLICATION_ID,
+                    managerId);
+            logger.error(message);
+            return new ServiceException(message);
+        });
     }
 
     private List<Worker> getWorkers(WorkerDao workerDao,
@@ -121,8 +129,4 @@ public class TaskServiceImpl implements TaskService {
         }
         return workers;
     }
-
-
-
-
 }

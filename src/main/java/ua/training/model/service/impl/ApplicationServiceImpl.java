@@ -1,5 +1,6 @@
 package ua.training.model.service.impl;
 
+import org.apache.log4j.Logger;
 import ua.training.model.dao.*;
 import ua.training.model.entities.Application;
 import ua.training.model.entities.ProblemScale;
@@ -11,10 +12,17 @@ import ua.training.model.service.ServiceException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class ApplicationServiceImpl implements ApplicationService {
 
+    private static final String EXCEPTION_INVALID_USER_ID
+            = "User with id = %d doesn't exist";
+    private static final String EXCEPTION_INVALID_TYPE_OF_WORK_ID
+            = "Type of work with id = %d doesn't exist";
+
     private DaoFactory daoFactory = DaoFactory.getInstance();
+    private Logger logger = Logger.getLogger(ApplicationServiceImpl.class);
 
     private ApplicationServiceImpl() {}
 
@@ -109,16 +117,23 @@ public class ApplicationServiceImpl implements ApplicationService {
     private User getUser(UserDao userDao, int userId) {
         return userDao.get(userId)
                 .filter(user -> user.getRole().equals(User.Role.TENANT))
-                .orElseThrow(
-                        () -> new ServiceException("Invalid user id")
-                );
+                .orElseThrow(getServiceExceptionSupplier(userId,
+                        EXCEPTION_INVALID_USER_ID));
     }
 
     private TypeOfWork getTypeOfWork(TypeOfWorkDao typeOfWorkDao,
                                      int typeOfWorkId) {
         return typeOfWorkDao.get(typeOfWorkId)
-                .orElseThrow(
-                        () -> new ServiceException("Invalid typeOfWork id")
-                );
+                .orElseThrow(getServiceExceptionSupplier(typeOfWorkId,
+                        EXCEPTION_INVALID_TYPE_OF_WORK_ID));
+    }
+
+    private Supplier<ServiceException> getServiceExceptionSupplier(int id,
+            String messageBlank) {
+        return () -> {
+            String message = String.format(messageBlank, id);
+            logger.error(message);
+            return new ServiceException(message);
+        };
     }
 }

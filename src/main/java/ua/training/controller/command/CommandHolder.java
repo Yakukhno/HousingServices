@@ -2,7 +2,7 @@ package ua.training.controller.command;
 
 import ua.training.controller.command.application.AddApplicationPage;
 import ua.training.controller.command.application.GetApplications;
-import ua.training.controller.command.application.GetTenantApplications;
+import ua.training.controller.command.application.GetUserApplications;
 import ua.training.controller.command.application.PostApplication;
 import ua.training.controller.command.auth.Login;
 import ua.training.controller.command.auth.LoginPage;
@@ -31,7 +31,7 @@ public final class CommandHolder {
         commands.put(GET_USER, new GetUser());
         commands.put(POST_USER, new PostUser());
         commands.put(UPDATE_USER, new UpdateUser());
-        commands.put(GET_TENANT_APPLICATION, new GetTenantApplications());
+        commands.put(GET_USER_APPLICATION, new GetUserApplications());
         commands.put(GET_APPLICATIONS, new GetApplications());
         commands.put(POST_APPLICATION, new PostApplication());
         commands.put(POST_LOGIN, new Login());

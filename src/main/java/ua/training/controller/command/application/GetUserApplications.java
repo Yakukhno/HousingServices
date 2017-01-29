@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import static ua.training.controller.Attributes.APPLICATIONS;
 
-public class GetTenantApplications implements Command {
+public class GetUserApplications implements Command {
 
     private static final String TENANT_APPLICATIONS_JSP_PATH
             = "/WEB-INF/view/tenant_applications.jsp";

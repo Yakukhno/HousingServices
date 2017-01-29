@@ -59,7 +59,4 @@ public class FrontController extends HttpServlet {
         return request.getMethod().toUpperCase() + ":"
                 + request.getRequestURI().replaceAll("(.*/rest)|(\\d+)", "");
     }
-
-
-
 }

@@ -1,5 +1,6 @@
 package ua.training.model.dao.jdbc;
 
+import org.apache.log4j.Logger;
 import ua.training.model.dao.DaoException;
 import ua.training.model.dao.WorkerDao;
 import ua.training.model.entities.TypeOfWork;
@@ -35,10 +36,24 @@ public class JdbcWorkerDao implements WorkerDao {
     private static final String UPDATE =
             "UPDATE worker SET name = ? WHERE id_worker = ?";
 
+    private static final String EXCEPTION_GET_BY_ID
+            = "Failed select from 'worker' with id = %d";
+    private static final String EXCEPTION_GET_BY_TYPE_OF_WORK_ID
+            = "Failed select from 'worker' with id_type_of_work = %d";
+    private static final String EXCEPTION_GET_ALL
+            = "Failed select from 'worker'";
+    private static final String EXCEPTION_ADD
+            = "Failed insert into 'worker' value = %s";
+    private static final String EXCEPTION_DELETE
+            = "Failed delete from 'worker' with id = %d";
+    private static final String EXCEPTION_UPDATE
+            = "Failed update 'worker' value = %s";
+
     static final String WORKER_ID = "id_worker";
     static final String WORKER_NAME = "name";
 
     private Connection connection;
+    private Logger logger = Logger.getLogger(JdbcWorkerDao.class);
 
     JdbcWorkerDao(Connection connection) {
         this.connection = connection;
@@ -56,7 +71,8 @@ public class JdbcWorkerDao implements WorkerDao {
                 worker = Optional.of(getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_GET_BY_ID, id);
+            throw getDaoException(message, e);
         }
         return worker;
     }
@@ -71,7 +87,7 @@ public class JdbcWorkerDao implements WorkerDao {
                 workers.add(getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            throw getDaoException(EXCEPTION_GET_ALL, e);
         }
         return workers;
     }
@@ -90,7 +106,8 @@ public class JdbcWorkerDao implements WorkerDao {
             }
             insertTypesOfWork(worker);
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_ADD, worker);
+            throw getDaoException(message, e);
         }
     }
 
@@ -101,25 +118,9 @@ public class JdbcWorkerDao implements WorkerDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_DELETE, id);
+            throw getDaoException(message, e);
         }
-    }
-
-    @Override
-    public List<Worker> getWorkersByTypeOfWork(TypeOfWork typeOfWork) {
-        List<Worker> workers = new ArrayList<>();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_TYPE)) {
-            statement.setInt(1, typeOfWork.getId());
-
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                workers.add(getWorkerFromResultSet(resultSet));
-            }
-        } catch (SQLException e) {
-            throw new DaoException(e);
-        }
-        return workers;
     }
 
     @Override
@@ -137,8 +138,28 @@ public class JdbcWorkerDao implements WorkerDao {
 
             insertTypesOfWork(worker);
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_UPDATE, worker);
+            throw getDaoException(message, e);
         }
+    }
+
+    @Override
+    public List<Worker> getWorkersByTypeOfWork(int typeOfWorkId) {
+        List<Worker> workers = new ArrayList<>();
+        try (PreparedStatement statement =
+                     connection.prepareStatement(SELECT_BY_TYPE)) {
+            statement.setInt(1, typeOfWorkId);
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                workers.add(getWorkerFromResultSet(resultSet));
+            }
+        } catch (SQLException e) {
+            String message = String.format(EXCEPTION_GET_BY_TYPE_OF_WORK_ID,
+                    typeOfWorkId);
+            throw getDaoException(message, e);
+        }
+        return workers;
     }
 
     static Worker getWorkerFromResultSet(ResultSet resultSet)
@@ -165,5 +186,10 @@ public class JdbcWorkerDao implements WorkerDao {
                 typeStatement.execute();
             }
         }
+    }
+
+    private DaoException getDaoException(String message, SQLException e) {
+        logger.error(message, e);
+        return new DaoException(e);
     }
 }

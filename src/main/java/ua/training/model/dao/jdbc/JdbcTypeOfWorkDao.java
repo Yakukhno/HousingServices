@@ -1,5 +1,6 @@
 package ua.training.model.dao.jdbc;
 
+import org.apache.log4j.Logger;
 import ua.training.model.dao.DaoException;
 import ua.training.model.dao.TypeOfWorkDao;
 import ua.training.model.entities.TypeOfWork;
@@ -25,10 +26,24 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
     private static final String UPDATE =
             "UPDATE type_of_work SET description = ? WHERE id_type_of_work = ?";
 
+    private static final String EXCEPTION_GET_BY_ID
+            = "Failed select from 'type_of_work' with id = %d";
+    private static final String EXCEPTION_GET_BY_DESCRIPTION
+            = "Failed select from 'type_of_work' with type_of_work like %s";
+    private static final String EXCEPTION_GET_ALL
+            = "Failed select from 'type_of_work'";
+    private static final String EXCEPTION_ADD
+            = "Failed insert into 'type_of_work' value = %s";
+    private static final String EXCEPTION_DELETE
+            = "Failed delete from 'type_of_work' with id = %d";
+    private static final String EXCEPTION_UPDATE
+            = "Failed update 'type_of_work' value = %s";
+
     static final String TYPE_OF_WORK_ID = "id_type_of_work";
     static final String TYPE_OF_WORK_DESCRIPTION = "description";
 
     private Connection connection;
+    private Logger logger = Logger.getLogger(JdbcTypeOfWorkDao.class);
 
     JdbcTypeOfWorkDao(Connection connection) {
         this.connection = connection;
@@ -46,7 +61,8 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
                 typeOfWork = Optional.of(getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_GET_BY_ID, id);
+            throw getDaoException(message, e);
         }
         return typeOfWork;
     }
@@ -60,7 +76,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
                 typesOfWork.add(getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            throw getDaoException(EXCEPTION_GET_ALL, e);
         }
         return typesOfWork;
     }
@@ -77,7 +93,8 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
                 typeOfWork.setId(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_ADD, typeOfWork);
+            throw getDaoException(message, e);
         }
     }
 
@@ -88,7 +105,8 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_DELETE, id);
+            throw getDaoException(message, e);
         }
     }
 
@@ -100,23 +118,26 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
             statement.setInt(2, typeOfWork.getId());
             statement.execute();
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_UPDATE, typeOfWork);
+            throw getDaoException(message, e);
         }
     }
 
     @Override
-    public List<TypeOfWork> getByDescription(String string) {
+    public List<TypeOfWork> getByDescription(String description) {
         List<TypeOfWork> typesOfWork = new ArrayList<>();
         try (PreparedStatement statement =
                      connection.prepareStatement(SELECT_BY_DESCRIPTION)) {
-            statement.setString(1, '%' + string + '%');
+            statement.setString(1, '%' + description + '%');
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 typesOfWork.add(getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DaoException(e);
+            String message = String.format(EXCEPTION_GET_BY_DESCRIPTION,
+                    description);
+            throw getDaoException(message, e);
         }
         return typesOfWork;
     }
@@ -129,4 +150,8 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
                 .build();
     }
 
+    private DaoException getDaoException(String message, SQLException e) {
+        logger.error(message, e);
+        return new DaoException(e);
+    }
 }

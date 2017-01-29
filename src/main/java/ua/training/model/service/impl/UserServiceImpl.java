@@ -1,5 +1,6 @@
 package ua.training.model.service.impl;
 
+import org.apache.log4j.Logger;
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.UserDao;
@@ -12,7 +13,14 @@ import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
 
+    private static final String EXCEPTION_INVALID_USER_ID
+            = "User with id = %d doesn't exist";
+    private static final String INCORRECT_EMAIL_OR_PASSWORD
+            = "Incorrect email or password";
+    private static final String INCORRECT_PASSWORD = "Incorrect password";
+
     private DaoFactory daoFactory = DaoFactory.getInstance();
+    private Logger logger = Logger.getLogger(UserServiceImpl.class);
 
     private UserServiceImpl() {}
 
@@ -46,8 +54,11 @@ public class UserServiceImpl implements UserService {
             UserDao userDao = daoFactory.createUserDao(connection);
             return userDao.getUserByEmail(email)
                     .filter(user -> password.equals(user.getPassword()))
-                    .orElseThrow(() -> new ServiceException()
-                            .setUserMessage("Incorrect email or password!"));
+                    .orElseThrow(() -> {
+                        logger.error(INCORRECT_EMAIL_OR_PASSWORD);
+                        return new ServiceException()
+                                .setUserMessage(INCORRECT_EMAIL_OR_PASSWORD);
+                    });
         }
     }
 
@@ -66,12 +77,18 @@ public class UserServiceImpl implements UserService {
 
             connection.begin();
             Optional<User> userFromDao = userDao.get(user.getId());
-            userFromDao.orElseThrow(() -> new ServiceException(
-                    "Invalid user id"
-            ));
+            userFromDao.orElseThrow(() -> {
+                String message = String.format(EXCEPTION_INVALID_USER_ID,
+                        user.getId());
+                logger.error(message);
+                return new ServiceException(message);
+            });
             userFromDao.filter(user1 -> user1.getPassword().equals(password))
-                    .orElseThrow(() -> new ServiceException()
-                            .setUserMessage("Incorrect password"));
+                    .orElseThrow(() -> {
+                        logger.error(INCORRECT_PASSWORD);
+                        return new ServiceException()
+                                .setUserMessage(INCORRECT_PASSWORD);
+                    });
             userDao.update(user);
             connection.commit();
         }

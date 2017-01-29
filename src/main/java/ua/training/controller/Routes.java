@@ -5,7 +5,7 @@ public class    Routes {
     public static final String GET_USER = "GET:/user/";
     public static final String POST_USER = "POST:/user";
     public static final String UPDATE_USER = "POST:/user/";
-    public static final String GET_TENANT_APPLICATION = "GET:/user//application";
+    public static final String GET_USER_APPLICATION = "GET:/user//application";
     public static final String GET_APPLICATIONS = "GET:/application";
     public static final String POST_APPLICATION = "POST:/application";
     public static final String POST_LOGIN = "POST:/login";

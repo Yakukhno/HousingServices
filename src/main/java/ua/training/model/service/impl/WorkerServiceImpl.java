@@ -3,7 +3,6 @@ package ua.training.model.service.impl;
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.WorkerDao;
-import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.Worker;
 import ua.training.model.service.WorkerService;
 
@@ -33,10 +32,10 @@ public class WorkerServiceImpl implements WorkerService {
     }
 
     @Override
-    public List<Worker> getWorkersByTypeOfWork(TypeOfWork typeOfWork) {
+    public List<Worker> getWorkersByTypeOfWork(int typeOfWorkId) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             WorkerDao workerDao = daoFactory.createWorkerDao(connection);
-            return workerDao.getWorkersByTypeOfWork(typeOfWork);
+            return workerDao.getWorkersByTypeOfWork(typeOfWorkId);
         }
     }
 

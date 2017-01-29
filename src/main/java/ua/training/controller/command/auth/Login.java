@@ -19,7 +19,7 @@ public class Login implements Command {
     private static final String PARAM_LOGIN = "login";
     private static final String PARAM_PASSWORD = "password";
 
-    private static final String USER_PATH = "/rest/user/%s";
+    private static final String USER_PATH = "/rest/user/%d";
     private static final String LOGIN_PATH = "/rest/login";
     private static final String LOGIN_JSP = "/WEB-INF/view/login.jsp";
 

@@ -20,7 +20,6 @@ public class AddTaskPage implements Command {
     private static final String ADD_TASK_JSP_PATH
             = "/WEB-INF/view/add_task.jsp";
     private static final String ERROR = "error";
-    private static final String RESOURCE_NOT_FOUND = "Resource not found!";
 
     private ApplicationService applicationService
             = ApplicationServiceImpl.getInstance();
