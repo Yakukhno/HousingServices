@@ -1,6 +1,6 @@
 package ua.training.controller;
 
-public class    Routes {
+public class Routes {
     public static final String HOME = "GET:/";
     public static final String GET_USER = "GET:/user/";
     public static final String POST_USER = "POST:/user";

@@ -1,5 +1,7 @@
 package ua.training.model.entities.person;
 
+import java.util.Objects;
+
 public class User extends Person {
     private String email;
     private String password;
@@ -31,6 +33,23 @@ public class User extends Person {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return id == user.id &&
+                Objects.equals(name, user.name) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password) &&
+                role == user.role;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email, password, role);
     }
 
     @Override

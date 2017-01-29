@@ -38,7 +38,8 @@ public class UpdateUser implements Command {
         if ((newEmail != null) && (newPassword != null)
                 && (oldPassword != null)) {
             int userId = Integer.parseInt(getUserIdFromRequest(request));
-            User user = getUserWithSetFields(userId, newEmail, newPassword);
+            User user = getUserWithSetFields(sessionUser,
+                    newEmail, newPassword);
             try {
                 userService.updateUser(user, oldPassword);
             } catch (ApplicationException e) {
@@ -55,10 +56,9 @@ public class UpdateUser implements Command {
         return pageToGo;
     }
 
-    private User getUserWithSetFields(int userId,
+    private User getUserWithSetFields(User user,
                                       String email,
                                       String password) {
-        User user = userService.getUserById(userId);
         if (!email.isEmpty()) {
             user.setEmail(email);
         }

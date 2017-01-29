@@ -21,10 +21,16 @@ public class UserServiceImpl implements UserService {
             = "Incorrect email or password";
     private static final String INCORRECT_PASSWORD = "Incorrect password";
 
-    private DaoFactory daoFactory = DaoFactory.getInstance();
+    private DaoFactory daoFactory;
     private Logger logger = Logger.getLogger(UserServiceImpl.class);
 
-    private UserServiceImpl() {}
+    private UserServiceImpl() {
+        daoFactory = DaoFactory.getInstance();
+    }
+
+    UserServiceImpl(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     private static class InstanceHolder {
         static final UserService INSTANCE = new UserServiceImpl();
@@ -106,10 +112,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     private Supplier<ApplicationException> getServiceExceptionSupplier(String message) {
         return () -> {
             ApplicationException e = new ServiceException().setUserMessage(message);
-            logger.warn(message, e);
+            logger.info(message, e);
             return e;
         };
     }
