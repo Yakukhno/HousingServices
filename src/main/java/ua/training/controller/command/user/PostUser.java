@@ -24,7 +24,15 @@ public class PostUser implements Command {
     private static final String REGISTER_USER_PATH = "/rest/register_user";
     private static final String LOGIN_PATH = "/rest/login";
 
-    private UserService userService = UserServiceImpl.getInstance();
+    private UserService userService;
+
+    public PostUser() {
+        userService = UserServiceImpl.getInstance();
+    }
+
+    PostUser(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public String execute(HttpServletRequest request,
@@ -47,14 +55,19 @@ public class PostUser implements Command {
                 );
                 pageToGo = LOGIN_PATH;
             } catch (ApplicationException e) {
-                if (e.isUserMessage()) {
-                    request.setAttribute(MESSAGE, e.getUserMessage());
-                    pageToGo = REGISTER_USER_JSP;
-                } else {
-                    throw e;
-                }
+                pageToGo = getPageToGo(request, e);
             }
         }
         return pageToGo;
+    }
+
+    private String getPageToGo(HttpServletRequest request,
+                               ApplicationException e) {
+        if (e.isUserMessage()) {
+            request.setAttribute(MESSAGE, e.getUserMessage());
+            return REGISTER_USER_JSP;
+        } else {
+            throw e;
+        }
     }
 }

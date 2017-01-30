@@ -116,15 +116,18 @@ public class UserServiceImpl implements UserService {
         this.daoFactory = daoFactory;
     }
 
-    private Supplier<ApplicationException> getServiceExceptionSupplier(String message) {
+    private Supplier<ApplicationException>
+                    getServiceExceptionSupplier(String message) {
         return () -> {
-            ApplicationException e = new ServiceException().setUserMessage(message);
+            ApplicationException e
+                    = new ServiceException().setUserMessage(message);
             logger.info(message, e);
             return e;
         };
     }
 
-    private Supplier<ApplicationException> getServiceExceptionSupplier(String messageBlank, int id) {
+    private Supplier<ApplicationException>
+                    getServiceExceptionSupplier(String messageBlank, int id) {
         return () -> {
             String message = String.format(messageBlank, id);
             ApplicationException e = new ServiceException(message);

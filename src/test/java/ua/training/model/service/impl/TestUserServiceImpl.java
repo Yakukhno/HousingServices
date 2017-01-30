@@ -1,6 +1,5 @@
 package ua.training.model.service.impl;
 
-import org.junit.Before;
 import org.junit.Test;
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
@@ -19,15 +18,8 @@ import static org.mockito.Mockito.*;
 
 public class TestUserServiceImpl {
 
-    private UserService userService;
-    private DaoFactory daoFactory;
-
-    @Before
-    public void before() {
-        daoFactory = mock(DaoFactory.class);
-        userService = new UserServiceImpl(daoFactory);
-        ((UserServiceImpl) userService).setDaoFactory(daoFactory);
-    }
+    private DaoFactory daoFactory = mock(DaoFactory.class);
+    private UserService userService = new UserServiceImpl(daoFactory);
 
     @Test
     public void testGetUserById() {

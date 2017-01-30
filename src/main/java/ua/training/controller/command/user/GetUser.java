@@ -16,21 +16,29 @@ public class GetUser implements Command {
 
     private static final String USER_JSP_PATH = "/WEB-INF/view/user.jsp";
 
-    private UserService userService = UserServiceImpl.getInstance();
+    private UserService userService;
+
+    public GetUser() {
+        userService = UserServiceImpl.getInstance();
+    }
+
+    GetUser(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        int userId = Integer.parseInt(getUserIdFromRequest(request));
+        int userId = getUserIdFromRequest(request);
         User user = userService.getUserById(userId);
         request.setAttribute(USER, user);
         return USER_JSP_PATH;
     }
 
-    private String getUserIdFromRequest(HttpServletRequest request) {
+    private int getUserIdFromRequest(HttpServletRequest request) {
         String uri = request.getRequestURI();
-        uri = uri.substring(uri.lastIndexOf('/') + 1);
-        return uri;
+        String userId = uri.substring(uri.lastIndexOf('/') + 1);
+        return Integer.parseInt(userId);
     }
 }
