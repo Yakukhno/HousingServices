@@ -155,8 +155,11 @@ public class JdbcUserDao implements UserDao {
     @Override
     public List<User> getUsersByRole(User.Role role) {
         List<User> users = new ArrayList<>();
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SELECT_BY_ROLE)) {
+        try (PreparedStatement statement
+                     = connection.prepareStatement(SELECT_BY_ROLE)) {
+            statement.setString(1, role.name());
+
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 users.add(getUserFromResultSet(resultSet));
             }
