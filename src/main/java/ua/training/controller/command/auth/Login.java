@@ -42,15 +42,20 @@ public class Login implements Command {
                 request.getSession().setAttribute(USER, user);
                 pageToGo = String.format(USER_PATH, user.getId());
             } catch (ApplicationException e) {
-                if (e.isUserMessage()) {
-                    request.setAttribute(MESSAGE, e.getUserMessage());
-                    pageToGo = LOGIN_JSP;
-                } else {
-                    throw e;
-                }
+                pageToGo = getPageToGo(request, e);
             }
         }
         return pageToGo;
+    }
+
+    private String getPageToGo(HttpServletRequest request,
+                               ApplicationException e) {
+        if (e.isUserMessage()) {
+            request.setAttribute(MESSAGE, e.getUserMessage());
+            return LOGIN_JSP;
+        } else {
+            throw e;
+        }
     }
 }
 

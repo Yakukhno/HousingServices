@@ -4,10 +4,11 @@
     <h3 align="center">Create a user account</h3>
 </div>
 <form class="form-horizontal col-md-offset-3 col-md-6" name="registerForm" onsubmit="return validateUser()" method="post" action="/rest/user">
-    <div class="form-group">
+    <div class="form-group" id="nameForm">
         <label for="name" class="control-label col-md-4">Name</label>
         <div class="col-md-8">
             <input class="form-control col-md-8" type="text" id="name" name="name"/><br/>
+            <span id="helpName" class="help-block"></span>
         </div>
     </div>
     <div class="form-group" id="emailForm">

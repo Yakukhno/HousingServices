@@ -17,6 +17,7 @@ import static ua.training.controller.Attributes.TENANT;
 
 public class FrontController extends HttpServlet {
 
+    private static final String URI_REPLACE_REGEXP = "(.*/rest)|(\\d+)";
     private static final String FORWARD_ROUTE = ".jsp";
     private static final String REDIRECT_ROUTE = "/rest";
 
@@ -57,6 +58,6 @@ public class FrontController extends HttpServlet {
 
     private String formCommand(HttpServletRequest request) {
         return request.getMethod().toUpperCase() + ":"
-                + request.getRequestURI().replaceAll("(.*/rest)|(\\d+)", "");
+                + request.getRequestURI().replaceAll(URI_REPLACE_REGEXP, "");
     }
 }

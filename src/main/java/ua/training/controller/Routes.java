@@ -13,7 +13,7 @@ public class Routes {
     public static final String GET_LOGIN_PAGE = "GET:/login";
     public static final String GET_REGISTER_USER_PAGE = "GET:/register_user";
     public static final String GET_ADD_APPLICATION_PAGE = "GET:/add_application";
-    public static final String GET_ADD_TASK_PAGE = "GET:/add_task";
+    public static final String POST_ADD_TASK_PAGE = "POST:/add_task";
     public static final String GET_TASKS = "GET:/task";
     public static final String POST_TASK = "POST:/task";
     public static final String GET_BRIGADE = "GET:/brigade/";

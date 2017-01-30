@@ -20,6 +20,8 @@ public class AuthFilter implements Filter {
             = "Unknown component of Role enum";
 
     private Set<String> guestAllowedRoutes = new HashSet<>();
+    private Set<String> tenantAllowedRoutes = new HashSet<>();
+    private Set<String> dispatcherAllowedRoutes = new HashSet<>();
     private Logger logger = Logger.getLogger(AuthFilter.class);
 
     @Override
@@ -29,6 +31,17 @@ public class AuthFilter implements Filter {
         guestAllowedRoutes.add(POST_LOGIN);
         guestAllowedRoutes.add(GET_REGISTER_USER_PAGE);
         guestAllowedRoutes.add(POST_USER);
+
+        tenantAllowedRoutes.add(POST_APPLICATION);
+        tenantAllowedRoutes.add(POST_LOGOUT);
+        tenantAllowedRoutes.add(GET_ADD_APPLICATION_PAGE);
+        tenantAllowedRoutes.add(GET_TASKS);
+
+        dispatcherAllowedRoutes.add(POST_LOGOUT);
+        dispatcherAllowedRoutes.add(GET_APPLICATIONS);
+        dispatcherAllowedRoutes.add(POST_ADD_TASK_PAGE);
+        dispatcherAllowedRoutes.add(POST_TASK);
+        dispatcherAllowedRoutes.add(GET_TASKS);
     }
 
     @Override
@@ -56,16 +69,19 @@ public class AuthFilter implements Filter {
     }
 
 
-    private void filterUser(User user, String uri, HttpServletRequest request,
+    private void filterUser(User user, String uri,
+                            HttpServletRequest request,
                             HttpServletResponse response,
                             FilterChain chain)
             throws ServletException, IOException {
+        boolean isAllowed = false;
+        int userId = user.getId();
         switch (user.getRole()) {
             case TENANT:
-                filterTenant(uri, request, response, chain);
+                isAllowed = isAllowedForTenant(uri, userId);
                 break;
             case DISPATCHER:
-                filterDispatcher(uri, request, response, chain);
+                isAllowed = isAllowedForDispatcher(uri, userId);
                 break;
             default:
                 String message = EXCEPTION_UNKNOWN_ENUM_COMPONENT;
@@ -73,6 +89,11 @@ public class AuthFilter implements Filter {
                         = new IllegalArgumentException(message);
                 logger.error(message, e);
                 throw e;
+        }
+        if (isAllowed) {
+            chain.doFilter(request, response);
+        } else {
+            response.sendRedirect("/rest/user/" + userId);
         }
     }
 
@@ -87,43 +108,20 @@ public class AuthFilter implements Filter {
         }
     }
 
-    private void filterTenant(String uri, HttpServletRequest request,
-                              HttpServletResponse response,
-                              FilterChain chain)
-            throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute(USER);
-        int userId = user.getId();
-        if ((uri.equals(String.format(GET_USER_APPLICATIONS_WITH_ID, userId)))
-                || (uri.equals(POST_APPLICATION))
-                || (uri.equals(POST_LOGOUT))
-                || (uri.equals(GET_ADD_APPLICATION_PAGE))
-                || (uri.startsWith(GET_BRIGADE))
-                || (uri.equals(String.format(GET_USER_WITH_ID, userId)))
-                || (uri.equals(String.format(UPDATE_USER_WITH_ID, userId)))
-                || (uri.equals(GET_TASKS))) {
-            chain.doFilter(request, response);
-        } else {
-            response.sendRedirect("/rest/user/" + userId);
-        }
+    private boolean isAllowedForTenant(String uri, int userId) {
+        return (uri.equals(String.format(GET_USER_APPLICATIONS_WITH_ID, userId)))
+                || (isAllowedForUser(uri, userId))
+                || (tenantAllowedRoutes.contains(uri));
     }
 
-    private void filterDispatcher(String uri, HttpServletRequest request,
-                                  HttpServletResponse response,
-                                  FilterChain chain)
-            throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute(USER);
-        int userId = user.getId();
-        if ((uri.equals(POST_LOGOUT))
-                || (uri.equals(GET_APPLICATIONS))
-                || (uri.equals(GET_ADD_TASK_PAGE))
-                || (uri.startsWith(GET_BRIGADE))
-                || (uri.equals(POST_TASK))
+    private boolean isAllowedForDispatcher(String uri, int userId) {
+        return (dispatcherAllowedRoutes.contains(uri)
+                || isAllowedForUser(uri, userId));
+    }
+
+    private boolean isAllowedForUser(String uri, int userId) {
+        return (uri.startsWith(GET_BRIGADE))
                 || (uri.equals(String.format(GET_USER_WITH_ID, userId)))
-                || (uri.equals(String.format(UPDATE_USER_WITH_ID, userId)))
-                || (uri.equals(GET_TASKS))) {
-            chain.doFilter(request, response);
-        } else {
-            response.sendRedirect("/rest/user/" + user.getId());
-        }
+                || (uri.equals(String.format(UPDATE_USER_WITH_ID, userId)));
     }
 }

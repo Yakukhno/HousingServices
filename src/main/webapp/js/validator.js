@@ -1,27 +1,13 @@
-var accountRegExp = /^[1-9]\d{3}$/;
+var nameRegExp = /^[A-zА-яЁёЇї]+ [A-zА-яЁёЇї]+$/;
 var emailRegExp = /^[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/;
 var passwordRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,64}$/;
-var accountErrorText = "Must contain 4 digit";
+var nameErrorText = "Must contain 2 words";
 var emailErrorText = "Invalid email";
 var passwordErrorText = "Must have at least one digit, one lowercase and uppercase letter";
 
 function validateUser() {
     var isValid = true;
-    isValid = validateEmail() && isValid;
-    isValid = validatePassword("password", "helpPass", "passwordForm") && isValid;
-    return isValid;
-}
-
-function validateTenant() {
-    var isValid = true;
-    isValid = validateAccount() && isValid;
-    isValid = validateEmail() && isValid;
-    isValid = validatePassword("password", "helpPass", "passwordForm") && isValid;
-    return isValid;
-}
-
-function validateDispatcher() {
-    var isValid = true;
+    isValid = validateName() && isValid;
     isValid = validateEmail() && isValid;
     isValid = validatePassword("password", "helpPass", "passwordForm") && isValid;
     return isValid;
@@ -41,17 +27,17 @@ function validateUserUpdate() {
     return isValid;
 }
 
-function validateAccount() {
-    var account = document.forms["registerForm"]["account"].value;
-    var helpAccount = document.getElementById("helpAccount");
-    var accountForm = document.getElementById("accountForm");
-    if (!accountRegExp.test(account)) {
-        helpAccount.innerHTML = accountErrorText;
-        accountForm.setAttribute('class', 'form-group has-error');
+function validateName() {
+    var name = document.forms["registerForm"]["name"].value;
+    var helpName = document.getElementById("helpName");
+    var nameForm = document.getElementById("nameForm");
+    if (!nameRegExp.test(name)) {
+        helpName.innerHTML = nameErrorText;
+        nameForm.setAttribute('class', 'form-group has-error');
         return false;
     } else {
-        helpAccount.innerHTML = '';
-        accountForm.setAttribute('class', 'form-group');
+        helpName.innerHTML = '';
+        nameForm.setAttribute('class', 'form-group');
         return true;
     }
 }

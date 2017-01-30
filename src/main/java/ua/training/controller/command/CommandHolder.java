@@ -39,7 +39,7 @@ public final class CommandHolder {
         commands.put(GET_LOGIN_PAGE, new LoginPage());
         commands.put(GET_REGISTER_USER_PAGE, new RegisterUserPage());
         commands.put(GET_ADD_APPLICATION_PAGE, new AddApplicationPage());
-        commands.put(GET_ADD_TASK_PAGE, new AddTaskPage());
+        commands.put(POST_ADD_TASK_PAGE, new AddTaskPage());
         commands.put(GET_TASKS, new GetTasks());
         commands.put(POST_TASK, new PostTask());
         commands.put(GET_BRIGADE, new GetBrigade());
