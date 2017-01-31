@@ -1,6 +1,7 @@
 package ua.training.controller.command.user;
 
 import ua.training.controller.command.Command;
+import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
@@ -24,6 +25,8 @@ public class PostUser implements Command {
     private static final String REGISTER_USER_PATH = "/rest/register_user";
     private static final String LOGIN_PATH = "/rest/login";
 
+    private Validator validator = new Validator();
+
     private UserService userService;
 
     public PostUser() {
@@ -46,6 +49,7 @@ public class PostUser implements Command {
         if ((name != null) && (email != null)
                 && (password != null) && (role != null)) {
             try {
+                validateUserFields(name, email, password);
                 userService.createNewUser(new User.Builder()
                         .setName(name)
                         .setEmail(email)
@@ -59,6 +63,12 @@ public class PostUser implements Command {
             }
         }
         return pageToGo;
+    }
+
+    private void validateUserFields(String name, String email, String password) {
+        validator.validateName(name);
+        validator.validateEmail(email);
+        validator.validatePassword(password);
     }
 
     private String getPageToGo(HttpServletRequest request,

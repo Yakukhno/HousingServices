@@ -3,7 +3,8 @@ var emailRegExp = /^[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/;
 var passwordRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,64}$/;
 var nameErrorText = "Must contain 2 words";
 var emailErrorText = "Invalid email";
-var passwordErrorText = "Must have at least one digit, one lowercase and uppercase letter";
+var passwordErrorText = "Must have at least one digit, " +
+    "one lowercase and uppercase letter, length 8-64 symbols";
 
 function validateUser() {
     var isValid = true;

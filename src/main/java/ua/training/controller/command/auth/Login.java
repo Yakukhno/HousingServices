@@ -23,9 +23,6 @@ public class Login implements Command {
     private static final String LOGIN_PATH = "/rest/login";
     private static final String LOGIN_JSP = "/WEB-INF/view/login.jsp";
 
-    private static final String EMAIL_REGEXP = "^[\\w.%+-]+@[A-Za-z0-9.-]" +
-            "+\\.[A-Za-z]{2,6}$";
-
     private UserService userService = UserServiceImpl.getInstance();
 
     @Override
@@ -35,8 +32,7 @@ public class Login implements Command {
         String pageToGo = LOGIN_PATH;
         String paramLogin = request.getParameter(PARAM_LOGIN);
         String paramPassword = request.getParameter(PARAM_PASSWORD);
-        if ((paramLogin != null) && (paramPassword != null)
-                && paramLogin.matches(EMAIL_REGEXP)) {
+        if ((paramLogin != null) && (paramPassword != null)) {
             try {
                 User user = userService.loginEmail(paramLogin, paramPassword);
                 request.getSession().setAttribute(USER, user);

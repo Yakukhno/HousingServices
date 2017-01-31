@@ -74,7 +74,7 @@ public class AuthFilter implements Filter {
                             HttpServletResponse response,
                             FilterChain chain)
             throws ServletException, IOException {
-        boolean isAllowed = false;
+        boolean isAllowed;
         int userId = user.getId();
         switch (user.getRole()) {
             case TENANT:

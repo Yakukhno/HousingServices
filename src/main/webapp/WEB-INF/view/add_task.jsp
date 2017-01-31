@@ -45,7 +45,7 @@
                             <div class="form-group" align="center">
                                 <label for="dateTime" class="control-label col-md-4">Time</label>
                                 <div class="col-md-8">
-                                    <input type="datetime-local" id="dateTime" name="dateTime" class="form-control"/>
+                                    <input type="datetime-local" required id="dateTime" name="dateTime" class="form-control"/>
                                 </div>
                             </div>
                         </div>

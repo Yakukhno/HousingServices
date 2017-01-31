@@ -36,5 +36,12 @@
             <button class="btn btn-default" type="submit">Send</button>
         </div>
     </div>
+    <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
+        <div class="row">
+            <div class="alert alert-danger" align="center" role="alert">
+                    ${requestScope[Attributes.MESSAGE]}
+            </div>
+        </div>
+    </c:if>
 </form>
 <%@ include file="footer.jsp"%>

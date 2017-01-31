@@ -1,6 +1,7 @@
 package ua.training.controller.command.user;
 
 import ua.training.controller.command.Command;
+import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
@@ -24,6 +25,8 @@ public class UpdateUser implements Command {
 
     private static final String USER_JSP_PATH = "/WEB-INF/view/user.jsp";
 
+    private Validator validator = new Validator();
+
     private UserService userService;
 
     public UpdateUser() {
@@ -46,9 +49,9 @@ public class UpdateUser implements Command {
         if ((newEmail != null) && (newPassword != null)
                 && (oldPassword != null)) {
             int userId = getUserIdFromRequest(request);
-            User user = getUserWithSetFields(sessionUser,
-                    newEmail, newPassword);
             try {
+                User user = setAndValidateFields(sessionUser,
+                        newEmail, newPassword);
                 userService.updateUser(user, oldPassword);
             } catch (ApplicationException e) {
                 pageToGo = getPageToGo(request, e, userId);
@@ -57,13 +60,15 @@ public class UpdateUser implements Command {
         return pageToGo;
     }
 
-    private User getUserWithSetFields(User user,
+    private User setAndValidateFields(User user,
                                       String email,
                                       String password) {
         if (!email.isEmpty()) {
+            validator.validateEmail(email);
             user.setEmail(email);
         }
         if (!password.isEmpty()) {
+            validator.validatePassword(password);
             user.setPassword(password);
         }
         return user;

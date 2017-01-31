@@ -1,6 +1,8 @@
 package ua.training.controller.command.task;
 
 import ua.training.controller.command.Command;
+import ua.training.controller.validator.ValidationException;
+import ua.training.controller.validator.Validator;
 import ua.training.model.service.TaskService;
 import ua.training.model.service.impl.TaskServiceImpl;
 
@@ -22,6 +24,8 @@ public class PostTask implements Command {
     private static final String PARAM_TIME = "dateTime";
 
     private static final String APPLICATIONS_PATH = "/rest/application";
+
+    private Validator validator = new Validator();
 
     private TaskService taskService = TaskServiceImpl.getInstance();
 
@@ -56,10 +60,10 @@ public class PostTask implements Command {
 
     private LocalDateTime getLocalDateTime(String paramDateTime) {
         if (!paramDateTime.isEmpty()) {
+            validator.validateDateTime(paramDateTime);
             return LocalDateTime.parse(paramDateTime);
-        } else {
-            throw new RuntimeException("Date should be determined");
         }
+        throw new ValidationException("Date should be determined");
     }
 
 }
