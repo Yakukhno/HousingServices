@@ -1,6 +1,11 @@
 package ua.training.exception;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ApplicationException extends RuntimeException {
+
+    private List<String> parameters = new ArrayList<>();
 
     private String userMessage;
 
@@ -31,5 +36,14 @@ public class ApplicationException extends RuntimeException {
 
     public boolean isUserMessage() {
         return (userMessage != null);
+    }
+
+    public ApplicationException addParameter(String parameter) {
+        parameters.add(parameter);
+        return this;
+    }
+
+    public List<String> getParameters() {
+        return parameters;
     }
 }

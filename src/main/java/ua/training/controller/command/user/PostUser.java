@@ -11,8 +11,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 import static ua.training.controller.Attributes.MESSAGE;
+import static ua.training.controller.Attributes.PARAMS;
 
 public class PostUser implements Command {
 
@@ -75,6 +77,10 @@ public class PostUser implements Command {
                                ApplicationException e) {
         if (e.isUserMessage()) {
             request.setAttribute(MESSAGE, e.getUserMessage());
+            List<String> parameters = e.getParameters();
+            if (e.getParameters().size() != 0) {
+                request.setAttribute(PARAMS, parameters);
+            }
             return REGISTER_USER_JSP;
         } else {
             throw e;

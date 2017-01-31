@@ -1,10 +1,10 @@
 <%@ include file="header.jsp"%>
     <div class="row">
         <div class="col-lg-offset-3 col-lg-6">
-            <h2 align="center">Your applications</h2>
+            <h2 align="center"><fmt:message key="your_applications"/></h2>
         </div>
         <div class="col-lg-3" style="padding: 20px 30px 10px 0px; text-align: right">
-            <a class="btn btn-default" href="/rest/add_application" role="button">Add new</a>
+            <a class="btn btn-default" href="/rest/add_application" role="button"><fmt:message key="add_new"/></a>
         </div>
     </div>
     <c:choose>
@@ -12,10 +12,10 @@
             <table class="table table-striped" align="center">
                 <thead>
                     <tr>
-                        <th>№</th>
-                        <th>Type of task</th>
-                        <th>Scale of problem</th>
-                        <th>Desired date</th>
+                        <th>N</th>
+                        <th><fmt:message key="type_of_task"/></th>
+                        <th><fmt:message key="problem_scale"/></th>
+                        <th><fmt:message key="desired_time"/></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,7 +31,7 @@
             </table>
         </c:when>
         <c:otherwise>
-            You don't have any applications!
+            <fmt:message key="no_user_applications"/>
         </c:otherwise>
     </c:choose>
 <%@ include file="footer.jsp"%>

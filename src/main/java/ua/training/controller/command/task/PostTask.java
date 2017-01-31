@@ -3,6 +3,7 @@ package ua.training.controller.command.task;
 import ua.training.controller.command.Command;
 import ua.training.controller.validator.ValidationException;
 import ua.training.controller.validator.Validator;
+import ua.training.exception.ApplicationException;
 import ua.training.model.service.TaskService;
 import ua.training.model.service.impl.TaskServiceImpl;
 
@@ -16,13 +17,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ua.training.controller.Attributes.MESSAGE;
+
 public class PostTask implements Command {
 
     private static final String PARAM_MANAGER = "manager";
     private static final String PARAM_APPLICATION = "application";
-    private static final String PARAM_WORKER = "worker";
+    private static final String PARAM_WORKER = "workers";
     private static final String PARAM_TIME = "dateTime";
 
+    private static final String ADD_TASK_JSP_PATH
+            = "/WEB-INF/view/add_task.jsp";
     private static final String APPLICATIONS_PATH = "/rest/application";
 
     private Validator validator = new Validator();
@@ -33,6 +38,7 @@ public class PostTask implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
+        String pageToGo = APPLICATIONS_PATH;
         String paramApplication = request.getParameter(PARAM_APPLICATION);
         String paramDateTime = request.getParameter(PARAM_TIME);
         String paramManager = request.getParameter(PARAM_MANAGER);
@@ -42,11 +48,15 @@ public class PostTask implements Command {
             int applicationId = Integer.parseInt(paramApplication);
             int managerId = Integer.parseInt(paramManager);
             List<Integer> workersIdsList = getWorkersIds(paramWorkers);
-            LocalDateTime dateTime = getLocalDateTime(paramDateTime);
-            taskService.createNewTask(applicationId, managerId,
-                    workersIdsList, dateTime);
+            try {
+                LocalDateTime dateTime = getLocalDateTime(paramDateTime);
+                taskService.createNewTask(applicationId, managerId,
+                        workersIdsList, dateTime);
+            } catch (ApplicationException e) {
+                pageToGo = getPageToGo(request, e);
+            }
         }
-        return APPLICATIONS_PATH;
+        return pageToGo;
     }
 
     private List<Integer> getWorkersIds(String[] paramWorkers) {
@@ -63,7 +73,17 @@ public class PostTask implements Command {
             validator.validateDateTime(paramDateTime);
             return LocalDateTime.parse(paramDateTime);
         }
-        throw new ValidationException("Date should be determined");
+        throw new ValidationException()
+                .setUserMessage("Date should be determined");
     }
 
+    private String getPageToGo(HttpServletRequest request,
+                               ApplicationException e) {
+        if (e.isUserMessage()) {
+            request.setAttribute(MESSAGE, e.getUserMessage());
+            return ADD_TASK_JSP_PATH;
+        } else {
+            throw e;
+        }
+    }
 }

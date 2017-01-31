@@ -43,6 +43,7 @@ public final class CommandHolder {
         commands.put(GET_TASKS, new GetTasks());
         commands.put(POST_TASK, new PostTask());
         commands.put(GET_BRIGADE, new GetBrigade());
+        commands.put(POST_LOCALE, new PostLocale());
         commands.put(GET_ERROR_PAGE, new ErrorPage());
         commands.put(POST_ERROR_PAGE, new ErrorPage());
     }

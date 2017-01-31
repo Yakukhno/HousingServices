@@ -17,6 +17,7 @@ public class Routes {
     public static final String GET_TASKS = "GET:/task";
     public static final String POST_TASK = "POST:/task";
     public static final String GET_BRIGADE = "GET:/brigade/";
+    public static final String POST_LOCALE = "POST:/locale";
 
     public static final String GET_USER_WITH_ID = "GET:/user/%d";
     public static final String GET_USER_APPLICATIONS_WITH_ID = "GET:/user/%d/application";

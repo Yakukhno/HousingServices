@@ -1,7 +1,7 @@
 <%@ include file="header.jsp"%>
 <div class="row">
     <div class="col-lg-offset-3 col-lg-6">
-        <h2 align="center">Brigade ${requestScope[Attributes.BRIGADE].id}</h2>
+        <h2 align="center"><fmt:message key="brigade"/> ${requestScope[Attributes.BRIGADE].id}</h2>
     </div>
 </div>
 <c:choose>
@@ -9,9 +9,9 @@
         <table class="table table-striped" style="width: 80%" align="center">
             <thead>
             <tr>
-                <th>Name</th>
-                <th>Specializations</th>
-                <th>Manager</th>
+                <th><fmt:message key="name"/></th>
+                <th><fmt:message key="specializations"/></th>
+                <th><fmt:message key="manager"/></th>
             </tr>
             </thead>
             <tbody>
@@ -23,7 +23,7 @@
                         </c:forEach>
                     </td>
                     <td>
-                        Manager
+                        <fmt:message key="manager"/>
                     </td>
                 </tr>
                 <c:forEach var="worker" items="${requestScope[Attributes.BRIGADE].workers}">
@@ -41,7 +41,7 @@
         </table>
     </c:when>
     <c:otherwise>
-        There no any workers!
+        <fmt:message key="no_workers"/>
     </c:otherwise>
 </c:choose>
 <%@ include file="footer.jsp"%>

@@ -1,4 +1,4 @@
-var nameRegExp = /^[A-zА-яЁёЇї]+ [A-zА-яЁёЇї]+$/;
+var nameRegExp = /^[A-zА-яЁёЇї]+\s+[A-zА-яЁёЇї]+\s*$/;
 var emailRegExp = /^[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/;
 var passwordRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,64}$/;
 var nameErrorText = "Must contain 2 words";

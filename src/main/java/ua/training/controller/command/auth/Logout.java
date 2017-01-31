@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static ua.training.controller.Attributes.USER;
+
 public class Logout implements Command {
 
     private static final String LOGIN_PATH = "/rest/login";
@@ -15,7 +17,7 @@ public class Logout implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        request.getSession().invalidate();
+        request.getSession().removeAttribute(USER);
         return LOGIN_PATH;
     }
 }

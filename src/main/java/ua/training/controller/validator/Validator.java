@@ -5,34 +5,31 @@ import java.time.LocalDateTime;
 
 public class Validator {
 
-    private static final String NAME_REGEXP = "^[A-zА-яЁёЇї]+ [A-zА-яЁёЇї]+$";
+    private static final String NAME_REGEXP = "^[A-zА-яЁёЇї]+\\s+[A-zА-яЁёЇї]+\\s*$";
     private static final String EMAIL_REGEXP = "^[\\w.%+-]+@[A-Za-z0-9.-]" +
             "+\\.[A-Za-z]{2,6}$";
     private static final String PASSWORD_REGEXP
             = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,64}$";
 
-    private static final String EXCEPTION_INCORRECT_NAME
-            = "Incorrect name %s. Name must contain 2 words";
-    private static final String EXCEPTION_INCORRECT_EMAIL
-            = "Incorrect email %s";
-    private static final String EXCEPTION_INCORRECT_PASSWORD =
-            "Incorrect password. Must have at least one digit, " +
-                    "one lowercase and uppercase letter, length 8-64 symbols";
-    private static final String EXCEPTION_INCORRECT_DATE
-            = "Incorrect date %s. You can't choose date, " +
-            "which earlier than tomorrow, and Sunday.";
+    private static final String EXCEPTION_INCORRECT_NAME = "exception.validation.name";
+    private static final String EXCEPTION_INCORRECT_EMAIL = "exception.validation.email";
+    private static final String EXCEPTION_INCORRECT_DATE = "exception.validation.date";
+    private static final String EXCEPTION_INCORRECT_PASSWORD
+            = "exception.validation.password";
 
     public void validateName(String name) {
         if (!name.matches(NAME_REGEXP)) {
-            String message = String.format(EXCEPTION_INCORRECT_NAME, name);
-            throw new ValidationException().setUserMessage(message);
+            throw new ValidationException()
+                    .setUserMessage(EXCEPTION_INCORRECT_NAME)
+                    .addParameter(name);
         }
     }
 
     public void validateEmail(String email) {
         if (!email.matches(EMAIL_REGEXP)) {
-            String message = String.format(EXCEPTION_INCORRECT_EMAIL, email);
-            throw new ValidationException().setUserMessage(message);
+            throw new ValidationException()
+                    .setUserMessage(EXCEPTION_INCORRECT_EMAIL)
+                    .addParameter(email);
         }
     }
 
@@ -53,8 +50,9 @@ public class Validator {
                 .withNano(0);
         if (!nextDay.isBefore(inputTime)
                 || (inputTime.getDayOfWeek().equals(DayOfWeek.SUNDAY))) {
-            String message = String.format(EXCEPTION_INCORRECT_DATE, dateTime);
-            throw new ValidationException().setUserMessage(message);
+            throw new ValidationException()
+                    .setUserMessage(EXCEPTION_INCORRECT_DATE)
+                    .addParameter(dateTime);
         }
     }
 }

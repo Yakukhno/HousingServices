@@ -18,8 +18,8 @@ public class UserServiceImpl implements UserService {
     private static final String EXCEPTION_USER_WITH_ID_NOT_FOUND
             = "User with id = %d not found";
     private static final String INCORRECT_EMAIL_OR_PASSWORD
-            = "Incorrect email or password";
-    private static final String INCORRECT_PASSWORD = "Incorrect password";
+            = "exception.email_password";
+    private static final String INCORRECT_PASSWORD = "exception.password";
 
     private DaoFactory daoFactory;
     private Logger logger = Logger.getLogger(UserServiceImpl.class);
@@ -110,10 +110,6 @@ public class UserServiceImpl implements UserService {
             UserDao userDao = daoFactory.createUserDao(connection);
             userDao.add(user);
         }
-    }
-
-    void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
     }
 
     private Supplier<ApplicationException>

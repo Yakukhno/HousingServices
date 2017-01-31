@@ -1,7 +1,7 @@
 <%@ include file="header.jsp"%>
 <div class="row">
     <div class="col-lg-offset-3 col-lg-6">
-        <h2 align="center">Scheduled tasks</h2>
+        <h2 align="center"><fmt:message key="header.tasks"/></h2>
     </div>
 </div>
 <div class="row">
@@ -12,10 +12,10 @@
                     <thead>
                     <tr>
                         <th>N</th>
-                        <th>Type of task</th>
-                        <th>Scale of problem</th>
-                        <th>Scheduled time</th>
-                        <th>Brigade</th>
+                        <th><fmt:message key="type_of_task"/></th>
+                        <th><fmt:message key="problem_scale"/></th>
+                        <th><fmt:message key="scheduled_time"/></th>
+                        <th><fmt:message key="brigade"/></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -26,7 +26,7 @@
                             <td>${task.application.scaleOfProblem}</td>
                             <td>${task.scheduledTime}</td>
                             <td>
-                                ${task.brigade.id} <a href="/rest/brigade/${task.brigade.id}">Show</a>
+                                ${task.brigade.id} <a href="/rest/brigade/${task.brigade.id}"><fmt:message key="show"/></a>
                             </td>
                         </tr>
                     </c:forEach>
@@ -34,7 +34,7 @@
                 </table>
             </c:when>
             <c:otherwise>
-                There no any tasks!
+                <fmt:message key="no_tasks"/>
             </c:otherwise>
         </c:choose>
     </div>

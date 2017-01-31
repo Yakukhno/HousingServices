@@ -13,4 +13,6 @@ public class Attributes {
     public static final String MESSAGE = "message";
     public static final String TENANT = "tenant";
     public static final String DISPATCHER = "dispatcher";
+    public static final String LOCALE = "locale";
+    public static final String PARAMS = "params";
 }

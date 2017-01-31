@@ -16,7 +16,7 @@ import static ua.training.controller.Attributes.USER;
 
 public class Login implements Command {
 
-    private static final String PARAM_LOGIN = "login";
+    private static final String PARAM_EMAIL = "email";
     private static final String PARAM_PASSWORD = "password";
 
     private static final String USER_PATH = "/rest/user/%d";
@@ -30,7 +30,7 @@ public class Login implements Command {
                           HttpServletResponse response)
             throws ServletException, IOException {
         String pageToGo = LOGIN_PATH;
-        String paramLogin = request.getParameter(PARAM_LOGIN);
+        String paramLogin = request.getParameter(PARAM_EMAIL);
         String paramPassword = request.getParameter(PARAM_PASSWORD);
         if ((paramLogin != null) && (paramPassword != null)) {
             try {

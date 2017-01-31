@@ -31,17 +31,20 @@ public class AuthFilter implements Filter {
         guestAllowedRoutes.add(POST_LOGIN);
         guestAllowedRoutes.add(GET_REGISTER_USER_PAGE);
         guestAllowedRoutes.add(POST_USER);
+        guestAllowedRoutes.add(POST_LOCALE);
 
         tenantAllowedRoutes.add(POST_APPLICATION);
         tenantAllowedRoutes.add(POST_LOGOUT);
         tenantAllowedRoutes.add(GET_ADD_APPLICATION_PAGE);
         tenantAllowedRoutes.add(GET_TASKS);
+        tenantAllowedRoutes.add(POST_LOCALE);
 
         dispatcherAllowedRoutes.add(POST_LOGOUT);
         dispatcherAllowedRoutes.add(GET_APPLICATIONS);
         dispatcherAllowedRoutes.add(POST_ADD_TASK_PAGE);
         dispatcherAllowedRoutes.add(POST_TASK);
         dispatcherAllowedRoutes.add(GET_TASKS);
+        dispatcherAllowedRoutes.add(POST_LOCALE);
     }
 
     @Override

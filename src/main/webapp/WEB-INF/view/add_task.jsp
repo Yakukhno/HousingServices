@@ -1,7 +1,7 @@
 <%@ include file="header.jsp"%>
 <div class="row">
     <div class="col-lg-offset-3 col-lg-6">
-        <h2 align="center">Workers</h2>
+        <h2 align="center"><fmt:message key="workers"/></h2>
     </div>
 </div>
 <div class="row">
@@ -12,11 +12,11 @@
                     <table class="table table-striped" align="center">
                         <thead>
                         <tr>
-                            <th>№</th>
-                            <th>Name</th>
-                            <th>Specializations</th>
-                            <th>Add to brigade</th>
-                            <th>Manager</th>
+                            <th>N</th>
+                            <th><fmt:message key="name"/></th>
+                            <th><fmt:message key="specializations"/></th>
+                            <th><fmt:message key="add_to_brigade"/></th>
+                            <th><fmt:message key="manager"/></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -43,7 +43,7 @@
                     <div class="row">
                         <div class="col-lg-offset-4 col-lg-4">
                             <div class="form-group" align="center">
-                                <label for="dateTime" class="control-label col-md-4">Time</label>
+                                <label for="dateTime" class="control-label col-md-4"><fmt:message key="time"/></label>
                                 <div class="col-md-8">
                                     <input type="datetime-local" required id="dateTime" name="dateTime" class="form-control"/>
                                 </div>
@@ -51,13 +51,20 @@
                         </div>
                     </div>
                     <div id="message"></div>
+                    <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
+                        <div class="row">
+                            <div class="alert alert-danger" align="center" role="alert">
+                                <fmt:message key="${requestScope[Attributes.MESSAGE]}"/>
+                            </div>
+                        </div>
+                    </c:if>
                     <div class="form-group" align="center">
                         <button class="btn btn-default" type="submit">Form</button>
                     </div>
                 </form>
             </c:when>
             <c:otherwise>
-                There no any workers!
+                <fmt:message key="no_workers"/>
             </c:otherwise>
         </c:choose>
     </div>
