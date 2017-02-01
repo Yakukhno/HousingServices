@@ -23,7 +23,7 @@ public class TestPostUser {
 
     private String name = "Dave Kesler";
     private String email = "Thishourses75@superrito.com";
-    private String password = "2mYPg=NB;";
+    private String password = "8Z8zdDAXq";
     private String role = "TENANT";
 
     private Command postUser = new PostUser(userService);
@@ -68,12 +68,12 @@ public class TestPostUser {
     @Test
     public void testExecuteExceptionWithUserMessage()
             throws ServletException, IOException {
+        ApplicationException exception = mock(ApplicationException.class);
+        String exceptionMessage = "Message";
         when(request.getParameter("name")).thenReturn(name);
         when(request.getParameter("email")).thenReturn(email);
         when(request.getParameter("password")).thenReturn(password);
         when(request.getParameter("role")).thenReturn(role);
-        ApplicationException exception = mock(ApplicationException.class);
-        String exceptionMessage = "Message";
         when(exception.getUserMessage()).thenReturn(exceptionMessage);
         when(exception.isUserMessage()).thenReturn(true);
         doThrow(exception).when(userService).createNewUser(any());

@@ -105,11 +105,11 @@ public class TestUpdateUser {
     @Test
     public void testExecuteExceptionWithUserMessage()
             throws ServletException, IOException {
+        ApplicationException exception = mock(ApplicationException.class);
+        String exceptionMessage = "Message";
         when(request.getParameter("email")).thenReturn(email);
         when(request.getParameter("oldPassword")).thenReturn(oldPassword);
         when(request.getParameter("newPassword")).thenReturn(newPassword);
-        ApplicationException exception = mock(ApplicationException.class);
-        String exceptionMessage = "Message";
         when(exception.getUserMessage()).thenReturn(exceptionMessage);
         when(exception.isUserMessage()).thenReturn(true);
         doThrow(exception).when(userService).updateUser(any(), anyString());

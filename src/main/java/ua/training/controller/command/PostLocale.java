@@ -13,7 +13,7 @@ public class PostLocale implements Command {
     private static final String PARAM_LOCALE = "locale";
     private static final String PARAM_URI = "uri";
 
-    private static final String HOME_PATH = "/rest/task";
+    private static final String HOME_PATH = "/";
 
     @Override
     public String execute(HttpServletRequest request,

@@ -1,7 +1,6 @@
 package ua.training.controller.command.user;
 
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import ua.training.controller.command.Command;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.ServiceException;
@@ -18,7 +17,6 @@ public class TestGetUser {
 
     private UserService userService = mock(UserService.class);
 
-    @InjectMocks
     private Command getUser = new GetUser(userService);
 
     @Test
