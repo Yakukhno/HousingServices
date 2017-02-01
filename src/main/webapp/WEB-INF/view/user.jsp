@@ -6,7 +6,7 @@
                 <fmt:message key="tenant_profile"/>
             </c:when>
             <c:when test="${requestScope[Attributes.USER].role eq applicationScope[Attributes.DISPATCHER]}">
-                <fmt:message key="disaptcher_profile"/>
+                <fmt:message key="dispatcher_profile"/>
             </c:when>
         </c:choose>
     </h2>

@@ -1,7 +1,7 @@
 package ua.training.controller.command.application;
 
 import ua.training.controller.command.Command;
-import ua.training.model.entities.Application;
+import ua.training.model.entities.person.User;
 import ua.training.model.service.ApplicationService;
 import ua.training.model.service.impl.ApplicationServiceImpl;
 
@@ -10,21 +10,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ua.training.controller.Attributes.APPLICATIONS;
-import static ua.training.controller.Attributes.STATUS_NEW;
+import static ua.training.controller.Attributes.USER;
 
-public class GetUserApplications implements Command {
+public class DeleteApplication implements Command {
 
-    private static final String TENANT_APPLICATIONS_JSP_PATH
-            = "/WEB-INF/view/tenant_applications.jsp";
+    private static final String TENANT_APPLICATIONS_PATH
+            = "/rest/user/%d/application";
 
     private ApplicationService applicationService;
 
-    public GetUserApplications() {
+    public DeleteApplication() {
         applicationService = ApplicationServiceImpl.getInstance();
     }
 
-    GetUserApplications(ApplicationService applicationService) {
+    DeleteApplication(ApplicationService applicationService) {
         this.applicationService = applicationService;
     }
 
@@ -32,16 +31,15 @@ public class GetUserApplications implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        int tenantId = Integer.parseInt(getUserIdFromRequest(request));
-        request.setAttribute(APPLICATIONS,
-                applicationService.getApplicationsByUserId(tenantId));
-        request.setAttribute(STATUS_NEW, Application.Status.NEW);
-        return TENANT_APPLICATIONS_JSP_PATH;
+        int userId = ((User) request.getSession().getAttribute(USER)).getId();
+        int applicationId = Integer.parseInt(getApplicationIdFromRequest(request));
+        applicationService.deleteApplication(applicationId, userId);
+        return String.format(TENANT_APPLICATIONS_PATH, userId);
     }
 
-    private String getUserIdFromRequest(HttpServletRequest request) {
+    private String getApplicationIdFromRequest(HttpServletRequest request) {
         String uri = request.getRequestURI();
-        uri = uri.substring(0, uri.lastIndexOf('/'));
+        uri = uri.substring(0, uri.lastIndexOf("/delete"));
         uri = uri.substring(uri.lastIndexOf('/') + 1);
         return uri;
     }

@@ -114,6 +114,7 @@ public class AuthFilter implements Filter {
     private boolean isAllowedForTenant(String uri, int userId) {
         return (uri.equals(String.format(GET_USER_APPLICATIONS_WITH_ID, userId)))
                 || (isAllowedForUser(uri, userId))
+                || (uri.matches(FILTER_APPLICATION_DELETE))
                 || (tenantAllowedRoutes.contains(uri));
     }
 

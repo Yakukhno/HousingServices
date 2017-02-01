@@ -8,6 +8,7 @@ public class Routes {
     public static final String GET_USER_APPLICATION = "GET:/user//application";
     public static final String GET_APPLICATIONS = "GET:/application";
     public static final String POST_APPLICATION = "POST:/application";
+    public static final String DELETE_APPLICATION = "POST:/application//delete";
     public static final String POST_LOGIN = "POST:/login";
     public static final String POST_LOGOUT = "POST:/logout";
     public static final String GET_LOGIN_PAGE = "GET:/login";
@@ -22,6 +23,7 @@ public class Routes {
     public static final String GET_USER_WITH_ID = "GET:/user/%d";
     public static final String GET_USER_APPLICATIONS_WITH_ID = "GET:/user/%d/application";
     public static final String UPDATE_USER_WITH_ID = "POST:/user/%d";
+    public static final String FILTER_APPLICATION_DELETE = "POST:/application/[\\d]+/delete";
 
     public static final String GET_ERROR_PAGE = "GET:/error";
     public static final String POST_ERROR_PAGE = "POST:/error";

@@ -16,6 +16,8 @@
                         <th><fmt:message key="type_of_task"/></th>
                         <th><fmt:message key="problem_scale"/></th>
                         <th><fmt:message key="desired_time"/></th>
+                        <th><fmt:message key="status"/></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,6 +27,14 @@
                             <td>${application.typeOfWork.description}</td>
                             <td>${application.scaleOfProblem}</td>
                             <td>${application.desiredTime}</td>
+                            <td>${application.status}</td>
+                            <td>
+                                <c:if test="${application.status eq requestScope[Attributes.STATUS_NEW]}">
+                                    <form method="post" action="/rest/application/${application.id}/delete" style="margin-bottom: 0">
+                                        <button class="btn btn-danger" type="submit"><fmt:message key="delete"/></button>
+                                    </form>
+                                </c:if>
+                            </td>
                         </tr>
                     </c:forEach>
                 </tbody>

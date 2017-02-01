@@ -16,4 +16,5 @@ public interface ApplicationService {
                               ProblemScale problemScale,
                               LocalDateTime localDateTime);
     void createNewApplication(Application application);
+    void deleteApplication(int applicationId, int userId);
 }

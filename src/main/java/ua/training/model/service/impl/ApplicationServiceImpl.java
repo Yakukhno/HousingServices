@@ -17,6 +17,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private static final String EXCEPTION_USER_WITH_ID_NOT_FOUND
             = "User with id = %d not found";
+    private static final String EXCEPTION_INVALID_ACCESS
+            = "Invalid access";
     private static final String EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND
             = "Type of work with id = %d not found";
     private static final String EXCEPTION_APPLICATION_WITH_ID_NOT_FOUND
@@ -124,6 +126,23 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
+    @Override
+    public void deleteApplication(int applicationId, int userId) {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            ApplicationDao applicationDao
+                    = daoFactory.createApplicationDao(connection);
+            connection.begin();
+            applicationDao.get(applicationId)
+                    .filter(application
+                            -> application.getTenant().getId() == userId)
+                    .orElseThrow(
+                            getServiceExceptionSupplier(EXCEPTION_INVALID_ACCESS)
+                    );
+            applicationDao.delete(applicationId);
+            connection.commit();
+        }
+    }
+
     private User getUser(UserDao userDao, int userId) {
         return userDao.get(userId)
                 .filter(user -> user.getRole().equals(User.Role.TENANT))
@@ -140,6 +159,13 @@ public class ApplicationServiceImpl implements ApplicationService {
                         getServiceExceptionSupplier(typeOfWorkId,
                                 EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND)
                 );
+    }
+
+    private Supplier<ServiceException> getServiceExceptionSupplier(String message) {
+        return () -> {
+            logger.error(message);
+            return new ServiceException(message);
+        };
     }
 
     private Supplier<ServiceException> getServiceExceptionSupplier(int id,
