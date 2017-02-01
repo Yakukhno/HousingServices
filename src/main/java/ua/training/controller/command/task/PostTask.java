@@ -26,13 +26,24 @@ public class PostTask implements Command {
     private static final String PARAM_WORKER = "workers";
     private static final String PARAM_TIME = "dateTime";
 
+    private static final String EXCEPTION_INCORRECT_DATE
+            = "exception.date";
+
     private static final String ADD_TASK_JSP_PATH
             = "/WEB-INF/view/add_task.jsp";
     private static final String APPLICATIONS_PATH = "/rest/application";
 
     private Validator validator = new Validator();
 
-    private TaskService taskService = TaskServiceImpl.getInstance();
+    private TaskService taskService;
+
+    public PostTask() {
+        taskService = TaskServiceImpl.getInstance();
+    }
+
+    PostTask(TaskService taskService) {
+        this.taskService = taskService;
+    }
 
     @Override
     public String execute(HttpServletRequest request,
@@ -74,7 +85,7 @@ public class PostTask implements Command {
             return LocalDateTime.parse(paramDateTime);
         }
         throw new ValidationException()
-                .setUserMessage("Date should be determined");
+                .setUserMessage(EXCEPTION_INCORRECT_DATE);
     }
 
     private String getPageToGo(HttpServletRequest request,

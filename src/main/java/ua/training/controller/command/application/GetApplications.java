@@ -18,8 +18,15 @@ public class GetApplications implements Command {
     private static final String APPLICATIONS_JSP_PATH
             = "/WEB-INF/view/applications.jsp";
 
-    private ApplicationService applicationService
-            = ApplicationServiceImpl.getInstance();
+    private ApplicationService applicationService;
+
+    public GetApplications() {
+        applicationService = ApplicationServiceImpl.getInstance();
+    }
+
+    GetApplications(ApplicationService applicationService) {
+        this.applicationService = applicationService;
+    }
 
     @Override
     public String execute(HttpServletRequest request,

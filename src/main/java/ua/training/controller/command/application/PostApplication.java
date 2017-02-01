@@ -33,10 +33,19 @@ public class PostApplication implements Command {
 
     private Validator validator = new Validator();
 
-    private TypeOfWorkService typeOfWorkService
-            = TypeOfWorkServiceImpl.getInstance();
-    private ApplicationService applicationService
-            = ApplicationServiceImpl.getInstance();
+    private TypeOfWorkService typeOfWorkService;
+    private ApplicationService applicationService;
+
+    public PostApplication() {
+        typeOfWorkService = TypeOfWorkServiceImpl.getInstance();
+        applicationService = ApplicationServiceImpl.getInstance();
+    }
+
+    PostApplication(TypeOfWorkService typeOfWorkService,
+                    ApplicationService applicationService) {
+        this.typeOfWorkService = typeOfWorkService;
+        this.applicationService = applicationService;
+    }
 
     @Override
     public String execute(HttpServletRequest request,

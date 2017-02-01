@@ -21,9 +21,19 @@ public class AddTaskPage implements Command {
     private static final String ADD_TASK_JSP_PATH
             = "/WEB-INF/view/add_task.jsp";
 
-    private ApplicationService applicationService
-            = ApplicationServiceImpl.getInstance();
-    private WorkerService workerService = WorkerServiceImpl.getInstance();
+    private WorkerService workerService;
+    private ApplicationService applicationService;
+
+    public AddTaskPage() {
+        workerService = WorkerServiceImpl.getInstance();
+        applicationService = ApplicationServiceImpl.getInstance();
+    }
+
+    AddTaskPage(WorkerService workerService,
+                ApplicationService applicationService) {
+        this.workerService = workerService;
+        this.applicationService = applicationService;
+    }
 
     @Override
     public String execute(HttpServletRequest request,

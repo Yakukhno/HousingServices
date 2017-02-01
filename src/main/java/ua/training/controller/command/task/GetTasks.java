@@ -15,7 +15,15 @@ public class GetTasks implements Command {
 
     private static final String TASKS_JSP_PATH = "/WEB-INF/view/tasks.jsp";
 
-    private TaskService taskService = TaskServiceImpl.getInstance();
+    private TaskService taskService;
+
+    public GetTasks() {
+        taskService = TaskServiceImpl.getInstance();
+    }
+
+    GetTasks(TaskService taskService) {
+        this.taskService = taskService;
+    }
 
     @Override
     public String execute(HttpServletRequest request,

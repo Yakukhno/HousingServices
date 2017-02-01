@@ -16,7 +16,15 @@ public class GetBrigade implements Command {
 
     private static final String BRIGADE_JSP_PATH = "/WEB-INF/view/brigade.jsp";
 
-    private BrigadeService brigadeService = BrigadeServiceImpl.getInstance();
+    private BrigadeService brigadeService;
+
+    public GetBrigade() {
+        brigadeService = BrigadeServiceImpl.getInstance();
+    }
+
+    GetBrigade(BrigadeService brigadeService) {
+        this.brigadeService = brigadeService;
+    }
 
     @Override
     public String execute(HttpServletRequest request,

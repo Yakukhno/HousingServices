@@ -23,7 +23,15 @@ public class Login implements Command {
     private static final String LOGIN_PATH = "/rest/login";
     private static final String LOGIN_JSP = "/WEB-INF/view/login.jsp";
 
-    private UserService userService = UserServiceImpl.getInstance();
+    private UserService userService;
+
+    public Login() {
+        userService = UserServiceImpl.getInstance();
+    }
+
+    Login(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public String execute(HttpServletRequest request,

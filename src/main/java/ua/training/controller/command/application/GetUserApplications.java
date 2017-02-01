@@ -16,8 +16,15 @@ public class GetUserApplications implements Command {
     private static final String TENANT_APPLICATIONS_JSP_PATH
             = "/WEB-INF/view/tenant_applications.jsp";
 
-    private ApplicationService applicationService
-            = ApplicationServiceImpl.getInstance();
+    private ApplicationService applicationService;
+
+    public GetUserApplications() {
+        applicationService = ApplicationServiceImpl.getInstance();
+    }
+
+    GetUserApplications(ApplicationService applicationService) {
+        this.applicationService = applicationService;
+    }
 
     @Override
     public String execute(HttpServletRequest request,

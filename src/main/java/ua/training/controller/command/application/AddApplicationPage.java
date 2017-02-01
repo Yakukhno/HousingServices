@@ -18,8 +18,16 @@ public class AddApplicationPage implements Command {
     private static final String ADD_APPLICATION_JSP_PATH
             = "/WEB-INF/view/add_application.jsp";
 
-    private TypeOfWorkService typeOfWorkService
-            = TypeOfWorkServiceImpl.getInstance();
+    private TypeOfWorkService typeOfWorkService;
+
+    public AddApplicationPage() {
+        typeOfWorkService
+                = TypeOfWorkServiceImpl.getInstance();
+    }
+
+    AddApplicationPage(TypeOfWorkService typeOfWorkService) {
+        this.typeOfWorkService = typeOfWorkService;
+    }
 
     @Override
     public String execute(HttpServletRequest request,
