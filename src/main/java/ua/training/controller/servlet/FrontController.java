@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static ua.training.controller.Attributes.DISPATCHER;
 import static ua.training.controller.Attributes.TENANT;
+import static ua.training.controller.Routes.HOME;
 
 public class FrontController extends HttpServlet {
 
@@ -21,11 +22,12 @@ public class FrontController extends HttpServlet {
     private static final String FORWARD_ROUTE = ".jsp";
     private static final String REDIRECT_ROUTE = "/rest";
 
-    private final Map<String, Command> commands = new CommandHolder().commands;
+    private Map<String, Command> commands;
 
     @Override
     public void init() throws ServletException {
         super.init();
+        commands = new CommandHolder().commands;
         ServletContext servletContext = getServletContext();
         servletContext.setAttribute(TENANT, User.Role.TENANT);
         servletContext.setAttribute(DISPATCHER, User.Role.DISPATCHER);
@@ -43,11 +45,11 @@ public class FrontController extends HttpServlet {
         processRequest(request, response);
     }
 
-    private void processRequest(HttpServletRequest request,
+    void processRequest(HttpServletRequest request,
                                 HttpServletResponse response)
             throws ServletException, IOException {
         String strCommand = formCommand(request);
-        Command command = commands.get(strCommand);
+        Command command = commands.getOrDefault(strCommand, commands.get(HOME));
         String route = command.execute(request, response);
         if (route.endsWith(FORWARD_ROUTE)) {
             request.getRequestDispatcher(route).forward(request, response);
@@ -56,8 +58,12 @@ public class FrontController extends HttpServlet {
         }
     }
 
-    private String formCommand(HttpServletRequest request) {
+    String formCommand(HttpServletRequest request) {
         return request.getMethod().toUpperCase() + ":"
                 + request.getRequestURI().replaceAll(URI_REPLACE_REGEXP, "");
+    }
+
+    void setCommands(Map<String, Command> commands) {
+        this.commands = commands;
     }
 }
