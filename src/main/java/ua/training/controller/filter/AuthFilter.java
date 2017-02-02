@@ -47,6 +47,7 @@ public class AuthFilter implements Filter {
         tenantAllowedRoutes.add(POST_APPLICATION);
         tenantAllowedRoutes.add(GET_USER_APPLICATION);
         tenantAllowedRoutes.add(GET_ADD_APPLICATION_PAGE);
+        tenantAllowedRoutes.add(DELETE_APPLICATION);
 
         dispatcherAllowedRoutes.addAll(userAllowedRoutes);
         dispatcherAllowedRoutes.add(GET_APPLICATIONS);

@@ -15,7 +15,7 @@ import static ua.training.controller.Attributes.USER;
 public class DeleteApplication implements Command {
 
     private static final String TENANT_APPLICATIONS_PATH
-            = "/rest/user/%d/application";
+            = "/rest/user/application";
 
     private ApplicationService applicationService;
 
@@ -34,7 +34,7 @@ public class DeleteApplication implements Command {
         int userId = ((User) request.getSession().getAttribute(USER)).getId();
         int applicationId = Integer.parseInt(getApplicationIdFromRequest(request));
         applicationService.deleteApplication(applicationId, userId);
-        return String.format(TENANT_APPLICATIONS_PATH, userId);
+        return TENANT_APPLICATIONS_PATH;
     }
 
     private String getApplicationIdFromRequest(HttpServletRequest request) {

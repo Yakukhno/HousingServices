@@ -94,17 +94,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public void createNewApplication(Application application) {
         try (DaoConnection connection = daoFactory.getConnection()) {
-            ApplicationDao applicationDao
-                    = daoFactory.createApplicationDao(connection);
-            applicationDao.add(application);
-        }
-    }
-
-    @Override
-    public void createNewApplication(int userId, int typeOfWorkId,
-                                     ProblemScale problemScale,
-                                     LocalDateTime localDateTime) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
             TypeOfWorkDao typeOfWorkDao
                     = daoFactory.createTypeOfWorkDao(connection);
@@ -112,15 +101,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                     = daoFactory.createApplicationDao(connection);
 
             connection.begin();
-            User user = getUser(userDao, userId);
-            TypeOfWork typeOfWork = getTypeOfWork(typeOfWorkDao, typeOfWorkId);
-            Application application = new Application.Builder()
-                    .setTenant(user)
-                    .setTypeOfWork(typeOfWork)
-                    .setScaleOfProblem(problemScale)
-                    .setDesiredTime(localDateTime)
-                    .setStatus(Application.Status.NEW)
-                    .build();
+            User user = getUser(userDao, application.getTenant().getId());
+            TypeOfWork typeOfWork = getTypeOfWork(typeOfWorkDao,
+                    application.getTypeOfWork().getId());
+            application.setTenant(user);
+            application.setTypeOfWork(typeOfWork);
+            application.setStatus(Application.Status.NEW);
             applicationDao.add(application);
             connection.commit();
         }

@@ -29,7 +29,7 @@
                                 <c:if test="${application.status eq requestScope[Attributes.STATUS_NEW]}">
                                     <form method="post" action="/rest/add_task" style="margin-bottom: 0">
                                         <input type="hidden" name="application" value="${application.id}"/>
-                                        <button class="btn btn-default" type="submit"><fmt:message key="form_brigade"/></button>
+                                        <button class="btn btn-primary" type="submit"><fmt:message key="form_brigade"/></button>
                                     </form>
                                 </c:if>
                             </td>

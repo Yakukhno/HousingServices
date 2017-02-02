@@ -3,7 +3,9 @@ package ua.training.controller.command.application;
 import ua.training.controller.command.Command;
 import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
+import ua.training.model.entities.Application;
 import ua.training.model.entities.ProblemScale;
+import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.ApplicationService;
 import ua.training.model.service.TypeOfWorkService;
@@ -30,7 +32,7 @@ public class PostApplication implements Command {
             = "/WEB-INF/view/add_application.jsp";
     private static final String ADD_APPLICATION_PATH = "/rest/add_application";
     private static final String TENANT_APPLICATIONS_PATH =
-            "/rest/user/%s/application";
+            "/rest/user/application";
 
     private Validator validator = new Validator();
 
@@ -59,14 +61,22 @@ public class PostApplication implements Command {
         String paramDateTime = request.getParameter(PARAM_DATE_TIME);
         if ((sessionUser != null) && (paramTypeOfWork != null)
                 && (paramProblemScale != null) && (paramDateTime != null)) {
+            int typeOfWorkId = Integer.parseInt(paramTypeOfWork);
+            ProblemScale problemScale = ProblemScale.valueOf(paramProblemScale);
+            LocalDateTime localDateTime = getLocalDateTime(paramDateTime);
+            Application application = new Application.Builder()
+                    .setTenant(new User.Builder()
+                            .setId(sessionUser.getId())
+                            .build())
+                    .setTypeOfWork(new TypeOfWork.Builder()
+                            .setId(typeOfWorkId)
+                            .build())
+                    .setScaleOfProblem(problemScale)
+                    .setDesiredTime(localDateTime)
+                    .build();
             try {
-                int typeOfWorkId = Integer.parseInt(paramTypeOfWork);
-                ProblemScale problemScale = ProblemScale.valueOf(paramProblemScale);
-                LocalDateTime localDateTime = getLocalDateTime(paramDateTime);
-                applicationService.createNewApplication(sessionUser.getId(),
-                        typeOfWorkId, problemScale, localDateTime);
-                pageToGo = String.format(TENANT_APPLICATIONS_PATH,
-                        sessionUser.getId());
+                applicationService.createNewApplication(application);
+                pageToGo = TENANT_APPLICATIONS_PATH;
             } catch (ApplicationException e) {
                 pageToGo = getPageToGo(request, e);
             }

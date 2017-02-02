@@ -1,8 +1,8 @@
 package ua.training.model.service;
 
+import ua.training.model.dto.TaskDto;
 import ua.training.model.entities.Task;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +11,5 @@ public interface TaskService {
     List<Task> getActiveTasks();
     List<Task> getAllTasks();
     void createNewTask(Task task);
-    void createNewTask(int applicationId, int managerId,
-                       List<Integer> workersIds, LocalDateTime dateTime);
+    void createNewTask(TaskDto taskDto);
 }

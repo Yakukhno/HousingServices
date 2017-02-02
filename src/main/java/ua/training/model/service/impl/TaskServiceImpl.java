@@ -2,6 +2,7 @@ package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
 import ua.training.model.dao.*;
+import ua.training.model.dto.TaskDto;
 import ua.training.model.entities.Application;
 import ua.training.model.entities.Brigade;
 import ua.training.model.entities.Task;
@@ -9,7 +10,6 @@ import ua.training.model.entities.person.Worker;
 import ua.training.model.service.ServiceException;
 import ua.training.model.service.TaskService;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -65,8 +65,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void createNewTask(int applicationId, int managerId,
-                              List<Integer> workersIds, LocalDateTime dateTime) {
+    public void createNewTask(TaskDto taskDto) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
             WorkerDao workerDao = daoFactory.createWorkerDao(connection);
@@ -75,19 +74,19 @@ public class TaskServiceImpl implements TaskService {
                     = daoFactory.createApplicationDao(connection);
 
             connection.begin();
-            Worker manager = getWorker(workerDao, managerId);
-            List<Worker> workers = getWorkers(workerDao, workersIds);
+            Worker manager = getWorker(workerDao, taskDto.getManagerId());
+            List<Worker> workers = getWorkers(workerDao, taskDto.getWorkersIds());
             Brigade brigade = getBrigade(manager, workers);
             brigadeDao.add(brigade);
 
             Application application = getApplication(applicationDao,
-                    applicationId);
+                    taskDto.getApplicationId());
             applicationDao.update(application);
 
             taskDao.add(new Task.Builder()
                     .setBrigade(brigade)
                     .setApplication(application)
-                    .setScheduledTime(dateTime)
+                    .setScheduledTime(taskDto.getDateTime())
                     .setActive(true)
                     .build());
             connection.commit();

@@ -4,6 +4,7 @@ import ua.training.controller.command.Command;
 import ua.training.controller.validator.ValidationException;
 import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
+import ua.training.model.dto.TaskDto;
 import ua.training.model.service.TaskService;
 import ua.training.model.service.impl.TaskServiceImpl;
 
@@ -61,8 +62,13 @@ public class PostTask implements Command {
             List<Integer> workersIdsList = getWorkersIds(paramWorkers);
             try {
                 LocalDateTime dateTime = getLocalDateTime(paramDateTime);
-                taskService.createNewTask(applicationId, managerId,
-                        workersIdsList, dateTime);
+                TaskDto taskDto = new TaskDto.Builder()
+                        .setApplicationId(applicationId)
+                        .setManagerId(managerId)
+                        .setWorkersIds(workersIdsList)
+                        .setDateTime(dateTime)
+                        .build();
+                taskService.createNewTask(taskDto);
             } catch (ApplicationException e) {
                 pageToGo = getPageToGo(request, e);
             }

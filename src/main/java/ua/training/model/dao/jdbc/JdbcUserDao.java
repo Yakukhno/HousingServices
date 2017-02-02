@@ -46,6 +46,7 @@ public class JdbcUserDao implements UserDao {
             = "Failed update 'user' value = %s";
     private static final String EXCEPTION_DUPLICATE_EMAIL
             = "Email %s is already exists!";
+    private static final int ERROR_CODE_DUPLICATE_FIELD = 1062;
 
     static final String USER_ID = "id_user";
     static final String USER_NAME = "name";
@@ -193,7 +194,7 @@ public class JdbcUserDao implements UserDao {
     private DaoException getDaoException(String message, SQLException e,
                                          User user) {
         DaoException daoException = new DaoException(e);
-        if (e.getErrorCode() == 1062) {
+        if (e.getErrorCode() == ERROR_CODE_DUPLICATE_FIELD) {
             daoException.setUserMessage(
                     String.format(EXCEPTION_DUPLICATE_EMAIL, user.getEmail())
             );
