@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static ua.training.controller.Attributes.*;
 
@@ -64,7 +65,6 @@ public class PostApplication implements Command {
                 LocalDateTime localDateTime = getLocalDateTime(paramDateTime);
                 applicationService.createNewApplication(sessionUser.getId(),
                         typeOfWorkId, problemScale, localDateTime);
-
                 pageToGo = String.format(TENANT_APPLICATIONS_PATH,
                         sessionUser.getId());
             } catch (ApplicationException e) {
@@ -89,6 +89,10 @@ public class PostApplication implements Command {
                     typeOfWorkService.getAllTypesOfWork());
             request.setAttribute(PROBLEM_SCALE, ProblemScale.values());
             request.setAttribute(MESSAGE, e.getUserMessage());
+            List<String> parameters = e.getParameters();
+            if (e.getParameters().size() != 0) {
+                request.setAttribute(PARAMS, parameters);
+            }
             return ADD_APPLICATION_JSP_PATH;
         } else {
             throw e;

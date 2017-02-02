@@ -75,8 +75,9 @@ public class TaskServiceImpl implements TaskService {
                     = daoFactory.createApplicationDao(connection);
 
             connection.begin();
-            Brigade brigade = getBrigade(getWorker(workerDao, managerId),
-                    getWorkers(workerDao, workersIds));
+            Worker manager = getWorker(workerDao, managerId);
+            List<Worker> workers = getWorkers(workerDao, workersIds);
+            Brigade brigade = getBrigade(manager, workers);
             brigadeDao.add(brigade);
 
             Application application = getApplication(applicationDao,

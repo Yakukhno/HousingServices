@@ -39,7 +39,13 @@
     <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
         <div class="row">
             <div class="alert alert-danger" align="center" role="alert">
-                    ${requestScope[Attributes.MESSAGE]}
+                <fmt:message key="${requestScope[Attributes.MESSAGE]}">
+                    <c:if test="${not empty requestScope[Attributes.PARAMS]}">
+                        <c:forEach var="parameter" items="${requestScope[Attributes.PARAMS]}">
+                            <fmt:param value="${parameter}"/>
+                        </c:forEach>
+                    </c:if>
+                </fmt:message>
             </div>
         </div>
     </c:if>

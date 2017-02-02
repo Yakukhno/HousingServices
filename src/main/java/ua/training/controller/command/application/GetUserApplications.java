@@ -2,6 +2,7 @@ package ua.training.controller.command.application;
 
 import ua.training.controller.command.Command;
 import ua.training.model.entities.Application;
+import ua.training.model.entities.person.User;
 import ua.training.model.service.ApplicationService;
 import ua.training.model.service.impl.ApplicationServiceImpl;
 
@@ -10,8 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ua.training.controller.Attributes.APPLICATIONS;
-import static ua.training.controller.Attributes.STATUS_NEW;
+import static ua.training.controller.Attributes.*;
 
 public class GetUserApplications implements Command {
 
@@ -32,9 +32,9 @@ public class GetUserApplications implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        int tenantId = Integer.parseInt(getUserIdFromRequest(request));
+        int userId = ((User) request.getSession().getAttribute(USER)).getId();
         request.setAttribute(APPLICATIONS,
-                applicationService.getApplicationsByUserId(tenantId));
+                applicationService.getApplicationsByUserId(userId));
         request.setAttribute(STATUS_NEW, Application.Status.NEW);
         return TENANT_APPLICATIONS_JSP_PATH;
     }

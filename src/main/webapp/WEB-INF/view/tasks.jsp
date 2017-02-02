@@ -11,7 +11,6 @@
                 <table class="table table-striped" align="center">
                     <thead>
                     <tr>
-                        <th>N</th>
                         <th><fmt:message key="type_of_task"/></th>
                         <th><fmt:message key="problem_scale"/></th>
                         <th><fmt:message key="scheduled_time"/></th>
@@ -21,7 +20,6 @@
                     <tbody>
                     <c:forEach var="task" items="${requestScope[Attributes.TASKS]}">
                         <tr>
-                            <td>${task.application.id}</td>
                             <td>${task.application.typeOfWork.description}</td>
                             <td>${task.application.scaleOfProblem}</td>
                             <td>${task.scheduledTime}</td>

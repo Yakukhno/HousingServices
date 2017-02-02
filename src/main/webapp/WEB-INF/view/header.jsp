@@ -22,7 +22,7 @@
                 <c:choose>
                     <c:when test="${sessionScope.user != null and sessionScope.user.role.equals(applicationScope.tenant)}">
                         <li><a href="/rest/user/${sessionScope[Attributes.USER].id}"><fmt:message key="header.profile"/></a></li>
-                        <li><a href="/rest/user/${sessionScope[Attributes.USER].id}/application"><fmt:message key="header.applications"/></a></li>
+                        <li><a href="/rest/user/application"><fmt:message key="header.applications"/></a></li>
                     </c:when>
                     <c:when test="${sessionScope.user != null and sessionScope.user.role.equals(applicationScope.dispatcher)}">
                         <li><a href="/rest/user/${sessionScope[Attributes.USER].id}"><fmt:message key="header.profile"/></a></li>

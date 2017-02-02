@@ -19,32 +19,39 @@ public class AuthFilter implements Filter {
     private static final String EXCEPTION_UNKNOWN_ENUM_COMPONENT
             = "Unknown component of Role enum";
 
+    private Set<String> allAllowedRoutes = new HashSet<>();
     private Set<String> guestAllowedRoutes = new HashSet<>();
+    private Set<String> userAllowedRoutes = new HashSet<>();
     private Set<String> tenantAllowedRoutes = new HashSet<>();
     private Set<String> dispatcherAllowedRoutes = new HashSet<>();
     private Logger logger = Logger.getLogger(AuthFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        guestAllowedRoutes.add(GET_TASKS);
+        allAllowedRoutes.add(GET_TASKS);
+        allAllowedRoutes.add(POST_LOCALE);
+        allAllowedRoutes.add(GET_BRIGADE);
+
+        guestAllowedRoutes.addAll(allAllowedRoutes);
         guestAllowedRoutes.add(GET_LOGIN_PAGE);
         guestAllowedRoutes.add(POST_LOGIN);
         guestAllowedRoutes.add(GET_REGISTER_USER_PAGE);
         guestAllowedRoutes.add(POST_USER);
-        guestAllowedRoutes.add(POST_LOCALE);
 
+        userAllowedRoutes.addAll(allAllowedRoutes);
+        userAllowedRoutes.add(GET_USER);
+        userAllowedRoutes.add(UPDATE_USER);
+        userAllowedRoutes.add(POST_LOGOUT);
+
+        tenantAllowedRoutes.addAll(userAllowedRoutes);
         tenantAllowedRoutes.add(POST_APPLICATION);
-        tenantAllowedRoutes.add(POST_LOGOUT);
+        tenantAllowedRoutes.add(GET_USER_APPLICATION);
         tenantAllowedRoutes.add(GET_ADD_APPLICATION_PAGE);
-        tenantAllowedRoutes.add(GET_TASKS);
-        tenantAllowedRoutes.add(POST_LOCALE);
 
-        dispatcherAllowedRoutes.add(POST_LOGOUT);
+        dispatcherAllowedRoutes.addAll(userAllowedRoutes);
         dispatcherAllowedRoutes.add(GET_APPLICATIONS);
         dispatcherAllowedRoutes.add(POST_ADD_TASK_PAGE);
         dispatcherAllowedRoutes.add(POST_TASK);
-        dispatcherAllowedRoutes.add(GET_TASKS);
-        dispatcherAllowedRoutes.add(POST_LOCALE);
     }
 
     @Override
@@ -68,7 +75,7 @@ public class AuthFilter implements Filter {
 
     private String getUri(HttpServletRequest req) {
         return req.getMethod().toUpperCase() + ":"
-                + req.getRequestURI().replaceAll(".*/rest", "");
+                + req.getRequestURI().replaceAll("(.*/rest)|(\\d+)", "");
     }
 
 
@@ -81,10 +88,10 @@ public class AuthFilter implements Filter {
         int userId = user.getId();
         switch (user.getRole()) {
             case TENANT:
-                isAllowed = isAllowedForTenant(uri, userId);
+                isAllowed = tenantAllowedRoutes.contains(uri);
                 break;
             case DISPATCHER:
-                isAllowed = isAllowedForDispatcher(uri, userId);
+                isAllowed = dispatcherAllowedRoutes.contains(uri);
                 break;
             default:
                 String message = EXCEPTION_UNKNOWN_ENUM_COMPONENT;
@@ -104,28 +111,10 @@ public class AuthFilter implements Filter {
                              HttpServletResponse response,
                              FilterChain chain)
             throws ServletException, IOException {
-        if (guestAllowedRoutes.contains(uri) || uri.startsWith(GET_BRIGADE)) {
+        if (guestAllowedRoutes.contains(uri)) {
             chain.doFilter(request, response);
         } else {
             response.sendRedirect("/rest/login");
         }
-    }
-
-    private boolean isAllowedForTenant(String uri, int userId) {
-        return (uri.equals(String.format(GET_USER_APPLICATIONS_WITH_ID, userId)))
-                || (isAllowedForUser(uri, userId))
-                || (uri.matches(FILTER_APPLICATION_DELETE))
-                || (tenantAllowedRoutes.contains(uri));
-    }
-
-    private boolean isAllowedForDispatcher(String uri, int userId) {
-        return (dispatcherAllowedRoutes.contains(uri)
-                || isAllowedForUser(uri, userId));
-    }
-
-    private boolean isAllowedForUser(String uri, int userId) {
-        return (uri.startsWith(GET_BRIGADE))
-                || (uri.equals(String.format(GET_USER_WITH_ID, userId)))
-                || (uri.equals(String.format(UPDATE_USER_WITH_ID, userId)));
     }
 }

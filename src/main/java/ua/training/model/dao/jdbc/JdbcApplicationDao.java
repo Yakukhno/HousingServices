@@ -17,7 +17,8 @@ public class JdbcApplicationDao implements ApplicationDao {
     private static final String SELECT_ALL =
             "SELECT * FROM application " +
                     "JOIN type_of_work USING (id_type_of_work) " +
-                    "LEFT JOIN user USING (id_user)";
+                    "LEFT JOIN user USING (id_user) " +
+                    "ORDER BY application.status, application.desired_time DESC";
     private static final String SELECT_BY_ID =
             "SELECT * FROM application " +
                     "JOIN type_of_work USING (id_type_of_work) " +

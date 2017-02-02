@@ -38,10 +38,6 @@ public class Brigade {
         workers.add(worker);
     }
 
-    public void removeWorker(Worker worker) {
-        workers.remove(worker);
-    }
-
     @Override
     public String toString() {
         return "Brigade{" +

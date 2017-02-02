@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
         <c:choose>
-            <c:when test="${requestScope.workers.size() != 0}">
+            <c:when test="${requestScope[Attributes.WORKERS].size() != 0}">
                 <form class="form-horizontal" name="brigadeForm" onsubmit="return validateBrigade()" method="post" action="/rest/task">
                     <table class="table table-striped" align="center">
                         <thead>
@@ -20,7 +20,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="worker" items="${requestScope.workers}">
+                            <c:forEach var="worker" items="${requestScope[Attributes.WORKERS]}">
                                 <tr>
                                     <td>${worker.id}</td>
                                     <td>${worker.name}</td>
@@ -30,7 +30,7 @@
                                         </c:forEach>
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="worker" id="worker" value="${worker.id}"/>
+                                        <input type="checkbox" name="workers" id="workers" value="${worker.id}"/>
                                     </td>
                                     <td>
                                         <input type="radio" name="manager" id="manager" value="${worker.id}"/>
@@ -39,7 +39,7 @@
                             </c:forEach>
                         </tbody>
                     </table>
-                    <input type="hidden" name="application" value="${requestScope.application}"/>
+                    <input type="hidden" name="application" value="${requestScope.application.id}"/>
                     <div class="row">
                         <div class="col-lg-offset-4 col-lg-4">
                             <div class="form-group" align="center">

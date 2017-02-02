@@ -6,6 +6,7 @@ import ua.training.controller.command.auth.LoginPage;
 import ua.training.controller.command.auth.PostLogout;
 import ua.training.controller.command.brigade.GetBrigade;
 import ua.training.controller.command.error.ErrorPage;
+import ua.training.controller.command.locale.PostLocale;
 import ua.training.controller.command.task.AddTaskPage;
 import ua.training.controller.command.task.GetTasks;
 import ua.training.controller.command.task.PostTask;

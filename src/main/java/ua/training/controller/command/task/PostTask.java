@@ -23,7 +23,7 @@ public class PostTask implements Command {
 
     private static final String PARAM_MANAGER = "manager";
     private static final String PARAM_APPLICATION = "application";
-    private static final String PARAM_WORKER = "workers";
+    private static final String PARAM_WORKERS = "workers";
     private static final String PARAM_TIME = "dateTime";
 
     private static final String EXCEPTION_INCORRECT_DATE
@@ -53,7 +53,7 @@ public class PostTask implements Command {
         String paramApplication = request.getParameter(PARAM_APPLICATION);
         String paramDateTime = request.getParameter(PARAM_TIME);
         String paramManager = request.getParameter(PARAM_MANAGER);
-        String[] paramWorkers = request.getParameterValues(PARAM_WORKER);
+        String[] paramWorkers = request.getParameterValues(PARAM_WORKERS);
         if ((paramApplication != null) && (paramManager != null)
                 && (paramDateTime != null)) {
             int applicationId = Integer.parseInt(paramApplication);

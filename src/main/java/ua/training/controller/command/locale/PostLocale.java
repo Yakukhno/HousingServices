@@ -1,4 +1,6 @@
-package ua.training.controller.command;
+package ua.training.controller.command.locale;
+
+import ua.training.controller.command.Command;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
