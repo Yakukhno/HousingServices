@@ -11,9 +11,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
-import static ua.training.controller.Attributes.MESSAGE;
-import static ua.training.controller.Attributes.USER;
+import static ua.training.controller.Attributes.*;
 
 public class UpdateUser implements Command {
 
@@ -23,7 +23,7 @@ public class UpdateUser implements Command {
 
     private static final String USER_PATH = "/rest/user/%s";
 
-    private static final String USER_JSP_PATH = "/WEB-INF/view/user.jsp";
+    private static final String USER_JSP_PATH = "/WEB-INF/view/user/user.jsp";
 
     private Validator validator = new Validator();
 
@@ -41,7 +41,7 @@ public class UpdateUser implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        User sessionUser = (User) request.getSession().getAttribute("user");
+        User sessionUser = (User) request.getSession().getAttribute(USER);
         String pageToGo = String.format(USER_PATH, sessionUser.getId());
         String newEmail = request.getParameter(PARAM_EMAIL);
         String oldPassword = request.getParameter(PARAM_OLD_PASSWORD);
@@ -87,6 +87,10 @@ public class UpdateUser implements Command {
             User user = userService.getUserById(userId);
             request.setAttribute(USER, user);
             request.setAttribute(MESSAGE, e.getUserMessage());
+            List<String> parameters = e.getParameters();
+            if (e.getParameters().size() != 0) {
+                request.setAttribute(PARAMS, parameters);
+            }
             return USER_JSP_PATH;
         } else {
             throw e;

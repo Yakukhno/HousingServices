@@ -1,10 +1,11 @@
 package ua.training.controller.command.task;
 
 import ua.training.controller.command.Command;
-import ua.training.controller.validator.ValidationException;
 import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
+import ua.training.exception.ValidationException;
 import ua.training.model.dto.TaskDto;
+import ua.training.model.entities.person.User;
 import ua.training.model.service.TaskService;
 import ua.training.model.service.impl.TaskServiceImpl;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static ua.training.controller.Attributes.MESSAGE;
+import static ua.training.controller.Attributes.USER;
 
 public class PostTask implements Command {
 
@@ -27,11 +29,10 @@ public class PostTask implements Command {
     private static final String PARAM_WORKERS = "workers";
     private static final String PARAM_TIME = "dateTime";
 
-    private static final String EXCEPTION_INCORRECT_DATE
-            = "exception.date";
+    private static final String EXCEPTION_INCORRECT_DATE = "exception.date";
 
     private static final String ADD_TASK_JSP_PATH
-            = "/WEB-INF/view/add_task.jsp";
+            = "/WEB-INF/view/task/new_task.jsp";
     private static final String APPLICATIONS_PATH = "/rest/application";
 
     private Validator validator = new Validator();
@@ -50,6 +51,7 @@ public class PostTask implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute(USER);
         String pageToGo = APPLICATIONS_PATH;
         String paramApplication = request.getParameter(PARAM_APPLICATION);
         String paramDateTime = request.getParameter(PARAM_TIME);
@@ -68,7 +70,7 @@ public class PostTask implements Command {
                         .setWorkersIds(workersIdsList)
                         .setDateTime(dateTime)
                         .build();
-                taskService.createNewTask(taskDto);
+                taskService.createNewTask(taskDto, user.getRole());
             } catch (ApplicationException e) {
                 pageToGo = getPageToGo(request, e);
             }

@@ -1,6 +1,4 @@
-package ua.training.controller.validator;
-
-import ua.training.exception.ApplicationException;
+package ua.training.exception;
 
 public class ValidationException extends ApplicationException {
 

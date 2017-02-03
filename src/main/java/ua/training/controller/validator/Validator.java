@@ -1,5 +1,7 @@
 package ua.training.controller.validator;
 
+import ua.training.exception.ValidationException;
+
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 

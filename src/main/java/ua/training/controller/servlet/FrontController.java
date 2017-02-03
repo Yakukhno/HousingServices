@@ -2,6 +2,8 @@ package ua.training.controller.servlet;
 
 import ua.training.controller.command.Command;
 import ua.training.controller.command.CommandHolder;
+import ua.training.exception.AccessForbiddenException;
+import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.entities.person.User;
 
 import javax.servlet.ServletContext;
@@ -50,11 +52,17 @@ public class FrontController extends HttpServlet {
             throws ServletException, IOException {
         String strCommand = formCommand(request);
         Command command = commands.getOrDefault(strCommand, commands.get(HOME));
-        String route = command.execute(request, response);
-        if (route.endsWith(FORWARD_ROUTE)) {
-            request.getRequestDispatcher(route).forward(request, response);
-        } else if (route.startsWith(REDIRECT_ROUTE)) {
-            response.sendRedirect(route);
+        try {
+            String route = command.execute(request, response);
+            if (route.endsWith(FORWARD_ROUTE)) {
+                request.getRequestDispatcher(route).forward(request, response);
+            } else if (route.startsWith(REDIRECT_ROUTE)) {
+                response.sendRedirect(route);
+            }
+        } catch (ResourceNotFoundException e) {
+            response.sendError(404, e.getMessage());
+        } catch (AccessForbiddenException e) {
+            response.sendError(403, e.getMessage());
         }
     }
 

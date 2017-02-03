@@ -1,6 +1,4 @@
-package ua.training.model.dao;
-
-import ua.training.exception.ApplicationException;
+package ua.training.exception;
 
 public class DaoException extends ApplicationException {
     public DaoException() {

@@ -43,7 +43,7 @@
                     </form>
                     <c:choose>
                         <c:when test="${empty sessionScope.user}">
-                            <a class="btn btn-default navbar-btn" href="/rest/register_user" role="button"><fmt:message key="header.sign_up"/></a>
+                            <a class="btn btn-default navbar-btn" href="/rest/new_user" role="button"><fmt:message key="header.sign_up"/></a>
                             <a class="btn btn-default navbar-btn" href="/rest/login" role="button"><fmt:message key="header.login"/></a>
                         </c:when>
                         <c:otherwise>

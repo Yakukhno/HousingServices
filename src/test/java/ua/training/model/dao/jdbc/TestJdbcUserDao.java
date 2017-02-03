@@ -3,7 +3,7 @@ package ua.training.model.dao.jdbc;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import ua.training.model.dao.DaoConnection;
-import ua.training.model.dao.DaoException;
+import ua.training.exception.DaoException;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.UserDao;
 import ua.training.model.entities.person.User;

@@ -23,8 +23,8 @@ public class PostUser implements Command {
     private static final String PARAM_PASSWORD = "password";
     private static final String PARAM_ROLE = "role";
 
-    private static final String REGISTER_USER_JSP = "/WEB-INF/view/register_user.jsp";
-    private static final String REGISTER_USER_PATH = "/rest/register_user";
+    private static final String REGISTER_USER_JSP = "/WEB-INF/view/user/new_user.jsp";
+    private static final String REGISTER_USER_PATH = "/rest/new_user";
     private static final String LOGIN_PATH = "/rest/login";
 
     private Validator validator = new Validator();

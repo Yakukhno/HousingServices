@@ -35,7 +35,7 @@ public class AuthFilter implements Filter {
         guestAllowedRoutes.addAll(allAllowedRoutes);
         guestAllowedRoutes.add(GET_LOGIN_PAGE);
         guestAllowedRoutes.add(POST_LOGIN);
-        guestAllowedRoutes.add(GET_REGISTER_USER_PAGE);
+        guestAllowedRoutes.add(GET_NEW_USER_PAGE);
         guestAllowedRoutes.add(POST_USER);
 
         userAllowedRoutes.addAll(allAllowedRoutes);
@@ -46,12 +46,12 @@ public class AuthFilter implements Filter {
         tenantAllowedRoutes.addAll(userAllowedRoutes);
         tenantAllowedRoutes.add(POST_APPLICATION);
         tenantAllowedRoutes.add(GET_USER_APPLICATION);
-        tenantAllowedRoutes.add(GET_ADD_APPLICATION_PAGE);
+        tenantAllowedRoutes.add(GET_NEW_APPLICATION_PAGE);
         tenantAllowedRoutes.add(DELETE_APPLICATION);
 
         dispatcherAllowedRoutes.addAll(userAllowedRoutes);
         dispatcherAllowedRoutes.add(GET_APPLICATIONS);
-        dispatcherAllowedRoutes.add(POST_ADD_TASK_PAGE);
+        dispatcherAllowedRoutes.add(POST_NEW_TASK_PAGE);
         dispatcherAllowedRoutes.add(POST_TASK);
     }
 

@@ -1,4 +1,4 @@
-<%@ include file="header.jsp"%>
+<%@ include file="../include/header.jsp"%>
 <div class="row" style="height: 15%"></div>
 <div class="row">
     <h3 align="center"><fmt:message key="create_user"/></h3>
@@ -53,4 +53,4 @@
         </div>
     </c:if>
 </form>
-<%@ include file="footer.jsp"%>
+<%@ include file="../include/footer.jsp"%>

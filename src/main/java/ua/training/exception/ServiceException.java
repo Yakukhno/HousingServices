@@ -1,6 +1,4 @@
-package ua.training.model.service;
-
-import ua.training.exception.ApplicationException;
+package ua.training.exception;
 
 public class ServiceException extends ApplicationException {
     public ServiceException() {

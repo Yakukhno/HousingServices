@@ -1,7 +1,7 @@
 package ua.training.model.dao.jdbc;
 
 import org.apache.log4j.Logger;
-import ua.training.model.dao.DaoException;
+import ua.training.exception.DaoException;
 import ua.training.model.dao.UserDao;
 import ua.training.model.entities.person.User;
 
@@ -45,7 +45,7 @@ public class JdbcUserDao implements UserDao {
     private static final String EXCEPTION_UPDATE
             = "Failed update 'user' value = %s";
     private static final String EXCEPTION_DUPLICATE_EMAIL
-            = "Email %s is already exists!";
+            = "exception.email_exists";
     private static final int ERROR_CODE_DUPLICATE_FIELD = 1062;
 
     static final String USER_ID = "id_user";
@@ -195,9 +195,8 @@ public class JdbcUserDao implements UserDao {
                                          User user) {
         DaoException daoException = new DaoException(e);
         if (e.getErrorCode() == ERROR_CODE_DUPLICATE_FIELD) {
-            daoException.setUserMessage(
-                    String.format(EXCEPTION_DUPLICATE_EMAIL, user.getEmail())
-            );
+            daoException.setUserMessage(EXCEPTION_DUPLICATE_EMAIL)
+                    .addParameter(user.getEmail());
             logger.info(message, e);
         } else {
             logger.error(message, e);

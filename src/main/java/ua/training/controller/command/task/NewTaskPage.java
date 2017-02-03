@@ -15,21 +15,21 @@ import java.io.IOException;
 import static ua.training.controller.Attributes.APPLICATION;
 import static ua.training.controller.Attributes.WORKERS;
 
-public class AddTaskPage implements Command {
+public class NewTaskPage implements Command {
 
     private static final String APPLICATIONS_PATH = "/rest/applications";
     private static final String ADD_TASK_JSP_PATH
-            = "/WEB-INF/view/add_task.jsp";
+            = "/WEB-INF/view/task/new_task.jsp";
 
     private WorkerService workerService;
     private ApplicationService applicationService;
 
-    public AddTaskPage() {
+    public NewTaskPage() {
         workerService = WorkerServiceImpl.getInstance();
         applicationService = ApplicationServiceImpl.getInstance();
     }
 
-    AddTaskPage(WorkerService workerService,
+    NewTaskPage(WorkerService workerService,
                 ApplicationService applicationService) {
         this.workerService = workerService;
         this.applicationService = applicationService;

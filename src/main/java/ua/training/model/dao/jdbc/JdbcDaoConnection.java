@@ -1,7 +1,7 @@
 package ua.training.model.dao.jdbc;
 
 import ua.training.model.dao.DaoConnection;
-import ua.training.model.dao.DaoException;
+import ua.training.exception.DaoException;
 
 import java.sql.Connection;
 import java.sql.SQLException;

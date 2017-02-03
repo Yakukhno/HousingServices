@@ -1,11 +1,12 @@
 package ua.training.model.service.impl;
 
 import org.junit.Test;
+import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.UserDao;
 import ua.training.model.entities.person.User;
-import ua.training.model.service.ServiceException;
+import ua.training.exception.ServiceException;
 import ua.training.model.service.UserService;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class TestUserServiceImpl {
         assertEquals(userFromDao, actualUser);
     }
 
-    @Test(expected = ServiceException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void testGetUserByIdDaoReturnsEmpty() {
         UserDao userDao = mock(UserDao.class);
         when(userDao.get(3))
@@ -170,7 +171,7 @@ public class TestUserServiceImpl {
         verify(userDao, never()).update(paramUser);
     }
 
-    @Test(expected = ServiceException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void testUpdateUserIncorrectUser() {
         UserDao userDao = mock(UserDao.class);
         when(userDao.get(3))

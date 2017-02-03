@@ -1,12 +1,12 @@
 package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
+import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.BrigadeDao;
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.entities.Brigade;
 import ua.training.model.service.BrigadeService;
-import ua.training.model.service.ServiceException;
 
 import java.util.List;
 
@@ -34,11 +34,11 @@ public class BrigadeServiceImpl implements BrigadeService {
             BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
             return brigadeDao.get(id).orElseThrow(
                     () -> {
+                        ResourceNotFoundException e = new ResourceNotFoundException();
                         String message = String.format(
                                 EXCEPTION_BRIGADE_WITH_ID_NOT_FOUND, id
                         );
-                        ServiceException e = new ServiceException(message);
-                        logger.error(message, e);
+                        logger.info(message, e);
                         return e;
                     }
             );

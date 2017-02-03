@@ -13,7 +13,7 @@ import static ua.training.controller.Attributes.TASKS;
 
 public class GetTasks implements Command {
 
-    private static final String TASKS_JSP_PATH = "/WEB-INF/view/tasks.jsp";
+    private static final String TASKS_JSP_PATH = "/WEB-INF/view/task/tasks.jsp";
 
     private TaskService taskService;
 

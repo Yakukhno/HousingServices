@@ -15,10 +15,6 @@
         <table class="table table-striped" align="center">
             <tbody>
                 <tr>
-                    <td>Status code</td>
-                    <td>${pageContext.errorData.statusCode}</td>
-                </tr>
-                <tr>
                     <td>URI</td>
                     <td>${pageContext.errorData.requestURI}</td>
                 </tr>

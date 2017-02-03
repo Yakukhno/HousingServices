@@ -34,7 +34,7 @@ function validateName() {
     var nameForm = document.getElementById("nameForm");
     if (!nameRegExp.test(name)) {
         helpName.innerHTML = nameErrorText;
-        nameForm.setAttribute('class', 'form-group has-error');
+        nameForm.setAttribute('class', 'form-group has-exception');
         return false;
     } else {
         helpName.innerHTML = '';
@@ -49,7 +49,7 @@ function validateEmail() {
     var emailForm = document.getElementById("emailForm");
     if (!emailRegExp.test(email)) {
         helpEmail.innerHTML = emailErrorText;
-        emailForm.setAttribute('class', 'form-group has-error');
+        emailForm.setAttribute('class', 'form-group has-exception');
         return false;
     }  else {
         helpEmail.innerHTML = '';
@@ -64,7 +64,7 @@ function validatePassword(passwordParam, helpPassParam, passwordFormParam) {
     var passwordForm = document.getElementById(passwordFormParam);
     if (!passwordRegExp.test(password)) {
         helpPass.innerHTML = passwordErrorText;
-        passwordForm.setAttribute('class', 'form-group has-error');
+        passwordForm.setAttribute('class', 'form-group has-exception');
         return false;
     }  else {
         helpPass.innerHTML = '';

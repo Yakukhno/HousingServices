@@ -1,4 +1,4 @@
-<%@ include file="header.jsp"%>
+<%@ include file="../include/header.jsp"%>
 <div class="row">
     <div class="col-lg-offset-3 col-lg-6">
         <h2 align="center"><fmt:message key="applications"/></h2>
@@ -27,7 +27,7 @@
                             <td>${application.status}</td>
                             <td>
                                 <c:if test="${application.status eq requestScope[Attributes.STATUS_NEW]}">
-                                    <form method="post" action="/rest/add_task" style="margin-bottom: 0">
+                                    <form method="post" action="/rest/new_task" style="margin-bottom: 0">
                                         <input type="hidden" name="application" value="${application.id}"/>
                                         <button class="btn btn-primary" type="submit"><fmt:message key="form_brigade"/></button>
                                     </form>
@@ -44,5 +44,5 @@
         </c:choose>
     </div>
 </div>
-<%@ include file="footer.jsp"%>
+<%@ include file="../include/footer.jsp"%>
 

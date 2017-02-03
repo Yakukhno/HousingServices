@@ -1,23 +1,28 @@
 package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
+import ua.training.exception.AccessForbiddenException;
+import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.*;
 import ua.training.model.dto.TaskDto;
 import ua.training.model.entities.Application;
 import ua.training.model.entities.Brigade;
 import ua.training.model.entities.Task;
+import ua.training.model.entities.person.User;
 import ua.training.model.entities.person.Worker;
-import ua.training.model.service.ServiceException;
 import ua.training.model.service.TaskService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class TaskServiceImpl implements TaskService {
 
-    private static final String EXCEPTION_INVALID_APPLICATION_ID
-            = "Application with id = %d doesn't exist";
+    private static final String EXCEPTION_APPLICATION_WITH_ID_NOT_FOUND
+            = "Application with id = %d not found";
+    private static final String EXCEPTION_WORKER_WITH_ID_NOT_FOUND
+            = "Worker with id = %d not found";
 
     private DaoFactory daoFactory = DaoFactory.getInstance();
     private Logger logger = Logger.getLogger(TaskServiceImpl.class);
@@ -65,39 +70,46 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void createNewTask(TaskDto taskDto) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
-            WorkerDao workerDao = daoFactory.createWorkerDao(connection);
-            TaskDao taskDao = daoFactory.createTaskDao(connection);
-            ApplicationDao applicationDao
-                    = daoFactory.createApplicationDao(connection);
+    public void createNewTask(TaskDto taskDto, User.Role role) {
+        if (role.equals(User.Role.DISPATCHER)) {
+            try (DaoConnection connection = daoFactory.getConnection()) {
+                BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
+                WorkerDao workerDao = daoFactory.createWorkerDao(connection);
+                TaskDao taskDao = daoFactory.createTaskDao(connection);
+                ApplicationDao applicationDao
+                        = daoFactory.createApplicationDao(connection);
+                connection.begin();
+                Worker manager = getWorker(workerDao, taskDto.getManagerId());
+                List<Worker> workers = getWorkers(workerDao, taskDto.getWorkersIds());
+                Brigade brigade = getBrigade(manager, workers);
+                brigadeDao.add(brigade);
 
-            connection.begin();
-            Worker manager = getWorker(workerDao, taskDto.getManagerId());
-            List<Worker> workers = getWorkers(workerDao, taskDto.getWorkersIds());
-            Brigade brigade = getBrigade(manager, workers);
-            brigadeDao.add(brigade);
+                Application application = getApplication(applicationDao,
+                        taskDto.getApplicationId());
+                applicationDao.update(application);
 
-            Application application = getApplication(applicationDao,
-                    taskDto.getApplicationId());
-            applicationDao.update(application);
-
-            taskDao.add(new Task.Builder()
-                    .setBrigade(brigade)
-                    .setApplication(application)
-                    .setScheduledTime(taskDto.getDateTime())
-                    .setActive(true)
-                    .build());
-            connection.commit();
+                taskDao.add(new Task.Builder()
+                        .setBrigade(brigade)
+                        .setApplication(application)
+                        .setScheduledTime(taskDto.getDateTime())
+                        .setActive(true)
+                        .build());
+                connection.commit();
+            }
+        } else {
+            AccessForbiddenException e = new AccessForbiddenException();
+            logger.warn(e.getMessage(), e);
+            throw e;
         }
     }
 
     private Application getApplication(ApplicationDao applicationDao,
-                                       int applicationId) {
-        Application application = applicationDao.get(applicationId)
+                                       int id) {
+        Application application = applicationDao.get(id)
                 .orElseThrow(
-                        () -> new ServiceException("Invalid application id")
+                        getResourceNotFoundExceptionSupplier(
+                                EXCEPTION_APPLICATION_WITH_ID_NOT_FOUND, id
+                        )
                 );
         application.setStatus(Application.Status.CONSIDERED);
         return application;
@@ -111,14 +123,13 @@ public class TaskServiceImpl implements TaskService {
                 .build();
     }
 
-    private Worker getWorker(WorkerDao workerDao, int managerId) {
-        return workerDao.get(managerId)
-                .orElseThrow(() -> {
-            String message = String.format(EXCEPTION_INVALID_APPLICATION_ID,
-                    managerId);
-            logger.error(message);
-            return new ServiceException(message);
-        });
+    private Worker getWorker(WorkerDao workerDao, int id) {
+        return workerDao.get(id)
+                .orElseThrow(
+                        getResourceNotFoundExceptionSupplier(
+                                EXCEPTION_WORKER_WITH_ID_NOT_FOUND, id
+                        )
+                );
     }
 
     private List<Worker> getWorkers(WorkerDao workerDao,
@@ -128,5 +139,16 @@ public class TaskServiceImpl implements TaskService {
             workers.add(getWorker(workerDao, workerId));
         }
         return workers;
+    }
+
+    private Supplier<ResourceNotFoundException>
+                getResourceNotFoundExceptionSupplier(String blankMessage,
+                                                     int id) {
+        return () -> {
+            ResourceNotFoundException e = new ResourceNotFoundException();
+            String message = String.format(blankMessage, id);
+            logger.info(message, e);
+            return e;
+        };
     }
 }

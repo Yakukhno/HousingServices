@@ -1,4 +1,4 @@
-<%@ include file="header.jsp"%>
+<%@ include file="../include/header.jsp"%>
 <div class="row">
     <h2 align="center">
         <c:choose>
@@ -61,10 +61,16 @@
         <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
             <div class="row">
                 <div class="alert alert-danger" align="center" role="alert">
-                    <fmt:message key="${requestScope[Attributes.MESSAGE]}"/>
+                    <fmt:message key="${requestScope[Attributes.MESSAGE]}">
+                        <c:if test="${not empty requestScope[Attributes.PARAMS]}">
+                            <c:forEach var="parameter" items="${requestScope[Attributes.PARAMS]}">
+                                <fmt:param value="${parameter}"/>
+                            </c:forEach>
+                        </c:if>
+                    </fmt:message>
                 </div>
             </div>
         </c:if>
     </form>
 </div>
-<%@ include file="footer.jsp"%>
+<%@ include file="../include/footer.jsp"%>

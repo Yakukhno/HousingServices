@@ -1,15 +1,14 @@
 package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
+import ua.training.exception.AccessForbiddenException;
+import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.*;
 import ua.training.model.entities.Application;
-import ua.training.model.entities.ProblemScale;
 import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.ApplicationService;
-import ua.training.model.service.ServiceException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -17,8 +16,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private static final String EXCEPTION_USER_WITH_ID_NOT_FOUND
             = "User with id = %d not found";
-    private static final String EXCEPTION_INVALID_ACCESS
-            = "Invalid access";
     private static final String EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND
             = "Type of work with id = %d not found";
     private static final String EXCEPTION_APPLICATION_WITH_ID_NOT_FOUND
@@ -42,16 +39,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         try (DaoConnection connection = daoFactory.getConnection()) {
             ApplicationDao applicationDao
                     = daoFactory.createApplicationDao(connection);
-            return applicationDao.get(id).orElseThrow(
-                    () -> {
-                        String message = String.format(
-                                EXCEPTION_APPLICATION_WITH_ID_NOT_FOUND, id
-                        );
-                        ServiceException e = new ServiceException(message);
-                        logger.error(message, e);
-                        return e;
-                    }
-            );
+            return applicationDao.get(id)
+                    .orElseThrow(
+                            getResourceNotFoundExceptionSupplier(
+                                    EXCEPTION_APPLICATION_WITH_ID_NOT_FOUND, id
+                            )
+                    );
         }
     }
 
@@ -83,11 +76,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<Application> getAllApplications() {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            ApplicationDao applicationDao
-                    = daoFactory.createApplicationDao(connection);
-            return applicationDao.getAll();
+    public List<Application> getAllApplications(User.Role role) {
+        if (role.equals(User.Role.DISPATCHER)) {
+            try (DaoConnection connection = daoFactory.getConnection()) {
+                ApplicationDao applicationDao
+                        = daoFactory.createApplicationDao(connection);
+                return applicationDao.getAll();
+            }
+        } else {
+            AccessForbiddenException e = new AccessForbiddenException();
+            logger.warn(e.getMessage(), e);
+            throw e;
         }
     }
 
@@ -122,44 +121,46 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .filter(application
                             -> application.getTenant().getId() == userId)
                     .orElseThrow(
-                            getServiceExceptionSupplier(EXCEPTION_INVALID_ACCESS)
+                            () -> {
+                                AccessForbiddenException e
+                                        = new AccessForbiddenException();
+                                logger.info(e.getMessage(), e);
+                                return e;
+                            }
                     );
             applicationDao.delete(applicationId);
             connection.commit();
         }
     }
 
-    private User getUser(UserDao userDao, int userId) {
-        return userDao.get(userId)
+    private User getUser(UserDao userDao, int id) {
+        return userDao.get(id)
                 .filter(user -> user.getRole().equals(User.Role.TENANT))
                 .orElseThrow(
-                        getServiceExceptionSupplier(userId,
-                                EXCEPTION_USER_WITH_ID_NOT_FOUND)
+                        getResourceNotFoundExceptionSupplier(
+                                EXCEPTION_USER_WITH_ID_NOT_FOUND, id
+                        )
                 );
     }
 
     private TypeOfWork getTypeOfWork(TypeOfWorkDao typeOfWorkDao,
-                                     int typeOfWorkId) {
-        return typeOfWorkDao.get(typeOfWorkId)
+                                     int id) {
+        return typeOfWorkDao.get(id)
                 .orElseThrow(
-                        getServiceExceptionSupplier(typeOfWorkId,
-                                EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND)
+                        getResourceNotFoundExceptionSupplier(
+                                EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND, id
+                        )
                 );
     }
 
-    private Supplier<ServiceException> getServiceExceptionSupplier(String message) {
+    private Supplier<ResourceNotFoundException>
+                getResourceNotFoundExceptionSupplier(String blankMessage,
+                                                     int id) {
         return () -> {
-            logger.error(message);
-            return new ServiceException(message);
-        };
-    }
-
-    private Supplier<ServiceException> getServiceExceptionSupplier(int id,
-            String messageBlank) {
-        return () -> {
-            String message = String.format(messageBlank, id);
-            logger.error(message);
-            return new ServiceException(message);
+            ResourceNotFoundException e = new ResourceNotFoundException();
+            String message = String.format(blankMessage, id);
+            logger.info(message, e);
+            return e;
         };
     }
 }

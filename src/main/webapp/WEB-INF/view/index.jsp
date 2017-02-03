@@ -1,2 +1,2 @@
-<%@ include file="header.jsp"%>
-<%@ include file="footer.jsp"%>
+<%@ include file="include/header.jsp"%>
+<%@ include file="include/footer.jsp"%>

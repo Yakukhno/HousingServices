@@ -16,7 +16,7 @@ import static ua.training.controller.Attributes.*;
 public class GetUserApplications implements Command {
 
     private static final String TENANT_APPLICATIONS_JSP_PATH
-            = "/WEB-INF/view/tenant_applications.jsp";
+            = "/WEB-INF/view/application/tenant_applications.jsp";
 
     private ApplicationService applicationService;
 

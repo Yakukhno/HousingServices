@@ -2,11 +2,12 @@ package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
 import ua.training.exception.ApplicationException;
+import ua.training.exception.ResourceNotFoundException;
+import ua.training.exception.ServiceException;
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.UserDao;
 import ua.training.model.entities.person.User;
-import ua.training.model.service.ServiceException;
 import ua.training.model.service.UserService;
 
 import java.util.List;
@@ -46,18 +47,10 @@ public class UserServiceImpl implements UserService {
             UserDao userDao = daoFactory.createUserDao(connection);
             return userDao.get(id)
                     .orElseThrow(
-                            getServiceExceptionSupplier(
+                            getResourceNotFoundExceptionSupplier(
                                     EXCEPTION_USER_WITH_ID_NOT_FOUND, id
                             )
                     );
-        }
-    }
-
-    @Override
-    public Optional<User> getUserByEmail(String email) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            UserDao userDao = daoFactory.createUserDao(connection);
-            return userDao.getUserByEmail(email);
         }
     }
 
@@ -91,7 +84,7 @@ public class UserServiceImpl implements UserService {
             connection.begin();
             Optional<User> userFromDao = userDao.get(user.getId());
             userFromDao.orElseThrow(
-                    getServiceExceptionSupplier(
+                    getResourceNotFoundExceptionSupplier(
                             EXCEPTION_USER_WITH_ID_NOT_FOUND, user.getId()
                     )
             );
@@ -122,12 +115,13 @@ public class UserServiceImpl implements UserService {
         };
     }
 
-    private Supplier<ApplicationException>
-                    getServiceExceptionSupplier(String messageBlank, int id) {
+    private Supplier<ResourceNotFoundException>
+                getResourceNotFoundExceptionSupplier(String blankMessage,
+                                         int id) {
         return () -> {
-            String message = String.format(messageBlank, id);
-            ApplicationException e = new ServiceException(message);
-            logger.error(message, e);
+            ResourceNotFoundException e = new ResourceNotFoundException();
+            String message = String.format(blankMessage, id);
+            logger.info(message, e);
             return e;
         };
     }

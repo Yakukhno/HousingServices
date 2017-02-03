@@ -2,7 +2,7 @@ package ua.training.model.dao.jdbc;
 
 import org.apache.log4j.Logger;
 import ua.training.model.dao.BrigadeDao;
-import ua.training.model.dao.DaoException;
+import ua.training.exception.DaoException;
 import ua.training.model.entities.Brigade;
 import ua.training.model.entities.person.Worker;
 
@@ -27,10 +27,10 @@ public class JdbcBrigadeDao implements BrigadeDao {
                     "WHERE id_worker = ?";
     private static final String SELECT_BY_ID =
             "SELECT * FROM brigade " +
-                    "JOIN brigade_has_worker USING (id_brigade) " +
-                    "JOIN worker USING (id_worker) " +
-                    "JOIN worker_has_type_of_work USING (id_worker)" +
-                    "JOIN type_of_work USING (id_type_of_work) " +
+                    "LEFT JOIN brigade_has_worker USING (id_brigade) " +
+                    "LEFT JOIN worker USING (id_worker) " +
+                    "LEFT JOIN worker_has_type_of_work USING (id_worker)" +
+                    "LEFT JOIN type_of_work USING (id_type_of_work) " +
                     "WHERE id_brigade = ? " +
                     "ORDER BY id_worker";
 
@@ -175,11 +175,14 @@ public class JdbcBrigadeDao implements BrigadeDao {
             throws SQLException {
         int currentId = resultSet.getInt(BRIGADE_ID);
         Brigade.Builder builder = new Brigade.Builder()
-                .setId(resultSet.getInt(BRIGADE_ID))
-                .addWorker(JdbcWorkerDao.getWorkerFromResultSet(resultSet));
-        while ((!resultSet.isAfterLast())
-                    && (resultSet.getInt(BRIGADE_ID) == currentId)) {
+                .setId(currentId);
+        resultSet.getInt(JdbcWorkerDao.WORKER_ID);
+        if (!resultSet.wasNull()) {
             builder.addWorker(JdbcWorkerDao.getWorkerFromResultSet(resultSet));
+            while ((!resultSet.isAfterLast())
+                    && (resultSet.getInt(BRIGADE_ID) == currentId)) {
+                builder.addWorker(JdbcWorkerDao.getWorkerFromResultSet(resultSet));
+            }
         }
         return builder.build();
     }

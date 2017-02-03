@@ -1,10 +1,10 @@
-<%@ include file="header.jsp"%>
+<%@ include file="../include/header.jsp"%>
     <div class="row">
         <div class="col-lg-offset-3 col-lg-6">
             <h2 align="center"><fmt:message key="your_applications"/></h2>
         </div>
         <div class="col-lg-3" style="padding: 20px 30px 10px 0px; text-align: right">
-            <a class="btn btn-primary" href="/rest/add_application" role="button"><fmt:message key="add_new"/></a>
+            <a class="btn btn-primary" href="/rest/new_application" role="button"><fmt:message key="add_new"/></a>
         </div>
     </div>
     <c:choose>
@@ -42,4 +42,4 @@
             <fmt:message key="no_user_applications"/>
         </c:otherwise>
     </c:choose>
-<%@ include file="footer.jsp"%>
+<%@ include file="../include/footer.jsp"%>

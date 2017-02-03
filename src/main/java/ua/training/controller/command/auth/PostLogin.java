@@ -21,7 +21,7 @@ public class PostLogin implements Command {
 
     private static final String USER_PATH = "/rest/user/%d";
     private static final String LOGIN_PATH = "/rest/login";
-    private static final String LOGIN_JSP = "/WEB-INF/view/login.jsp";
+    private static final String LOGIN_JSP = "/WEB-INF/view/auth/login.jsp";
 
     private UserService userService;
 

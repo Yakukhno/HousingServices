@@ -1,4 +1,4 @@
-package ua.training.controller.command.error;
+package ua.training.controller.command.exception;
 
 import ua.training.controller.command.Command;
 
@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class ErrorPage implements Command {
 
-    private static final String ERROR_JSP_PATH = "/WEB-INF/view/error.jsp";
+    private static final String ERROR_JSP_PATH = "/WEB-INF/view/error/error.jsp";
 
     @Override
     public String execute(HttpServletRequest request,

@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class RegisterUserPage implements Command {
+public class NewUserPage implements Command {
 
     private static final String REGISTER_USER_JSP_PATH
-            = "/WEB-INF/view/register_user.jsp";
+            = "/WEB-INF/view/user/new_user.jsp";
 
     @Override
     public String execute(HttpServletRequest request,

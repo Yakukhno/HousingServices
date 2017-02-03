@@ -1,4 +1,4 @@
-<%@ include file="header.jsp"%>
+<%@ include file="../include/header.jsp"%>
 <div class="row">
     <div class="col-lg-offset-3 col-lg-6">
         <h2 align="center"><fmt:message key="workers"/></h2>
@@ -69,4 +69,4 @@
         </c:choose>
     </div>
 </div>
-<%@ include file="footer.jsp"%>
+<%@ include file="../include/footer.jsp"%>

@@ -1,7 +1,7 @@
 package ua.training.model.dao.jdbc;
 
 import org.apache.log4j.Logger;
-import ua.training.model.dao.DaoException;
+import ua.training.exception.DaoException;
 import ua.training.model.dao.WorkerDao;
 import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.Worker;

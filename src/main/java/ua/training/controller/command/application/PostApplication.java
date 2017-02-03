@@ -29,10 +29,10 @@ public class PostApplication implements Command {
     private static final String PARAM_DATE_TIME = "dateTime";
 
     private static final String ADD_APPLICATION_JSP_PATH
-            = "/WEB-INF/view/add_application.jsp";
-    private static final String ADD_APPLICATION_PATH = "/rest/add_application";
-    private static final String TENANT_APPLICATIONS_PATH =
-            "/rest/user/application";
+            = "/WEB-INF/view/application/new_application.jsp";
+    private static final String ADD_APPLICATION_PATH = "/rest/new_application";
+    private static final String TENANT_APPLICATIONS_PATH
+            = "/rest/user/application";
 
     private Validator validator = new Validator();
 
