@@ -23,7 +23,11 @@
                        <tr>
                             <td>${application.typeOfWork.description}</td>
                             <td>${application.scaleOfProblem}</td>
-                            <td>${application.desiredTime}</td>
+                            <td>
+                                <c:if test="${not empty application.desiredTime}">
+                                    <custom:dateTime>${application.desiredTime}</custom:dateTime>
+                                </c:if>
+                            </td>
                             <td>${application.status}</td>
                             <td>
                                 <c:if test="${application.status eq requestScope[Attributes.STATUS_NEW]}">

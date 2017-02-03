@@ -1,0 +1,10 @@
+<taglib>
+    <tlib-version>1.0</tlib-version>
+    <jsp-version>2.0</jsp-version>
+    <short-name>DateTime formatter</short-name>
+    <tag>
+        <name>dateTime</name>
+        <tag-class>ua.training.view.tag.DateTimeFormatTag</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
+</taglib>

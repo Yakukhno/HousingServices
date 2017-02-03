@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="custom" uri="/WEB-INF/custom.tld"%>
 <%@ page import="ua.training.controller.Attributes" %>
 <c:set var="language" value="${not empty sessionScope[Attributes.LOCALE] ? sessionScope[Attributes.LOCALE].getDisplayLanguage() : 'en_US'}" scope="session" />
 <fmt:setLocale value="${language}" />
