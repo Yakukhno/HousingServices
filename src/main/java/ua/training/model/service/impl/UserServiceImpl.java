@@ -1,5 +1,6 @@
 package ua.training.model.service.impl;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import ua.training.exception.ApplicationException;
 import ua.training.exception.ResourceNotFoundException;
@@ -58,8 +59,9 @@ public class UserServiceImpl implements UserService {
     public User loginEmail(String email, String password) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
+            String hashedPassword = DigestUtils.sha256Hex(password);
             return userDao.getUserByEmail(email)
-                    .filter(user -> password.equals(user.getPassword()))
+                    .filter(user -> hashedPassword.equals(user.getPassword()))
                     .orElseThrow(
                             getServiceExceptionSupplier(
                                     INCORRECT_EMAIL_OR_PASSWORD
@@ -80,6 +82,8 @@ public class UserServiceImpl implements UserService {
     public void updateUser(User user, String password) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
+            String hashedPassword = DigestUtils.sha256Hex(password);
+            user.setPassword(DigestUtils.sha256Hex(user.getPassword()));
 
             connection.begin();
             Optional<User> userFromDao = userDao.get(user.getId());
@@ -88,7 +92,8 @@ public class UserServiceImpl implements UserService {
                             EXCEPTION_USER_WITH_ID_NOT_FOUND, user.getId()
                     )
             );
-            userFromDao.filter(user1 -> user1.getPassword().equals(password))
+            userFromDao
+                    .filter(user1 -> hashedPassword.equals(user1.getPassword()))
                     .orElseThrow(
                             getServiceExceptionSupplier(INCORRECT_PASSWORD)
                     );
@@ -101,6 +106,7 @@ public class UserServiceImpl implements UserService {
     public void createNewUser(User user) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
+            user.setPassword(DigestUtils.sha256Hex(user.getPassword()));
             userDao.add(user);
         }
     }
