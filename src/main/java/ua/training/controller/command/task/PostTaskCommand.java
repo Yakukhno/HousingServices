@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static ua.training.controller.Attributes.MESSAGE;
 import static ua.training.controller.Attributes.USER;
 
-public class PostTask implements Command {
+public class PostTaskCommand implements Command {
 
     private static final String PARAM_MANAGER = "manager";
     private static final String PARAM_APPLICATION = "application";
@@ -39,11 +39,11 @@ public class PostTask implements Command {
 
     private TaskService taskService;
 
-    public PostTask() {
+    public PostTaskCommand() {
         taskService = TaskServiceImpl.getInstance();
     }
 
-    PostTask(TaskService taskService) {
+    PostTaskCommand(TaskService taskService) {
         this.taskService = taskService;
     }
 

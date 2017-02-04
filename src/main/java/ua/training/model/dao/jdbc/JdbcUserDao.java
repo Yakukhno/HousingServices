@@ -54,6 +54,7 @@ public class JdbcUserDao implements UserDao {
     static final String USER_PASSWORD = "password";
     static final String USER_ROLE = "role";
 
+    private JdbcHelper helper = new JdbcHelper();
     private Logger logger = Logger.getLogger(Logger.class);
     private Connection connection;
 
@@ -70,7 +71,7 @@ public class JdbcUserDao implements UserDao {
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                user = Optional.of(getUserFromResultSet(resultSet));
+                user = Optional.of(helper.getUserFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -85,7 +86,7 @@ public class JdbcUserDao implements UserDao {
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             while (resultSet.next()) {
-                users.add(getUserFromResultSet(resultSet));
+                users.add(helper.getUserFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_ALL, e);
@@ -144,7 +145,7 @@ public class JdbcUserDao implements UserDao {
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                user = Optional.of(getUserFromResultSet(resultSet));
+                user = Optional.of(helper.getUserFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_EMAIL, email);
@@ -162,24 +163,13 @@ public class JdbcUserDao implements UserDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                users.add(getUserFromResultSet(resultSet));
+                users.add(helper.getUserFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ROLE, role);
             throw getDaoException(message, e);
         }
         return users;
-    }
-
-    static User getUserFromResultSet(ResultSet resultSet)
-            throws SQLException {
-        return new User.Builder()
-                .setId(resultSet.getInt(USER_ID))
-                .setName(resultSet.getString(USER_NAME))
-                .setEmail(resultSet.getString(USER_EMAIL))
-                .setPassword(resultSet.getString(USER_PASSWORD))
-                .setRole(User.Role.valueOf(resultSet.getString(USER_ROLE)))
-                .build();
     }
 
     private void setStatementFromUser(PreparedStatement statement,

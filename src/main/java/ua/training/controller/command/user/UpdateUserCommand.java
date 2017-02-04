@@ -2,6 +2,7 @@ package ua.training.controller.command.user;
 
 import ua.training.controller.command.Command;
 import ua.training.controller.validator.Validator;
+import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ApplicationException;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
@@ -15,7 +16,7 @@ import java.util.List;
 
 import static ua.training.controller.Attributes.*;
 
-public class UpdateUser implements Command {
+public class UpdateUserCommand implements Command {
 
     private static final String PARAM_EMAIL = "email";
     private static final String PARAM_OLD_PASSWORD = "oldPassword";
@@ -29,11 +30,11 @@ public class UpdateUser implements Command {
 
     private UserService userService;
 
-    public UpdateUser() {
+    public UpdateUserCommand() {
         userService = UserServiceImpl.getInstance();
     }
 
-    UpdateUser(UserService userService) {
+    UpdateUserCommand(UserService userService) {
         this.userService = userService;
     }
 
@@ -46,9 +47,12 @@ public class UpdateUser implements Command {
         String newEmail = request.getParameter(PARAM_EMAIL);
         String oldPassword = request.getParameter(PARAM_OLD_PASSWORD);
         String newPassword = request.getParameter(PARAM_NEW_PASSWORD);
+        int userId = getUserIdFromRequest(request);
+        if (sessionUser.getId() != userId) {
+            throw new AccessForbiddenException();
+        }
         if ((newEmail != null) && (newPassword != null)
                 && (oldPassword != null)) {
-            int userId = getUserIdFromRequest(request);
             try {
                 User user = setAndValidateFields(sessionUser,
                         newEmail, newPassword);

@@ -15,11 +15,11 @@ import java.io.IOException;
 
 import static org.mockito.Mockito.*;
 
-public class TestGetUser {
+public class TestGetUserCommand {
 
     private UserService userService = mock(UserService.class);
 
-    private Command getUser = new GetUser(userService);
+    private Command getUserCommand = new GetUserCommand(userService);
 
     @Test
     public void testExecute() throws ServletException, IOException {
@@ -34,7 +34,7 @@ public class TestGetUser {
         when(request.getSession().getAttribute(any())).thenReturn(sessionUser);
         when(userService.getUserById(userId)).thenReturn(user);
 
-        getUser.execute(request, response);
+        getUserCommand.execute(request, response);
 
         verify(request).setAttribute(anyString(), eq(user));
     }
@@ -51,7 +51,7 @@ public class TestGetUser {
         when(request.getSession().getAttribute(any())).thenReturn(sessionUser);
         when(userService.getUserById(userId)).thenThrow(mock(ServiceException.class));
 
-        getUser.execute(request, response);
+        getUserCommand.execute(request, response);
     }
 
     @Test(expected = AccessForbiddenException.class)
@@ -66,6 +66,6 @@ public class TestGetUser {
         when(request.getSession().getAttribute(any())).thenReturn(sessionUser);
         when(userService.getUserById(userId)).thenThrow(mock(ServiceException.class));
 
-        getUser.execute(request, response);
+        getUserCommand.execute(request, response);
     }
 }

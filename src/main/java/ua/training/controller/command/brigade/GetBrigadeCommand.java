@@ -12,17 +12,17 @@ import java.io.IOException;
 
 import static ua.training.controller.Attributes.BRIGADE;
 
-public class GetBrigade implements Command {
+public class GetBrigadeCommand implements Command {
 
     private static final String BRIGADE_JSP_PATH = "/WEB-INF/view/brigade/brigade.jsp";
 
     private BrigadeService brigadeService;
 
-    public GetBrigade() {
+    public GetBrigadeCommand() {
         brigadeService = BrigadeServiceImpl.getInstance();
     }
 
-    GetBrigade(BrigadeService brigadeService) {
+    GetBrigadeCommand(BrigadeService brigadeService) {
         this.brigadeService = brigadeService;
     }
 

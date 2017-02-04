@@ -23,7 +23,7 @@ public class TestJdbcUserDao {
 
     private static List<User> usersInDb = new ArrayList<>();
 
-    @BeforeClass
+    @BeforeClass //userInDb in Enum
     public static void beforeClass() {
         usersInDb.add(new User.Builder()
                 .setId(1)
@@ -83,7 +83,7 @@ public class TestJdbcUserDao {
         assertEquals(users, userDao.getUsersByRole(User.Role.TENANT));
     }
 
-    @Test
+    @Test //get copy from Enum
     public void testAdd() {
         String email = "Suese1992@cuvox.de";
         User user = new User.Builder()

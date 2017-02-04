@@ -16,7 +16,7 @@ import java.util.List;
 import static ua.training.controller.Attributes.MESSAGE;
 import static ua.training.controller.Attributes.PARAMS;
 
-public class PostUser implements Command {
+public class PostUserCommand implements Command {
 
     private static final String PARAM_NAME = "name";
     private static final String PARAM_EMAIL = "email";
@@ -31,11 +31,11 @@ public class PostUser implements Command {
 
     private UserService userService;
 
-    public PostUser() {
+    public PostUserCommand() {
         userService = UserServiceImpl.getInstance();
     }
 
-    PostUser(UserService userService) {
+    PostUserCommand(UserService userService) {
         this.userService = userService;
     }
 

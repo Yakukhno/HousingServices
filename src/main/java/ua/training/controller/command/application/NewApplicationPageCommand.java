@@ -13,18 +13,18 @@ import java.io.IOException;
 import static ua.training.controller.Attributes.PROBLEM_SCALE;
 import static ua.training.controller.Attributes.TYPE_OF_WORK;
 
-public class NewApplicationPage implements Command {
+public class NewApplicationPageCommand implements Command {
 
     private static final String ADD_APPLICATION_JSP_PATH
             = "/WEB-INF/view/application/new_application.jsp";
 
     private TypeOfWorkService typeOfWorkService;
 
-    public NewApplicationPage() {
+    public NewApplicationPageCommand() {
         typeOfWorkService = TypeOfWorkServiceImpl.getInstance();
     }
 
-    NewApplicationPage(TypeOfWorkService typeOfWorkService) {
+    NewApplicationPageCommand(TypeOfWorkService typeOfWorkService) {
         this.typeOfWorkService = typeOfWorkService;
     }
 

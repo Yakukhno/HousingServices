@@ -15,7 +15,7 @@ import java.io.IOException;
 import static ua.training.controller.Attributes.APPLICATION;
 import static ua.training.controller.Attributes.WORKERS;
 
-public class NewTaskPage implements Command {
+public class NewTaskPageCommand implements Command {
 
     private static final String APPLICATIONS_PATH = "/rest/applications";
     private static final String ADD_TASK_JSP_PATH
@@ -24,13 +24,13 @@ public class NewTaskPage implements Command {
     private WorkerService workerService;
     private ApplicationService applicationService;
 
-    public NewTaskPage() {
+    public NewTaskPageCommand() {
         workerService = WorkerServiceImpl.getInstance();
         applicationService = ApplicationServiceImpl.getInstance();
     }
 
-    NewTaskPage(WorkerService workerService,
-                ApplicationService applicationService) {
+    NewTaskPageCommand(WorkerService workerService,
+                       ApplicationService applicationService) {
         this.workerService = workerService;
         this.applicationService = applicationService;
     }

@@ -14,7 +14,7 @@ import java.io.IOException;
 import static ua.training.controller.Attributes.MESSAGE;
 import static ua.training.controller.Attributes.USER;
 
-public class PostLogin implements Command {
+public class PostLoginCommand implements Command {
 
     private static final String PARAM_EMAIL = "email";
     private static final String PARAM_PASSWORD = "password";
@@ -25,11 +25,11 @@ public class PostLogin implements Command {
 
     private UserService userService;
 
-    public PostLogin() {
+    public PostLoginCommand() {
         userService = UserServiceImpl.getInstance();
     }
 
-    PostLogin(UserService userService) {
+    PostLoginCommand(UserService userService) {
         this.userService = userService;
     }
 

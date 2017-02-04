@@ -3,7 +3,7 @@
 <div class="row">
     <h3 align="center"><fmt:message key="create_user"/></h3>
 </div>
-<form class="form-horizontal col-md-offset-3 col-md-6" name="registerForm" onsubmit="return validateUser()" method="post" action="/rest/user">
+<form class="form-horizontal col-md-offset-3 col-md-6" name="registerForm" method="post" action="/rest/user">
     <div class="form-group" id="nameForm">
         <label for="name" class="control-label col-md-4"><fmt:message key="name"/></label>
         <div class="col-md-8">

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class ErrorPage implements Command {
+public class ErrorPageCommand implements Command {
 
     private static final String ERROR_JSP_PATH = "/WEB-INF/view/error/error.jsp";
 

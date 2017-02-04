@@ -13,17 +13,17 @@ import java.io.IOException;
 
 import static ua.training.controller.Attributes.USER;
 
-public class GetUser implements Command {
+public class GetUserCommand implements Command {
 
     private static final String USER_JSP_PATH = "/WEB-INF/view/user/user.jsp";
 
     private UserService userService;
 
-    public GetUser() {
+    public GetUserCommand() {
         userService = UserServiceImpl.getInstance();
     }
 
-    GetUser(UserService userService) {
+    GetUserCommand(UserService userService) {
         this.userService = userService;
     }
 

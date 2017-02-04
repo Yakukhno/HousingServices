@@ -8,7 +8,11 @@
     <div class="col-lg-offset-1 col-lg-10">
         <c:choose>
             <c:when test="${requestScope[Attributes.WORKERS].size() != 0}">
-                <form class="form-horizontal" name="brigadeForm" onsubmit="return validateBrigade()" method="post" action="/rest/task">
+                <form class="form-horizontal"
+                      name="brigadeForm"
+                      onsubmit="return validateBrigade()"
+                      method="post"
+                      action="/rest/task">
                     <table class="table table-striped" align="center">
                         <thead>
                         <tr>
@@ -20,32 +24,48 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="worker" items="${requestScope[Attributes.WORKERS]}">
+                            <c:forEach var="worker"
+                                       items="${requestScope[Attributes.WORKERS]}">
                                 <tr>
                                     <td>${worker.id}</td>
                                     <td>${worker.name}</td>
                                     <td>
-                                        <c:forEach var="typeOfWork" items="${worker.typesOfWork}">
+                                        <c:forEach var="typeOfWork"
+                                                   items="${worker.typesOfWork}">
                                             <c:out value="${typeOfWork.description}; "/>
                                         </c:forEach>
                                     </td>
                                     <td>
-                                        <input type="checkbox" name="workers" id="workers" value="${worker.id}"/>
+                                        <input type="checkbox"
+                                               name="workers"
+                                               id="workers"
+                                               value="${worker.id}"/>
                                     </td>
                                     <td>
-                                        <input type="radio" name="manager" id="manager" value="${worker.id}"/>
+                                        <input type="radio"
+                                               name="manager"
+                                               id="manager"
+                                               value="${worker.id}"/>
                                     </td>
                                 </tr>
                             </c:forEach>
                         </tbody>
                     </table>
-                    <input type="hidden" name="application" value="${requestScope.application.id}"/>
+                    <input type="hidden"
+                           name="application"
+                           value="${requestScope.application.id}"/>
                     <div class="row">
                         <div class="col-lg-offset-4 col-lg-4">
                             <div class="form-group" align="center">
-                                <label for="dateTime" class="control-label col-md-4"><fmt:message key="time"/></label>
+                                <label for="dateTime" class="control-label col-md-4">
+                                    <fmt:message key="time"/>
+                                </label>
                                 <div class="col-md-8">
-                                    <input type="datetime-local" required id="dateTime" name="dateTime" class="form-control"/>
+                                    <input type="datetime-local"
+                                           required
+                                           id="dateTime"
+                                           name="dateTime"
+                                           class="form-control"/>
                                 </div>
                             </div>
                         </div>

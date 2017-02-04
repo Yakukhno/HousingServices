@@ -1,13 +1,11 @@
 package ua.training.model.dao.jdbc;
 
 import org.apache.log4j.Logger;
-import ua.training.model.dao.ApplicationDao;
 import ua.training.exception.DaoException;
+import ua.training.model.dao.ApplicationDao;
 import ua.training.model.entities.Application;
-import ua.training.model.entities.ProblemScale;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -73,6 +71,7 @@ public class JdbcApplicationDao implements ApplicationDao {
     static final String APPLICATION_DESIRED_TIME = "desired_time";
     static final String APPLICATION_STATUS = "status";
 
+    private JdbcHelper helper = new JdbcHelper();
     private Connection connection;
     private Logger logger = Logger.getLogger(JdbcApplicationDao.class);
 
@@ -89,7 +88,9 @@ public class JdbcApplicationDao implements ApplicationDao {
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                application = Optional.of(getApplicationFromResultSet(resultSet));
+                application = Optional.of(
+                        helper.getApplicationFromResultSet(resultSet)
+                );
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -104,7 +105,7 @@ public class JdbcApplicationDao implements ApplicationDao {
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             while (resultSet.next()) {
-                applications.add(getApplicationFromResultSet(resultSet));
+                applications.add(helper.getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_ALL, e);
@@ -163,7 +164,7 @@ public class JdbcApplicationDao implements ApplicationDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                applications.add(getApplicationFromResultSet(resultSet));
+                applications.add(helper.getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_TYPE_OF_WORK,
@@ -182,7 +183,7 @@ public class JdbcApplicationDao implements ApplicationDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                applications.add(getApplicationFromResultSet(resultSet));
+                applications.add(helper.getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_USER_ID, userId);
@@ -200,33 +201,13 @@ public class JdbcApplicationDao implements ApplicationDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                applications.add(getApplicationFromResultSet(resultSet));
+                applications.add(helper.getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_STATUS, status);
             throw getDaoException(message, e);
         }
         return applications;
-    }
-
-    static Application getApplicationFromResultSet(ResultSet resultSet)
-            throws SQLException {
-        LocalDateTime localDateTime = null;
-        if (resultSet.getTimestamp(APPLICATION_DESIRED_TIME) != null) {
-            localDateTime = resultSet.getTimestamp(APPLICATION_DESIRED_TIME)
-                    .toLocalDateTime();
-        }
-        return new Application.Builder()
-                .setId(resultSet.getInt(APPLICATION_ID))
-                .setTypeOfWork(JdbcTypeOfWorkDao
-                        .getTypeOfWorkFromResultSet(resultSet))
-                .setTenant(JdbcUserDao.getUserFromResultSet(resultSet))
-                .setScaleOfProblem(ProblemScale.valueOf(resultSet
-                        .getString(APPLICATION_SCALE_OF_PROBLEM)))
-                .setDesiredTime(localDateTime)
-                .setStatus(Application.Status.valueOf(resultSet
-                        .getString(APPLICATION_STATUS)))
-                .build();
     }
 
     private void setStatementFromApplication(PreparedStatement statement,

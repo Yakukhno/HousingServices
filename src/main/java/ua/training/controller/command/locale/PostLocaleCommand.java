@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import static ua.training.controller.Attributes.LOCALE;
 
-public class PostLocale implements Command {
+public class PostLocaleCommand implements Command {
 
     private static final String PARAM_LOCALE = "locale";
     private static final String PARAM_URI = "uri";

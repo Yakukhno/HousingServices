@@ -4,15 +4,17 @@ import ua.training.exception.ValidationException;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Validator {
 
-    private static final String NAME_REGEXP
-            = "^[A-zА-яЁёЇїІі]+\\s+[A-zА-яЁёЇїІі]+\\s*$";
-    private static final String EMAIL_REGEXP = "^[\\w.%+-]+@[A-Za-z0-9.-]" +
-            "+\\.[A-Za-z]{2,6}$";
-    private static final String PASSWORD_REGEXP
-            = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,64}$";
+    private Pattern patternName
+            = Pattern.compile("^[A-zА-яЁёЇїІі]+\\s+[A-zА-яЁёЇїІі]+\\s*$");
+    private Pattern patternEmail
+            = Pattern.compile("^[\\w.%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
+    private Pattern patternPassword
+            = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,64}$");
 
     private static final String EXCEPTION_INCORRECT_NAME
             = "exception.validation.name";
@@ -24,7 +26,8 @@ public class Validator {
             = "exception.validation.password";
 
     public void validateName(String name) {
-        if (!name.matches(NAME_REGEXP)) {
+        Matcher matcher = patternName.matcher(name);
+        if (!matcher.matches()) {
             throw new ValidationException()
                     .setUserMessage(EXCEPTION_INCORRECT_NAME)
                     .addParameter(name);
@@ -32,7 +35,8 @@ public class Validator {
     }
 
     public void validateEmail(String email) {
-        if (!email.matches(EMAIL_REGEXP)) {
+        Matcher matcher = patternEmail.matcher(email);
+        if (!matcher.matches()) {
             throw new ValidationException()
                     .setUserMessage(EXCEPTION_INCORRECT_EMAIL)
                     .addParameter(email);
@@ -40,7 +44,8 @@ public class Validator {
     }
 
     public void validatePassword(String password) {
-        if (!password.matches(PASSWORD_REGEXP)) {
+        Matcher matcher = patternPassword.matcher(password);
+        if (!matcher.matches()) {
             throw new ValidationException()
                     .setUserMessage(EXCEPTION_INCORRECT_PASSWORD);
         }

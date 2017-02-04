@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import static org.mockito.Mockito.*;
 
-public class TestLogin {
+public class TestLoginCommand {
 
     private UserService userService = mock(UserService.class);
 
@@ -25,7 +25,7 @@ public class TestLogin {
     private String email = "Thishourses75@superrito.com";
     private String password = "8Z8zdDAXq";
 
-    private Command postLogin = new PostLogin(userService);
+    private Command postLoginCommand = new PostLoginCommand(userService);
 
     @Before
     public void before() {
@@ -42,7 +42,7 @@ public class TestLogin {
         when(userService.loginEmail(email, password)).thenReturn(user);
         when(request.getSession()).thenReturn(session);
 
-        postLogin.execute(request, response);
+        postLoginCommand.execute(request, response);
 
         verify(session).setAttribute(anyString(), eq(user));
     }
@@ -57,7 +57,7 @@ public class TestLogin {
         doThrow(mock(ApplicationException.class))
                 .when(userService).loginEmail(email, password);
 
-        postLogin.execute(request, response);
+        postLoginCommand.execute(request, response);
         verify(session, never()).setAttribute(anyString(), any(User.class));
     }
 
@@ -72,7 +72,7 @@ public class TestLogin {
         when(exception.isUserMessage()).thenReturn(true);
         doThrow(exception).when(userService).loginEmail(email, password);
 
-        postLogin.execute(request, response);
+        postLoginCommand.execute(request, response);
 
         verify(request).setAttribute(anyString(), eq(exceptionMessage));
     }
@@ -82,7 +82,7 @@ public class TestLogin {
         when(request.getParameter("email")).thenReturn(null);
         when(request.getParameter("password")).thenReturn(password);
 
-        postLogin.execute(request, response);
+        postLoginCommand.execute(request, response);
 
         verify(userService, never()).loginEmail(any(), any());
     }
@@ -92,7 +92,7 @@ public class TestLogin {
         when(request.getParameter("email")).thenReturn(email);
         when(request.getParameter("password")).thenReturn(null);
 
-        postLogin.execute(request, response);
+        postLoginCommand.execute(request, response);
 
         verify(userService, never()).loginEmail(any(), any());
     }
@@ -103,7 +103,7 @@ public class TestLogin {
         when(request.getParameter("email")).thenReturn(null);
         when(request.getParameter("password")).thenReturn(null);
 
-        postLogin.execute(request, response);
+        postLoginCommand.execute(request, response);
 
         verify(userService, never()).loginEmail(any(), any());
     }

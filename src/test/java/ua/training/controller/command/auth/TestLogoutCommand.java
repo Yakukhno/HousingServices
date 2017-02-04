@@ -12,9 +12,9 @@ import java.io.IOException;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class TestLogout {
+public class TestLogoutCommand {
 
-    private Command postLogout = new PostLogout();
+    private Command postLogoutCommand = new PostLogoutCommand();
 
     @Test
     public void testExecute() throws ServletException, IOException {
@@ -23,7 +23,7 @@ public class TestLogout {
         HttpSession session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
 
-        postLogout.execute(request, response);
+        postLogoutCommand.execute(request, response);
 
         verify(session).removeAttribute(anyString());
     }

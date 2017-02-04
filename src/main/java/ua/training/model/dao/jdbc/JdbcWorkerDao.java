@@ -52,6 +52,7 @@ public class JdbcWorkerDao implements WorkerDao {
     static final String WORKER_ID = "id_worker";
     static final String WORKER_NAME = "name";
 
+    private JdbcHelper helper = new JdbcHelper();
     private Connection connection;
     private Logger logger = Logger.getLogger(JdbcWorkerDao.class);
 
@@ -68,7 +69,7 @@ public class JdbcWorkerDao implements WorkerDao {
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.first()) {
-                worker = Optional.of(getWorkerFromResultSet(resultSet));
+                worker = Optional.of(helper.getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -84,7 +85,7 @@ public class JdbcWorkerDao implements WorkerDao {
              ResultSet resultSet = statement.executeQuery(SELECT_ALL_WORKERS)) {
             resultSet.next();
             while (!resultSet.isAfterLast()) {
-                workers.add(getWorkerFromResultSet(resultSet));
+                workers.add(helper.getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_ALL, e);
@@ -152,7 +153,7 @@ public class JdbcWorkerDao implements WorkerDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                workers.add(getWorkerFromResultSet(resultSet));
+                workers.add(helper.getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_TYPE_OF_WORK_ID,
@@ -160,21 +161,6 @@ public class JdbcWorkerDao implements WorkerDao {
             throw getDaoException(message, e);
         }
         return workers;
-    }
-
-    static Worker getWorkerFromResultSet(ResultSet resultSet)
-            throws SQLException {
-        int currentId = resultSet.getInt(WORKER_ID);
-        Worker.Builder builder = new Worker.Builder()
-                .setId(resultSet.getInt(WORKER_ID))
-                .setName(resultSet.getString(WORKER_NAME))
-                .addTypeOfWork(JdbcTypeOfWorkDao
-                        .getTypeOfWorkFromResultSet(resultSet));
-        while (resultSet.next() && resultSet.getInt(WORKER_ID) == currentId) {
-            builder.addTypeOfWork(JdbcTypeOfWorkDao
-                    .getTypeOfWorkFromResultSet(resultSet));
-        }
-        return builder.build();
     }
 
     private void insertTypesOfWork(Worker worker) throws SQLException {

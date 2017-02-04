@@ -60,6 +60,7 @@ public class JdbcBrigadeDao implements BrigadeDao {
     static final String BRIGADE_ID = "id_brigade";
     static final String MANAGER = "manager";
 
+    private JdbcHelper helper = new JdbcHelper();
     private Connection connection;
     private Logger logger = Logger.getLogger(JdbcBrigadeDao.class);
 
@@ -79,11 +80,13 @@ public class JdbcBrigadeDao implements BrigadeDao {
             ResultSet brigadeResultSet = brigadeStatement.executeQuery();
             if (brigadeResultSet.first()) {
                 managerStatement.setInt(1, brigadeResultSet.getInt(MANAGER));
-                Brigade tempBrigade = getBrigadeFromResultSet(brigadeResultSet);
+                Brigade tempBrigade
+                        = helper.getBrigadeFromResultSet(brigadeResultSet);
                 ResultSet managerResultSet = managerStatement.executeQuery();
                 if (managerResultSet.next()) {
-                    tempBrigade.setManager(JdbcWorkerDao
-                            .getWorkerFromResultSet(managerResultSet));
+                    tempBrigade.setManager(
+                            helper.getWorkerFromResultSet(managerResultSet)
+                    );
                 }
                 brigade = Optional.of(tempBrigade);
             }
@@ -106,10 +109,10 @@ public class JdbcBrigadeDao implements BrigadeDao {
             brigadeResultSet.next();
             while (!brigadeResultSet.isAfterLast()) {
                 managerStatement.setInt(1, brigadeResultSet.getInt(MANAGER));
-                Brigade brigade = getBrigadeFromResultSet(brigadeResultSet);
+                Brigade brigade = helper.getBrigadeFromResultSet(brigadeResultSet);
                 ResultSet managerResultSet = managerStatement.executeQuery();
                 if (managerResultSet.next()) {
-                    brigade.setManager(JdbcWorkerDao
+                    brigade.setManager(helper
                             .getWorkerFromResultSet(managerResultSet));
                 }
                 brigades.add(brigade);
@@ -169,22 +172,6 @@ public class JdbcBrigadeDao implements BrigadeDao {
             String message = String.format(EXCEPTION_UPDATE, brigade);
             throw getDaoException(message, e);
         }
-    }
-
-    static Brigade getBrigadeFromResultSet(ResultSet resultSet)
-            throws SQLException {
-        int currentId = resultSet.getInt(BRIGADE_ID);
-        Brigade.Builder builder = new Brigade.Builder()
-                .setId(currentId);
-        resultSet.getInt(JdbcWorkerDao.WORKER_ID);
-        if (!resultSet.wasNull()) {
-            builder.addWorker(JdbcWorkerDao.getWorkerFromResultSet(resultSet));
-            while ((!resultSet.isAfterLast())
-                    && (resultSet.getInt(BRIGADE_ID) == currentId)) {
-                builder.addWorker(JdbcWorkerDao.getWorkerFromResultSet(resultSet));
-            }
-        }
-        return builder.build();
     }
 
     private void insertWorkers(Brigade brigade) throws SQLException {

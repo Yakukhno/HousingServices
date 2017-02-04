@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import static org.mockito.Mockito.*;
 
-public class TestUpdateUser {
+public class TestUpdateUserCommand {
 
     private UserService userService = mock(UserService.class);
 
@@ -29,7 +29,7 @@ public class TestUpdateUser {
 
     private User user;
 
-    private Command updateUser = new UpdateUser(userService);
+    private Command updateUserCommand = new UpdateUserCommand(userService);
 
     @Before
     public void before() {
@@ -52,12 +52,11 @@ public class TestUpdateUser {
         when(request.getParameter("email")).thenReturn(email);
         when(request.getParameter("oldPassword")).thenReturn(oldPassword);
         when(request.getParameter("newPassword")).thenReturn(newPassword);
-        when(request.getRequestURI()).thenReturn("/rest/user/" + userId);
         when(userService.getUserById(userId)).thenReturn(user);
         user.setEmail(email);
         user.setPassword(newPassword);
 
-        updateUser.execute(request, response);
+        updateUserCommand.execute(request, response);
 
         verify(userService).updateUser(user, oldPassword);
     }
@@ -71,7 +70,7 @@ public class TestUpdateUser {
         when(userService.getUserById(userId)).thenReturn(user);
         user.setPassword(newPassword);
 
-        updateUser.execute(request, response);
+        updateUserCommand.execute(request, response);
 
         verify(userService).updateUser(user, oldPassword);
     }
@@ -85,7 +84,7 @@ public class TestUpdateUser {
         when(userService.getUserById(userId)).thenReturn(user);
         user.setEmail(email);
 
-        updateUser.execute(request, response);
+        updateUserCommand.execute(request, response);
 
         verify(userService).updateUser(user, oldPassword);
     }
@@ -99,7 +98,7 @@ public class TestUpdateUser {
         doThrow(mock(ApplicationException.class))
                 .when(userService).updateUser(any(), anyString());
 
-        updateUser.execute(request, response);
+        updateUserCommand.execute(request, response);
     }
 
     @Test
@@ -114,7 +113,7 @@ public class TestUpdateUser {
         when(exception.isUserMessage()).thenReturn(true);
         doThrow(exception).when(userService).updateUser(any(), anyString());
 
-        updateUser.execute(request, response);
+        updateUserCommand.execute(request, response);
 
         verify(request).setAttribute(anyString(), eq(exceptionMessage));
     }
@@ -127,7 +126,7 @@ public class TestUpdateUser {
         when(request.getParameter("oldPassword")).thenReturn(oldPassword);
         when(request.getParameter("newPassword")).thenReturn(newPassword);
 
-        updateUser.execute(request, response);
+        updateUserCommand.execute(request, response);
 
         verify(userService, never()).createNewUser(any());
     }
@@ -138,7 +137,7 @@ public class TestUpdateUser {
         when(request.getParameter("oldPassword")).thenReturn(null);
         when(request.getParameter("newPassword")).thenReturn(newPassword);
 
-        updateUser.execute(request, response);
+        updateUserCommand.execute(request, response);
 
         verify(userService, never()).createNewUser(any());
     }
@@ -149,7 +148,7 @@ public class TestUpdateUser {
         when(request.getParameter("oldPassword")).thenReturn(oldPassword);
         when(request.getParameter("newPassword")).thenReturn(null);
 
-        updateUser.execute(request, response);
+        updateUserCommand.execute(request, response);
 
         verify(userService, never()).createNewUser(any());
     }

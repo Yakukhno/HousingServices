@@ -1,7 +1,9 @@
 <%@ include file="../include/header.jsp"%>
 <div class="row">
     <div class="col-lg-offset-3 col-lg-6">
-        <h2 align="center"><fmt:message key="brigade"/> ${requestScope[Attributes.BRIGADE].id}</h2>
+        <h2 align="center">
+            <fmt:message key="brigade"/> ${requestScope[Attributes.BRIGADE].id}
+        </h2>
     </div>
 </div>
     <table class="table table-striped" style="width: 80%" align="center">
@@ -16,7 +18,8 @@
             <tr>
                 <td>${requestScope[Attributes.BRIGADE].manager.name}</td>
                 <td>
-                    <c:forEach var="typeOfWork" items="${requestScope[Attributes.BRIGADE].manager.typesOfWork}">
+                    <c:forEach var="typeOfWork"
+                               items="${requestScope[Attributes.BRIGADE].manager.typesOfWork}">
                         <c:out value="${typeOfWork.description}; "/>
                     </c:forEach>
                 </td>

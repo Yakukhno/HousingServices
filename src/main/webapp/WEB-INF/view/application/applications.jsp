@@ -19,7 +19,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach var="application" items="${requestScope[Attributes.APPLICATIONS]}">
+                    <c:forEach var="application"
+                               items="${requestScope[Attributes.APPLICATIONS]}">
                        <tr>
                             <td>${application.typeOfWork.description}</td>
                             <td>${application.scaleOfProblem}</td>
@@ -31,9 +32,13 @@
                             <td>${application.status}</td>
                             <td>
                                 <c:if test="${application.status eq requestScope[Attributes.STATUS_NEW]}">
-                                    <form method="post" action="/rest/new_task" style="margin-bottom: 0">
+                                    <form style="margin-bottom: 0"
+                                          method="post"
+                                          action="/rest/new_task">
                                         <input type="hidden" name="application" value="${application.id}"/>
-                                        <button class="btn btn-primary" type="submit"><fmt:message key="form_brigade"/></button>
+                                        <button class="btn btn-primary" type="submit">
+                                            <fmt:message key="form_brigade"/>
+                                        </button>
                                     </form>
                                 </c:if>
                             </td>

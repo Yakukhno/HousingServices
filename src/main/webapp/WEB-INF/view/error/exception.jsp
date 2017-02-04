@@ -25,7 +25,8 @@
                 <tr>
                     <td>Stack trace</td>
                     <td>
-                        <c:forEach var="trace" items="${pageContext.exception.stackTrace}">
+                        <c:forEach var="trace"
+                                   items="${pageContext.exception.stackTrace}">
                             ${trace}<br/>
                         </c:forEach>
                     </td>

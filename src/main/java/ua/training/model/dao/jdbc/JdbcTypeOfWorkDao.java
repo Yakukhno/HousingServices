@@ -42,6 +42,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
     static final String TYPE_OF_WORK_ID = "id_type_of_work";
     static final String TYPE_OF_WORK_DESCRIPTION = "description";
 
+    private JdbcHelper helper = new JdbcHelper();
     private Connection connection;
     private Logger logger = Logger.getLogger(JdbcTypeOfWorkDao.class);
 
@@ -58,7 +59,9 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                typeOfWork = Optional.of(getTypeOfWorkFromResultSet(resultSet));
+                typeOfWork = Optional.of(
+                        helper.getTypeOfWorkFromResultSet(resultSet)
+                );
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -73,7 +76,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             while (resultSet.next()) {
-                typesOfWork.add(getTypeOfWorkFromResultSet(resultSet));
+                typesOfWork.add(helper.getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_ALL, e);
@@ -132,7 +135,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                typesOfWork.add(getTypeOfWorkFromResultSet(resultSet));
+                typesOfWork.add(helper.getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_DESCRIPTION,
@@ -140,14 +143,6 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
             throw getDaoException(message, e);
         }
         return typesOfWork;
-    }
-
-    static TypeOfWork getTypeOfWorkFromResultSet(ResultSet resultSet)
-            throws SQLException {
-        return new TypeOfWork.Builder()
-                .setId(resultSet.getInt(TYPE_OF_WORK_ID))
-                .setDescription(resultSet.getString(TYPE_OF_WORK_DESCRIPTION))
-                .build();
     }
 
     private DaoException getDaoException(String message, SQLException e) {

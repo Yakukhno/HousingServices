@@ -5,20 +5,26 @@
 </div>
 <form class="form-horizontal col-md-offset-3 col-md-6" method="post" action="/rest/login">
     <div class="form-group">
-        <label for="email" class="control-label col-md-4"><fmt:message key="email"/></label>
+        <label for="email" class="control-label col-md-4">
+            <fmt:message key="email"/>
+        </label>
         <div class="col-md-8">
             <input class="form-control col-md-8" type="text" id="email" name="email"/><br/>
         </div>
     </div>
     <div class="form-group">
-        <label for="password" class="control-label col-md-4"><fmt:message key="password"/></label>
+        <label for="password" class="control-label col-md-4">
+            <fmt:message key="password"/>
+        </label>
         <div class="col-md-8">
             <input class="form-control col-md-8" type="password" id="password" name="password"/><br/>
         </div>
     </div>
     <div class="form-group">
         <div class="col-md-offset-4 col-md-8">
-            <button class="btn btn-default" type="submit"><fmt:message key="header.login"/></button>
+            <button class="btn btn-default" type="submit">
+                <fmt:message key="header.login"/>
+            </button>
         </div>
     </div>
     <c:if test="${not empty requestScope[Attributes.MESSAGE]}">

@@ -14,7 +14,7 @@ import java.io.IOException;
 
 import static org.mockito.Mockito.*;
 
-public class TestPostUser {
+public class TestPostUserCommand {
 
     private UserService userService = mock(UserService.class);
 
@@ -26,7 +26,7 @@ public class TestPostUser {
     private String password = "8Z8zdDAXq";
     private String role = "TENANT";
 
-    private Command postUser = new PostUser(userService);
+    private Command postUserCommand = new PostUserCommand(userService);
 
     @Before
     public void before() {
@@ -47,7 +47,7 @@ public class TestPostUser {
                 .setRole(User.Role.valueOf(role))
                 .build();
 
-        postUser.execute(request, response);
+        postUserCommand.execute(request, response);
 
         verify(userService).createNewUser(user);
     }
@@ -62,7 +62,7 @@ public class TestPostUser {
         doThrow(mock(ApplicationException.class))
                 .when(userService).createNewUser(any());
 
-        postUser.execute(request, response);
+        postUserCommand.execute(request, response);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class TestPostUser {
         when(exception.isUserMessage()).thenReturn(true);
         doThrow(exception).when(userService).createNewUser(any());
 
-        postUser.execute(request, response);
+        postUserCommand.execute(request, response);
 
         verify(request).setAttribute(anyString(), eq(exceptionMessage));
     }
@@ -90,7 +90,7 @@ public class TestPostUser {
         when(request.getParameter("password")).thenReturn(password);
         when(request.getParameter("role")).thenReturn(role);
 
-        postUser.execute(request, response);
+        postUserCommand.execute(request, response);
 
         verify(userService, never()).createNewUser(any());
     }
@@ -102,7 +102,7 @@ public class TestPostUser {
         when(request.getParameter("password")).thenReturn(password);
         when(request.getParameter("role")).thenReturn(role);
 
-        postUser.execute(request, response);
+        postUserCommand.execute(request, response);
 
         verify(userService, never()).createNewUser(any());
     }
@@ -114,7 +114,7 @@ public class TestPostUser {
         when(request.getParameter("password")).thenReturn(null);
         when(request.getParameter("role")).thenReturn(role);
 
-        postUser.execute(request, response);
+        postUserCommand.execute(request, response);
 
         verify(userService, never()).createNewUser(any());
     }
@@ -126,7 +126,7 @@ public class TestPostUser {
         when(request.getParameter("password")).thenReturn(password);
         when(request.getParameter("role")).thenReturn(null);
 
-        postUser.execute(request, response);
+        postUserCommand.execute(request, response);
 
         verify(userService, never()).createNewUser(any());
     }

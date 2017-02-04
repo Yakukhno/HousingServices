@@ -21,7 +21,7 @@ import java.util.List;
 
 import static ua.training.controller.Attributes.*;
 
-public class PostApplication implements Command {
+public class PostApplicationCommand implements Command {
 
     private static final String PARAM_USER = "user";
     private static final String PARAM_TYPE_OF_WORK = "typeOfWork";
@@ -39,13 +39,13 @@ public class PostApplication implements Command {
     private TypeOfWorkService typeOfWorkService;
     private ApplicationService applicationService;
 
-    public PostApplication() {
+    public PostApplicationCommand() {
         typeOfWorkService = TypeOfWorkServiceImpl.getInstance();
         applicationService = ApplicationServiceImpl.getInstance();
     }
 
-    PostApplication(TypeOfWorkService typeOfWorkService,
-                    ApplicationService applicationService) {
+    PostApplicationCommand(TypeOfWorkService typeOfWorkService,
+                           ApplicationService applicationService) {
         this.typeOfWorkService = typeOfWorkService;
         this.applicationService = applicationService;
     }

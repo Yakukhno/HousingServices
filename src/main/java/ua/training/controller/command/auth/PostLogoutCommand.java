@@ -7,14 +7,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class LoginPage implements Command {
+import static ua.training.controller.Attributes.USER;
 
-    private static final String LOGIN_JSP_PATH = "/WEB-INF/view/auth/login.jsp";
+public class PostLogoutCommand implements Command {
+
+    private static final String LOGIN_PATH = "/rest/login";
 
     @Override
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        return LOGIN_JSP_PATH;
+        request.getSession().removeAttribute(USER);
+        return LOGIN_PATH;
     }
 }
