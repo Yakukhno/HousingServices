@@ -1,7 +1,6 @@
 package ua.training.model.dao.jdbc;
 
 import org.apache.log4j.Logger;
-import ua.training.exception.DaoException;
 import ua.training.model.dao.ApplicationDao;
 import ua.training.model.entities.Application;
 
@@ -10,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class JdbcApplicationDao implements ApplicationDao {
+public class JdbcApplicationDao extends AbstractJdbcDao
+        implements ApplicationDao {
 
     private static final String SELECT =
             "SELECT * FROM application " +
@@ -52,22 +52,18 @@ public class JdbcApplicationDao implements ApplicationDao {
             = "Failed select from 'application'";
     private static final String EXCEPTION_ADD
             = "Failed insert into 'application' value = %s";
-    private static final String EXCEPTION_DELETE
-            = "Failed delete from 'application' with id = %d";
     private static final String EXCEPTION_UPDATE
             = "Failed update 'application' value = %s";
 
+    static final String APPLICATION_TABLE = "application";
     static final String APPLICATION_ID = "id_application";
     static final String APPLICATION_SCALE_OF_PROBLEM = "scale_of_problem";
     static final String APPLICATION_DESIRED_TIME = "desired_time";
     static final String APPLICATION_STATUS = "status";
 
-    private JdbcHelper helper = new JdbcHelper();
-    private Connection connection;
-    private Logger logger = Logger.getLogger(JdbcApplicationDao.class);
-
     JdbcApplicationDao(Connection connection) {
         this.connection = connection;
+        logger = Logger.getLogger(JdbcApplicationDao.class);
     }
 
     @Override
@@ -123,14 +119,7 @@ public class JdbcApplicationDao implements ApplicationDao {
 
     @Override
     public void delete(int id) {
-        try (PreparedStatement statement =
-                     connection.prepareStatement(DELETE_BY_ID)) {
-            statement.setInt(1, id);
-            statement.execute();
-        } catch (SQLException e) {
-            String message = String.format(EXCEPTION_DELETE, id);
-            throw getDaoException(message, e);
-        }
+        delete(APPLICATION_TABLE, DELETE_BY_ID, id);
     }
 
     @Override
@@ -212,10 +201,5 @@ public class JdbcApplicationDao implements ApplicationDao {
         statement.setString(3, application.getScaleOfProblem().name());
         statement.setTimestamp(4, timestamp);
         statement.setString(5, application.getStatus().name());
-    }
-
-    private DaoException getDaoException(String message, SQLException e) {
-        logger.error(message, e);
-        return new DaoException(e);
     }
 }

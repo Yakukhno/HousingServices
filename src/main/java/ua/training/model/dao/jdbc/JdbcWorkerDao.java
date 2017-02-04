@@ -1,7 +1,6 @@
 package ua.training.model.dao.jdbc;
 
 import org.apache.log4j.Logger;
-import ua.training.exception.DaoException;
 import ua.training.model.dao.WorkerDao;
 import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.Worker;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class JdbcWorkerDao implements WorkerDao {
+public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
 
     private static final String SELECT =
             "SELECT * FROM worker " +
@@ -44,20 +43,16 @@ public class JdbcWorkerDao implements WorkerDao {
             = "Failed select from 'worker'";
     private static final String EXCEPTION_ADD
             = "Failed insert into 'worker' value = %s";
-    private static final String EXCEPTION_DELETE
-            = "Failed delete from 'worker' with id = %d";
     private static final String EXCEPTION_UPDATE
             = "Failed update 'worker' value = %s";
 
+    static final String TABLE_WORKER = "worker";
     static final String WORKER_ID = "id_worker";
     static final String WORKER_NAME = "name";
 
-    private JdbcHelper helper = new JdbcHelper();
-    private Connection connection;
-    private Logger logger = Logger.getLogger(JdbcWorkerDao.class);
-
     JdbcWorkerDao(Connection connection) {
         this.connection = connection;
+        logger = Logger.getLogger(JdbcWorkerDao.class);
     }
 
     @Override
@@ -117,14 +112,7 @@ public class JdbcWorkerDao implements WorkerDao {
 
     @Override
     public void delete(int id) {
-        try (PreparedStatement statement =
-                     connection.prepareStatement(DELETE_BY_ID)) {
-            statement.setInt(1, id);
-            statement.execute();
-        } catch (SQLException e) {
-            String message = String.format(EXCEPTION_DELETE, id);
-            throw getDaoException(message, e);
-        }
+        delete(TABLE_WORKER, DELETE_BY_ID, id);
     }
 
     @Override
@@ -177,10 +165,5 @@ public class JdbcWorkerDao implements WorkerDao {
             }
             statement.execute();
         }
-    }
-
-    private DaoException getDaoException(String message, SQLException e) {
-        logger.error(message, e);
-        return new DaoException(e);
     }
 }

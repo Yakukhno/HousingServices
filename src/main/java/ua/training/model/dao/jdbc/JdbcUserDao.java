@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class JdbcUserDao implements UserDao {
+public class JdbcUserDao extends AbstractJdbcDao implements UserDao {
 
     private static final String SELECT = "SELECT * FROM user ";
 
@@ -42,26 +42,22 @@ public class JdbcUserDao implements UserDao {
             = "Failed select from 'user'";
     private static final String EXCEPTION_ADD
             = "Failed insert into 'user' value = %s";
-    private static final String EXCEPTION_DELETE
-            = "Failed delete from 'user' with id = %d";
     private static final String EXCEPTION_UPDATE
             = "Failed update 'user' value = %s";
     private static final String EXCEPTION_DUPLICATE_EMAIL
             = "exception.email_exists";
     private static final int ERROR_CODE_DUPLICATE_FIELD = 1062;
 
+    static final String USER_TABLE = "user";
     static final String USER_ID = "id_user";
     static final String USER_NAME = "name";
     static final String USER_EMAIL = "email";
     static final String USER_PASSWORD = "password";
     static final String USER_ROLE = "role";
 
-    private JdbcHelper helper = new JdbcHelper();
-    private Logger logger = Logger.getLogger(Logger.class);
-    private Connection connection;
-
     JdbcUserDao(Connection connection) {
         this.connection = connection;
+        logger = Logger.getLogger(JdbcUserDao.class);
     }
 
     @Override
@@ -115,14 +111,7 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public void delete(int id) {
-        try (PreparedStatement statement =
-                     connection.prepareStatement(DELETE_BY_ID)) {
-            statement.setInt(1, id);
-            statement.execute();
-        } catch (SQLException e) {
-            String message = String.format(EXCEPTION_DELETE, id);
-            throw getDaoException(message, e);
-        }
+        delete(USER_TABLE, DELETE_BY_ID, id);
     }
 
     @Override
@@ -194,10 +183,5 @@ public class JdbcUserDao implements UserDao {
             logger.error(message, e);
         }
         return daoException;
-    }
-
-    private DaoException getDaoException(String message, SQLException e) {
-        logger.error(message, e);
-        return new DaoException(e);
     }
 }

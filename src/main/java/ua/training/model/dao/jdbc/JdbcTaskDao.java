@@ -1,7 +1,6 @@
 package ua.training.model.dao.jdbc;
 
 import org.apache.log4j.Logger;
-import ua.training.exception.DaoException;
 import ua.training.model.dao.TaskDao;
 import ua.training.model.entities.Task;
 
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class JdbcTaskDao implements TaskDao {
+public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
 
     private static final String SELECT =
         "SELECT table1.*, type_of_work.description AS worker_type_description FROM " +
@@ -57,21 +56,17 @@ public class JdbcTaskDao implements TaskDao {
             = "Failed select from 'task'";
     private static final String EXCEPTION_ADD
             = "Failed insert into 'task' value = %s";
-    private static final String EXCEPTION_DELETE
-            = "Failed delete from 'task' with id = %d";
     private static final String EXCEPTION_UPDATE
             = "Failed update 'task' value = %s";
 
+    static final String TASK_TABLE = "task";
     static final String TASK_ID = "id_task";
     static final String TASK_SCHEDULED_TIME = "scheduled_time";
     static final String TASK_IS_ACTIVE = "is_active";
 
-    private JdbcHelper helper = new JdbcHelper();
-    private Connection connection;
-    private Logger logger = Logger.getLogger(JdbcTaskDao.class);
-
     JdbcTaskDao(Connection connection) {
         this.connection = connection;
+        logger = Logger.getLogger(JdbcTaskDao.class);
     }
 
     @Override
@@ -125,14 +120,7 @@ public class JdbcTaskDao implements TaskDao {
 
     @Override
     public void delete(int id) {
-        try (PreparedStatement statement =
-                     connection.prepareStatement(DELETE_BY_ID)) {
-            statement.setInt(1, id);
-            statement.execute();
-        } catch (SQLException e) {
-            String message = String.format(EXCEPTION_DELETE, id);
-            throw getDaoException(message, e);
-        }
+        delete(TASK_TABLE, DELETE_BY_ID, id);
     }
 
     @Override
@@ -170,10 +158,5 @@ public class JdbcTaskDao implements TaskDao {
         statement.setInt(2, task.getBrigade().getId());
         statement.setTimestamp(3, Timestamp.valueOf(task.getScheduledTime()));
         statement.setBoolean(4, task.isActive());
-    }
-
-    private DaoException getDaoException(String message, SQLException e) {
-        logger.error(message, e);
-        return new DaoException(e);
     }
 }

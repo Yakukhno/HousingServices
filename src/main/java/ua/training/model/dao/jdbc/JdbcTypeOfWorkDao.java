@@ -1,7 +1,6 @@
 package ua.training.model.dao.jdbc;
 
 import org.apache.log4j.Logger;
-import ua.training.exception.DaoException;
 import ua.training.model.dao.TypeOfWorkDao;
 import ua.training.model.entities.TypeOfWork;
 
@@ -10,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
+public class JdbcTypeOfWorkDao extends AbstractJdbcDao
+        implements TypeOfWorkDao {
 
     private static final String SELECT = "SELECT * FROM type_of_work ";
 
@@ -35,20 +35,16 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
             = "Failed select from 'type_of_work'";
     private static final String EXCEPTION_ADD
             = "Failed insert into 'type_of_work' value = %s";
-    private static final String EXCEPTION_DELETE
-            = "Failed delete from 'type_of_work' with id = %d";
     private static final String EXCEPTION_UPDATE
             = "Failed update 'type_of_work' value = %s";
 
+    static final String TYPE_OF_WORK_TABLE = "type_of_work";
     static final String TYPE_OF_WORK_ID = "id_type_of_work";
     static final String TYPE_OF_WORK_DESCRIPTION = "description";
 
-    private JdbcHelper helper = new JdbcHelper();
-    private Connection connection;
-    private Logger logger = Logger.getLogger(JdbcTypeOfWorkDao.class);
-
     JdbcTypeOfWorkDao(Connection connection) {
         this.connection = connection;
+        logger = Logger.getLogger(JdbcTypeOfWorkDao.class);
     }
 
     @Override
@@ -104,14 +100,7 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
 
     @Override
     public void delete(int id) {
-        try (PreparedStatement statement =
-                     connection.prepareStatement(DELETE_BY_ID)) {
-            statement.setInt(1, id);
-            statement.execute();
-        } catch (SQLException e) {
-            String message = String.format(EXCEPTION_DELETE, id);
-            throw getDaoException(message, e);
-        }
+        delete(TYPE_OF_WORK_TABLE, DELETE_BY_ID, id);
     }
 
     @Override
@@ -144,10 +133,5 @@ public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
             throw getDaoException(message, e);
         }
         return typesOfWork;
-    }
-
-    private DaoException getDaoException(String message, SQLException e) {
-        logger.error(message, e);
-        return new DaoException(e);
     }
 }

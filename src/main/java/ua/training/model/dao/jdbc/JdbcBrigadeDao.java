@@ -1,7 +1,6 @@
 package ua.training.model.dao.jdbc;
 
 import org.apache.log4j.Logger;
-import ua.training.exception.DaoException;
 import ua.training.model.dao.BrigadeDao;
 import ua.training.model.entities.Brigade;
 import ua.training.model.entities.person.Worker;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class JdbcBrigadeDao implements BrigadeDao {
+public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
 
     private static final String SELECT =
             "SELECT * FROM brigade " +
@@ -47,20 +46,16 @@ public class JdbcBrigadeDao implements BrigadeDao {
             = "Failed select from 'brigade'";
     private static final String EXCEPTION_ADD
             = "Failed insert into 'brigade' value = %s";
-    private static final String EXCEPTION_DELETE
-            = "Failed delete from 'brigade' with id = %d";
     private static final String EXCEPTION_UPDATE
             = "Failed update 'brigade' value = %s";
 
+    static final String BRIGADE_TABLE = "brigade";
     static final String BRIGADE_ID = "id_brigade";
     static final String MANAGER = "manager";
 
-    private JdbcHelper helper = new JdbcHelper();
-    private Connection connection;
-    private Logger logger = Logger.getLogger(JdbcBrigadeDao.class);
-
     JdbcBrigadeDao(Connection connection) {
         this.connection = connection;
+        logger = Logger.getLogger(JdbcBrigadeDao.class);
     }
 
     @Override
@@ -142,14 +137,7 @@ public class JdbcBrigadeDao implements BrigadeDao {
 
     @Override
     public void delete(int id) {
-        try (PreparedStatement statement
-                     = connection.prepareStatement(DELETE_BY_ID)) {
-            statement.setInt(1, id);
-            statement.execute();
-        } catch (SQLException e) {
-            String message = String.format(EXCEPTION_DELETE, id);
-            throw getDaoException(message, e);
-        }
+        delete(BRIGADE_TABLE, DELETE_BY_ID, id);
     }
 
     @Override
@@ -183,10 +171,5 @@ public class JdbcBrigadeDao implements BrigadeDao {
             }
             statement.execute();
         }
-    }
-
-    private DaoException getDaoException(String message, SQLException e) {
-        logger.error(message, e);
-        return new DaoException(e);
     }
 }
