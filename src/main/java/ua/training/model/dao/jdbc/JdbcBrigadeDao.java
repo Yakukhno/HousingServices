@@ -1,8 +1,8 @@
 package ua.training.model.dao.jdbc;
 
 import org.apache.log4j.Logger;
-import ua.training.model.dao.BrigadeDao;
 import ua.training.exception.DaoException;
+import ua.training.model.dao.BrigadeDao;
 import ua.training.model.entities.Brigade;
 import ua.training.model.entities.person.Worker;
 
@@ -31,16 +31,15 @@ public class JdbcBrigadeDao implements BrigadeDao {
                     "WHERE id_worker = ?";
 
     private static final String INSERT =
-            "INSERT INTO brigade (manager) VALUES (?)";
+            "INSERT INTO brigade (manager) VALUES (?);";
     private static final String INSERT_WORKER =
             "INSERT INTO brigade_has_worker (id_brigade, id_worker) " +
-                    "VALUES (?, ?)";
+                    "VALUES (?, ?);";
     private static final String DELETE_BY_ID =
             "DELETE FROM brigade WHERE id_brigade = ?";
-    private static final String DELETE_TYPE_OF_WORK_BY_ID =
-            "DELETE FROM brigade_has_worker WHERE id_brigade = ?";
     private static final String UPDATE =
-            "UPDATE brigade SET manager = ? WHERE id_brigade = ?";
+            "UPDATE brigade SET manager = ? WHERE id_brigade = ?; " +
+                    "DELETE FROM brigade_has_worker WHERE id_brigade = ?";
 
     private static final String EXCEPTION_GET_BY_ID
             = "Failed select from 'brigade' with id = %d";
@@ -121,17 +120,20 @@ public class JdbcBrigadeDao implements BrigadeDao {
 
     @Override
     public void add(Brigade brigade) {
-        try (PreparedStatement brigadeStatement
+        try (PreparedStatement statement
                      = connection.prepareStatement(INSERT,
                              Statement.RETURN_GENERATED_KEYS)) {
-            brigadeStatement.setInt(1, brigade.getManager().getId());
-            brigadeStatement.execute();
+            connection.setAutoCommit(false);
+            statement.setInt(1, brigade.getManager().getId());
+            statement.execute();
 
-            ResultSet resultSet = brigadeStatement.getGeneratedKeys();
+            ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
                 brigade.setId(resultSet.getInt(1));
             }
             insertWorkers(brigade);
+
+            connection.commit();
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_ADD, brigade);
             throw getDaoException(message, e);
@@ -152,18 +154,16 @@ public class JdbcBrigadeDao implements BrigadeDao {
 
     @Override
     public void update(Brigade brigade) {
-        try (PreparedStatement brigadeStatement
-                     = connection.prepareStatement(UPDATE);
-             PreparedStatement workerStatement
-                     = connection.prepareStatement(DELETE_TYPE_OF_WORK_BY_ID)) {
-            brigadeStatement.setInt(1, brigade.getManager().getId());
-            brigadeStatement.setInt(2, brigade.getId());
-            brigadeStatement.execute();
-
-            workerStatement.setInt(1, brigade.getId());
-            workerStatement.execute();
+        try (PreparedStatement statement
+                     = connection.prepareStatement(UPDATE)) {
+            connection.setAutoCommit(false);
+            statement.setInt(1, brigade.getManager().getId());
+            statement.setInt(2, brigade.getId());
+            statement.setInt(3, brigade.getId());
+            statement.execute();
 
             insertWorkers(brigade);
+            connection.commit();
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_UPDATE, brigade);
             throw getDaoException(message, e);
@@ -171,13 +171,17 @@ public class JdbcBrigadeDao implements BrigadeDao {
     }
 
     private void insertWorkers(Brigade brigade) throws SQLException {
-        try (PreparedStatement workerStatement
-                     = connection.prepareStatement(INSERT_WORKER)) {
+        StringBuilder query = new StringBuilder();
+        List<Worker> workers = brigade.getWorkers();
+        workers.forEach(typeOfWork -> query.append(INSERT_WORKER));
+        try (PreparedStatement statement
+                     = connection.prepareStatement(query.toString())) {
+            int count = 1;
             for (Worker worker : brigade.getWorkers()) {
-                workerStatement.setInt(1, brigade.getId());
-                workerStatement.setInt(2, worker.getId());
-                workerStatement.execute();
+                statement.setInt(count++, brigade.getId());
+                statement.setInt(count++, worker.getId());
             }
+            statement.execute();
         }
     }
 

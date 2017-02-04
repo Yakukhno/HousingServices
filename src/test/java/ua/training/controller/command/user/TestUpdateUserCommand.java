@@ -120,8 +120,6 @@ public class TestUpdateUserCommand {
 
     @Test
     public void testExecuteNullEmail() throws ServletException, IOException {
-        when(request.getSession().getAttribute("user"))
-                .thenReturn(mock(User.class));
         when(request.getParameter("email")).thenReturn(null);
         when(request.getParameter("oldPassword")).thenReturn(oldPassword);
         when(request.getParameter("newPassword")).thenReturn(newPassword);

@@ -1,5 +1,6 @@
 package ua.training.model.service.impl;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.DaoConnection;
@@ -66,7 +67,7 @@ public class TestUserServiceImpl {
         String email = "a@a.com";
         String password = "qwerty";
         userFromDao.setEmail(email);
-        userFromDao.setPassword(password);
+        userFromDao.setPassword(DigestUtils.sha256Hex(password));
         UserDao userDao = mock(UserDao.class);
         when(userDao.getUserByEmail(email))
                 .thenReturn(Optional.of(userFromDao));
@@ -135,7 +136,7 @@ public class TestUserServiceImpl {
         User userFromDao = new User();
         String password = "qwerty";
         userFromDao.setId(3);
-        userFromDao.setPassword(password);
+        userFromDao.setPassword(DigestUtils.sha256Hex(password));
         UserDao userDao = mock(UserDao.class);
         when(userDao.get(3))
                 .thenReturn(Optional.of(userFromDao));
@@ -145,6 +146,7 @@ public class TestUserServiceImpl {
                 .thenReturn(userDao);
         User paramUser = new User();
         paramUser.setId(3);
+        paramUser.setPassword("newPass");
 
         userService.updateUser(paramUser, password);
 
@@ -165,6 +167,7 @@ public class TestUserServiceImpl {
                 .thenReturn(userDao);
         User paramUser = new User();
         paramUser.setId(3);
+        paramUser.setPassword("newPass");
 
         userService.updateUser(paramUser, "wrong");
 
@@ -182,6 +185,7 @@ public class TestUserServiceImpl {
                 .thenReturn(userDao);
         User paramUser = new User();
         paramUser.setId(3);
+        paramUser.setPassword("newPass");
 
         userService.updateUser(paramUser, "qwerty");
 
@@ -191,10 +195,12 @@ public class TestUserServiceImpl {
     @Test
     public void testCreateUser() {
         UserDao userDao = mock(UserDao.class);
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
         User paramUser = new User();
         paramUser.setId(3);
+        paramUser.setPassword("qwerty");
+        when(daoFactory.createUserDao(any()))
+                .thenReturn(userDao);
+
 
         userService.createNewUser(paramUser);
 

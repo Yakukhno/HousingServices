@@ -1,5 +1,6 @@
 package ua.training.controller.servlet;
 
+import org.apache.log4j.Logger;
 import ua.training.controller.command.Command;
 import ua.training.controller.command.CommandHolder;
 import ua.training.exception.AccessForbiddenException;
@@ -25,6 +26,7 @@ public class FrontController extends HttpServlet {
     private static final String REDIRECT_ROUTE = "/rest";
 
     private Map<String, Command> commands;
+    private Logger logger = Logger.getLogger(FrontController.class);
 
     @Override
     public void init() throws ServletException {
@@ -63,6 +65,9 @@ public class FrontController extends HttpServlet {
             response.sendError(404, e.getMessage());
         } catch (AccessForbiddenException e) {
             response.sendError(403, e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw e;
         }
     }
 
