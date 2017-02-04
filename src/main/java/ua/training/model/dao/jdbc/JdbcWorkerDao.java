@@ -13,17 +13,17 @@ import java.util.Optional;
 
 public class JdbcWorkerDao implements WorkerDao {
 
-    private static final String SELECT_ALL_WORKERS =
+    private static final String SELECT =
             "SELECT * FROM worker " +
                     "JOIN worker_has_type_of_work USING (id_worker) " +
-                    "JOIN type_of_work USING (id_type_of_work) ORDER BY id_worker";
-    private static final String SELECT_BY_ID =
-            "SELECT * FROM worker " +
-                    "JOIN worker_has_type_of_work USING (id_worker) " +
-                    "JOIN type_of_work USING (id_type_of_work) " +
-                    "WHERE id_worker = ?";
+                    "JOIN type_of_work USING (id_type_of_work) ";
+    private static final String ORDER_BY = "ORDER BY id_worker ";
+
+    private static final String SELECT_ALL = SELECT + ORDER_BY;
+    private static final String SELECT_BY_ID = SELECT + "WHERE id_worker = ?";
     private static final String SELECT_BY_TYPE =
-            "SELECT id_worker FROM worker_has_type_of_work WHERE id_type_of_work = ?";
+            "SELECT id_worker FROM worker_has_type_of_work " +
+                    "WHERE id_type_of_work = ?";
 
     private static final String INSERT =
             "INSERT INTO worker (name) VALUES (?)";
@@ -82,7 +82,7 @@ public class JdbcWorkerDao implements WorkerDao {
     public List<Worker> getAll() {
         List<Worker> workers = new ArrayList<>();
         try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SELECT_ALL_WORKERS)) {
+             ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             resultSet.next();
             while (!resultSet.isAfterLast()) {
                 workers.add(helper.getWorkerFromResultSet(resultSet));

@@ -12,31 +12,22 @@ import java.util.Optional;
 
 public class JdbcApplicationDao implements ApplicationDao {
 
-    private static final String SELECT_ALL =
+    private static final String SELECT =
             "SELECT * FROM application " +
                     "JOIN type_of_work USING (id_type_of_work) " +
-                    "LEFT JOIN user USING (id_user) " +
-                    "ORDER BY application.status, application.desired_time DESC";
-    private static final String SELECT_BY_ID =
-            "SELECT * FROM application " +
-                    "JOIN type_of_work USING (id_type_of_work) " +
-                    "LEFT JOIN user USING (id_user) " +
+                    "LEFT JOIN user USING (id_user) ";
+    private static final String ORDER_BY =
+            "ORDER BY application.status, application.desired_time DESC";
+
+    private static final String SELECT_ALL = SELECT + ORDER_BY;
+    private static final String SELECT_BY_ID = SELECT +
             "WHERE id_application = ?";
-    private static final String SELECT_BY_TYPE_OF_WORK =
-            "SELECT * FROM application " +
-                    "JOIN type_of_work USING (id_type_of_work) " +
-                    "LEFT JOIN user USING (id_user) " +
-                    "WHERE type_of_work.description LIKE ?";
-    private static final String SELECT_BY_TENANT =
-            "SELECT * FROM application " +
-                    "JOIN type_of_work USING (id_type_of_work) " +
-                    "JOIN user USING (id_user) " +
-                    "WHERE id_user = ?";
-    private static final String SELECT_BY_STATUS =
-            "SELECT * FROM application " +
-                    "JOIN type_of_work USING (id_type_of_work) " +
-                    "JOIN user USING (id_user) " +
-                    "WHERE status = ?";
+    private static final String SELECT_BY_TYPE_OF_WORK = SELECT +
+            "WHERE type_of_work.description LIKE ?";
+    private static final String SELECT_BY_TENANT = SELECT +
+            "WHERE id_user = ?";
+    private static final String SELECT_BY_STATUS = SELECT +
+            "WHERE status = ?";
 
     private static final String INSERT =
             "INSERT INTO application " +

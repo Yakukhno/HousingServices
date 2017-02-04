@@ -12,13 +12,15 @@ import java.util.Optional;
 
 public class JdbcUserDao implements UserDao {
 
-    private static final String SELECT_BY_ID =
-            "SELECT * FROM user WHERE id_user = ?";
-    private static final String SELECT_BY_EMAIL =
-            "SELECT * FROM user WHERE email = ?";
-    private static final String SELECT_BY_ROLE =
-            "SELECT * FROM user WHERE role = ?";
-    private static final String SELECT_ALL = "SELECT * FROM user";
+    private static final String SELECT = "SELECT * FROM user ";
+
+    private static final String SELECT_ALL = SELECT;
+    private static final String SELECT_BY_ID = SELECT +
+            "WHERE id_user = ?";
+    private static final String SELECT_BY_EMAIL = SELECT +
+            "WHERE email = ?";
+    private static final String SELECT_BY_ROLE = SELECT +
+            "WHERE role = ?";
 
     private static final String INSERT =
             "INSERT INTO user (name, email, password, role) " +

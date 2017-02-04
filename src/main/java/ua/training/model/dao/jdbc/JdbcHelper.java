@@ -1,9 +1,6 @@
 package ua.training.model.dao.jdbc;
 
-import ua.training.model.entities.Application;
-import ua.training.model.entities.Brigade;
-import ua.training.model.entities.ProblemScale;
-import ua.training.model.entities.TypeOfWork;
+import ua.training.model.entities.*;
 import ua.training.model.entities.person.User;
 import ua.training.model.entities.person.Worker;
 
@@ -12,14 +9,18 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 import static ua.training.model.dao.jdbc.JdbcApplicationDao.*;
-import static ua.training.model.dao.jdbc.JdbcBrigadeDao.BRIGADE_ID;
-import static ua.training.model.dao.jdbc.JdbcTypeOfWorkDao.TYPE_OF_WORK_DESCRIPTION;
-import static ua.training.model.dao.jdbc.JdbcTypeOfWorkDao.TYPE_OF_WORK_ID;
+import static ua.training.model.dao.jdbc.JdbcBrigadeDao.*;
+import static ua.training.model.dao.jdbc.JdbcTaskDao.*;
+import static ua.training.model.dao.jdbc.JdbcTypeOfWorkDao.*;
 import static ua.training.model.dao.jdbc.JdbcUserDao.*;
-import static ua.training.model.dao.jdbc.JdbcWorkerDao.WORKER_ID;
-import static ua.training.model.dao.jdbc.JdbcWorkerDao.WORKER_NAME;
+import static ua.training.model.dao.jdbc.JdbcWorkerDao.*;
 
 class JdbcHelper {
+
+    private static final String TASK_WORKER_NAME = "worker_name";
+    private static final String TASK_WORKER_TYPE_ID = "worker_type_id";
+    private static final String TASK_WORKER_TYPE_DESCRIPTION
+            = "worker_type_description";
 
     User getUserFromResultSet(ResultSet resultSet)
             throws SQLException {
@@ -57,10 +58,8 @@ class JdbcHelper {
 
     TypeOfWork getTypeOfWorkFromResultSet(ResultSet resultSet)
             throws SQLException {
-        return new TypeOfWork.Builder()
-                .setId(resultSet.getInt(TYPE_OF_WORK_ID))
-                .setDescription(resultSet.getString(TYPE_OF_WORK_DESCRIPTION))
-                .build();
+        return getTypeOfWorkFromResultSet(resultSet, TYPE_OF_WORK_ID,
+                TYPE_OF_WORK_DESCRIPTION);
     }
 
     Worker getWorkerFromResultSet(ResultSet resultSet)
@@ -90,5 +89,68 @@ class JdbcHelper {
             }
         }
         return builder.build();
+    }
+
+    Task getTaskFromResultSet(ResultSet resultSet)
+            throws SQLException {
+        int taskId = resultSet.getInt(TASK_ID);
+        boolean isActive = resultSet.getBoolean(TASK_IS_ACTIVE);
+        LocalDateTime dateTime = resultSet.getTimestamp(TASK_SCHEDULED_TIME)
+                .toLocalDateTime();
+        Application application = getApplicationFromResultSet(resultSet);
+        Brigade brigade = getTaskBrigadeFromResultSet(resultSet, taskId);
+
+        Task.Builder builderTask = new Task.Builder()
+                .setId(taskId)
+                .setScheduledTime(dateTime)
+                .setApplication(application)
+                .setBrigade(brigade)
+                .setActive(isActive);
+        return builderTask.build();
+    }
+
+    private Brigade getTaskBrigadeFromResultSet(ResultSet resultSet,
+                                                int taskId)
+            throws SQLException {
+        int brigadeId = resultSet.getInt(BRIGADE_ID);
+        Brigade.Builder builderBrigade = new Brigade.Builder()
+                .setId(brigadeId);
+        while ((!resultSet.isAfterLast()
+                && (resultSet.getInt(TASK_ID) == taskId))) {
+            Worker.Builder builderWorker = getTaskWorkerFormResultSet(resultSet);
+            builderBrigade.addWorker(builderWorker.build());
+        }
+        return builderBrigade.build();
+    }
+
+    private Worker.Builder getTaskWorkerFormResultSet(ResultSet resultSet)
+            throws SQLException {
+        int currentId = resultSet.getInt(WORKER_ID);
+        Worker.Builder builderWorker = new Worker.Builder()
+                .setId(resultSet.getInt(WORKER_ID))
+                .setName(resultSet.getString(TASK_WORKER_NAME))
+                .addTypeOfWork(getTypeOfWorkFromResultSet(
+                        resultSet,
+                        TASK_WORKER_TYPE_ID,
+                        TASK_WORKER_TYPE_DESCRIPTION)
+                );
+        while (resultSet.next() && resultSet.getInt(WORKER_ID) == currentId) {
+            builderWorker.addTypeOfWork(getTypeOfWorkFromResultSet(
+                    resultSet,
+                    TASK_WORKER_TYPE_ID,
+                    TASK_WORKER_TYPE_DESCRIPTION)
+            );
+        }
+        return builderWorker;
+    }
+
+    private TypeOfWork getTypeOfWorkFromResultSet(ResultSet resultSet,
+                                                  String typeId,
+                                                  String typeDescription)
+            throws SQLException {
+        return new TypeOfWork.Builder()
+                .setId(resultSet.getInt(typeId))
+                .setDescription(resultSet.getString(typeDescription))
+                .build();
     }
 }

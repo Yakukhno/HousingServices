@@ -12,12 +12,30 @@ import java.util.Optional;
 
 public class JdbcTaskDao implements TaskDao {
 
-    private static final String SELECT_ALL =
-            "SELECT * FROM task";
-    private static final String SELECT_BY_ID = "SELECT * FROM task " +
-        "WHERE id_task = ?";
-    private static final String SELECT_BY_ACTIVE = "SELECT * FROM task " +
-            "WHERE is_active = TRUE";
+    private static final String SELECT =
+        "SELECT table1.*, type_of_work.description AS worker_type_description FROM " +
+            "(SELECT task.id_task, task.scheduled_time, task.is_active, " +
+            "application.id_application, application.scale_of_problem, " +
+            "application.desired_time, application.status, user.*, " +
+            "type_of_work.*, brigade.*, worker.id_worker, " +
+            "worker.name AS worker_name, " +
+            "worker_has_type_of_work.id_type_of_work AS worker_type_id " +
+            "FROM task " +
+                "JOIN application USING (id_application) " +
+                "LEFT JOIN user USING (id_user) " +
+                "JOIN type_of_work USING (id_type_of_work) " +
+                "JOIN brigade USING (id_brigade) " +
+                "JOIN brigade_has_worker USING (id_brigade) " +
+                "JOIN worker USING (id_worker) " +
+                "JOIN worker_has_type_of_work USING (id_worker)) AS table1 " +
+            "JOIN type_of_work ON table1.worker_type_id = type_of_work.id_type_of_work ";
+    private static final String ORDER_BY = "ORDER BY scheduled_time, id_task, id_worker";
+
+    private static final String SELECT_ALL = SELECT + ORDER_BY;
+    private static final String SELECT_BY_ACTIVE = SELECT +
+            "WHERE is_active = TRUE " + ORDER_BY;
+    private static final String SELECT_BY_ID = SELECT +
+            "WHERE id_task = ? " + ORDER_BY;
 
     private static final String INSERT =
             "INSERT INTO task " +
@@ -44,10 +62,11 @@ public class JdbcTaskDao implements TaskDao {
     private static final String EXCEPTION_UPDATE
             = "Failed update 'task' value = %s";
 
-    private static final String TASK_ID = "id_task";
-    private static final String TASK_SCHEDULED_TIME = "scheduled_time";
-    private static final String TASK_IS_ACTIVE = "is_active";
+    static final String TASK_ID = "id_task";
+    static final String TASK_SCHEDULED_TIME = "scheduled_time";
+    static final String TASK_IS_ACTIVE = "is_active";
 
+    private JdbcHelper helper = new JdbcHelper();
     private Connection connection;
     private Logger logger = Logger.getLogger(JdbcTaskDao.class);
 
@@ -64,7 +83,7 @@ public class JdbcTaskDao implements TaskDao {
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                task = Optional.of(getTaskFromResultSet(resultSet));
+                task = Optional.of(helper.getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -79,7 +98,7 @@ public class JdbcTaskDao implements TaskDao {
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             while (resultSet.next()) {
-                tasks.add(getTaskFromResultSet(resultSet));
+                tasks.add(helper.getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_ALL, e);
@@ -134,29 +153,14 @@ public class JdbcTaskDao implements TaskDao {
         List<Task> tasks = new ArrayList<>();
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(SELECT_BY_ACTIVE)) {
-            while (resultSet.next()) {
-                tasks.add(getTaskFromResultSet(resultSet));
+            resultSet.next();
+            while (!resultSet.isAfterLast()) {
+                tasks.add(helper.getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_BY_ACTIVE, e);
         }
         return tasks;
-    }
-
-    private Task getTaskFromResultSet(ResultSet resultSet)
-            throws SQLException {
-        return new Task.Builder()
-                .setId(resultSet.getInt(TASK_ID))
-                .setApplication(new JdbcApplicationDao(connection)
-                        .get(resultSet.getInt(JdbcApplicationDao
-                                .APPLICATION_ID)).orElse(null))
-                .setBrigade(new JdbcBrigadeDao(connection)
-                        .get(resultSet.getInt(JdbcBrigadeDao
-                                .BRIGADE_ID)).orElse(null))
-                .setScheduledTime(resultSet.getTimestamp(TASK_SCHEDULED_TIME)
-                        .toLocalDateTime())
-                .setActive(resultSet.getBoolean(TASK_IS_ACTIVE))
-                .build();
     }
 
     private void setStatementFromTask(PreparedStatement statement,

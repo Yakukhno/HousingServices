@@ -12,12 +12,13 @@ import java.util.Optional;
 
 public class JdbcTypeOfWorkDao implements TypeOfWorkDao {
 
-    private static final String SELECT_ALL =
-            "SELECT * FROM type_of_work";
-    private static final String SELECT_BY_ID =
-            "SELECT * FROM type_of_work WHERE id_type_of_work = ?";
-    private static final String SELECT_BY_DESCRIPTION =
-            "SELECT * FROM type_of_work WHERE description LIKE ?";
+    private static final String SELECT = "SELECT * FROM type_of_work ";
+
+    private static final String SELECT_ALL = SELECT;
+    private static final String SELECT_BY_ID = SELECT +
+            "WHERE id_type_of_work = ?";
+    private static final String SELECT_BY_DESCRIPTION = SELECT +
+            "WHERE description LIKE ?";
 
     private static final String INSERT =
             "INSERT INTO type_of_work (description) VALUES (?)";
