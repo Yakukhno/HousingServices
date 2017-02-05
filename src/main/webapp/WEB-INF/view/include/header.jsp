@@ -20,7 +20,7 @@
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="/"><fmt:message key="header.housing_services"/></a>
+            <a class="navbar-brand" href="/rest/home"><fmt:message key="header.housing_services"/></a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">

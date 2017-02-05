@@ -10,7 +10,6 @@
             <c:when test="${requestScope[Attributes.WORKERS].size() != 0}">
                 <form class="form-horizontal"
                       name="brigadeForm"
-                      onsubmit="return validateBrigade()"
                       method="post"
                       action="/rest/task">
                     <table class="table table-striped" align="center">
@@ -53,14 +52,14 @@
                     </table>
                     <input type="hidden"
                            name="application"
-                           value="${requestScope.application.id}"/>
+                           value="${requestScope[Attributes.APPLICATION]}"/>
                     <div class="row">
-                        <div class="col-lg-offset-4 col-lg-4">
+                        <div class="col-lg-offset-4 col-lg-4 col-md-offset-3 col-md-6">
                             <div class="form-group" align="center">
-                                <label for="dateTime" class="control-label col-md-4">
+                                <label for="dateTime" class="control-label col-lg-4 col-md-4">
                                     <fmt:message key="time"/>
                                 </label>
-                                <div class="col-md-8">
+                                <div class="col-lg-8 col-md-8">
                                     <input type="datetime-local"
                                            required
                                            id="dateTime"
@@ -74,7 +73,16 @@
                     <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
                         <div class="row">
                             <div class="alert alert-danger" align="center" role="alert">
-                                <fmt:message key="${requestScope[Attributes.MESSAGE]}"/>
+                                <fmt:message key="${requestScope[Attributes.MESSAGE]}">
+                                    <c:if test="${not empty requestScope[Attributes.PARAMS]}">
+                                        <c:forEach var="parameter"
+                                                   items="${requestScope[Attributes.PARAMS]}">
+                                            <fmt:param>
+                                                <custom:dateTime>${parameter}</custom:dateTime>
+                                            </fmt:param>
+                                        </c:forEach>
+                                    </c:if>
+                                </fmt:message>
                             </div>
                         </div>
                     </c:if>

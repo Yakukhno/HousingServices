@@ -31,6 +31,7 @@ public class AuthFilter implements Filter {
         allAllowedRoutes.add(GET_TASKS);
         allAllowedRoutes.add(POST_LOCALE);
         allAllowedRoutes.add(GET_BRIGADE);
+        allAllowedRoutes.add(GET_HOME);
 
         guestAllowedRoutes.addAll(allAllowedRoutes);
         guestAllowedRoutes.add(GET_LOGIN_PAGE);

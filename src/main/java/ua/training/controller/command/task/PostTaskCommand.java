@@ -7,7 +7,9 @@ import ua.training.exception.ValidationException;
 import ua.training.model.dto.TaskDto;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.TaskService;
+import ua.training.model.service.WorkerService;
 import ua.training.model.service.impl.TaskServiceImpl;
+import ua.training.model.service.impl.WorkerServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,8 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ua.training.controller.Attributes.MESSAGE;
-import static ua.training.controller.Attributes.USER;
+import static ua.training.controller.Attributes.*;
 
 public class PostTaskCommand implements Command {
 
@@ -30,6 +31,7 @@ public class PostTaskCommand implements Command {
     private static final String PARAM_TIME = "dateTime";
 
     private static final String EXCEPTION_INCORRECT_DATE = "exception.date";
+    private static final String EXCEPTION_NULL_MANAGER = "exception.manager";
 
     private static final String ADD_TASK_JSP_PATH
             = "/WEB-INF/view/task/new_task.jsp";
@@ -38,13 +40,16 @@ public class PostTaskCommand implements Command {
     private Validator validator = new Validator();
 
     private TaskService taskService;
+    private WorkerService workerService;
 
     public PostTaskCommand() {
         taskService = TaskServiceImpl.getInstance();
+        workerService = WorkerServiceImpl.getInstance();
     }
 
-    PostTaskCommand(TaskService taskService) {
+    PostTaskCommand(TaskService taskService, WorkerService workerService) {
         this.taskService = taskService;
+        this.workerService = workerService;
     }
 
     @Override
@@ -57,12 +62,11 @@ public class PostTaskCommand implements Command {
         String paramDateTime = request.getParameter(PARAM_TIME);
         String paramManager = request.getParameter(PARAM_MANAGER);
         String[] paramWorkers = request.getParameterValues(PARAM_WORKERS);
-        if ((paramApplication != null) && (paramManager != null)
-                && (paramDateTime != null)) {
+        if ((paramApplication != null) && (paramDateTime != null)) {
             int applicationId = Integer.parseInt(paramApplication);
-            int managerId = Integer.parseInt(paramManager);
             List<Integer> workersIdsList = getWorkersIds(paramWorkers);
             try {
+                int managerId = getManagerId(paramManager);
                 LocalDateTime dateTime = getLocalDateTime(paramDateTime);
                 TaskDto taskDto = new TaskDto.Builder()
                         .setApplicationId(applicationId)
@@ -72,7 +76,7 @@ public class PostTaskCommand implements Command {
                         .build();
                 taskService.createNewTask(taskDto, user.getRole());
             } catch (ApplicationException e) {
-                pageToGo = getPageToGo(request, e);
+                pageToGo = getPageToGo(request, e, applicationId);
             }
         }
         return pageToGo;
@@ -87,6 +91,14 @@ public class PostTaskCommand implements Command {
         return workersIdsList;
     }
 
+    private int getManagerId(String managerId) {
+        if (managerId != null) {
+            return Integer.parseInt(managerId);
+        }
+        throw new ValidationException()
+                .setUserMessage(EXCEPTION_NULL_MANAGER);
+    }
+
     private LocalDateTime getLocalDateTime(String paramDateTime) {
         if (!paramDateTime.isEmpty()) {
             validator.validateDateTime(paramDateTime);
@@ -97,9 +109,16 @@ public class PostTaskCommand implements Command {
     }
 
     private String getPageToGo(HttpServletRequest request,
-                               ApplicationException e) {
+                               ApplicationException e,
+                               int applicationId) {
         if (e.isUserMessage()) {
+            request.setAttribute(APPLICATION, applicationId);
+            request.setAttribute(WORKERS, workerService.getAllWorkers());
             request.setAttribute(MESSAGE, e.getUserMessage());
+            List<String> parameters = e.getParameters();
+            if (e.getParameters().size() != 0) {
+                request.setAttribute(PARAMS, parameters);
+            }
             return ADD_TASK_JSP_PATH;
         } else {
             throw e;

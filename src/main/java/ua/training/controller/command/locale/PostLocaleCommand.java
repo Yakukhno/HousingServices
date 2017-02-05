@@ -15,7 +15,7 @@ public class PostLocaleCommand implements Command {
     private static final String PARAM_LOCALE = "locale";
     private static final String PARAM_URI = "uri";
 
-    private static final String HOME_PATH = "/";
+    private static final String HOME_PATH = "/rest/home";
 
     @Override
     public String execute(HttpServletRequest request,
@@ -24,7 +24,8 @@ public class PostLocaleCommand implements Command {
         String pageToGo = HOME_PATH;
         String paramURI = request.getParameter(PARAM_URI);
         String paramLocale = request.getParameter(PARAM_LOCALE);
-        if ((paramLocale != null) && (paramURI != null)) {
+        if ((paramLocale != null) && (paramURI != null)
+                && (!paramURI.isEmpty())) {
             Locale locale = new Locale(paramLocale);
             request.getSession().setAttribute(LOCALE, locale);
             pageToGo = paramURI;

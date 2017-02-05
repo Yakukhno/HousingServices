@@ -1,10 +1,8 @@
 package ua.training.controller.command.task;
 
 import ua.training.controller.command.Command;
-import ua.training.model.entities.Application;
 import ua.training.model.service.ApplicationService;
 import ua.training.model.service.WorkerService;
-import ua.training.model.service.impl.ApplicationServiceImpl;
 import ua.training.model.service.impl.WorkerServiceImpl;
 
 import javax.servlet.ServletException;
@@ -22,17 +20,14 @@ public class NewTaskPageCommand implements Command {
             = "/WEB-INF/view/task/new_task.jsp";
 
     private WorkerService workerService;
-    private ApplicationService applicationService;
 
     public NewTaskPageCommand() {
         workerService = WorkerServiceImpl.getInstance();
-        applicationService = ApplicationServiceImpl.getInstance();
     }
 
     NewTaskPageCommand(WorkerService workerService,
                        ApplicationService applicationService) {
         this.workerService = workerService;
-        this.applicationService = applicationService;
     }
 
     @Override
@@ -42,9 +37,7 @@ public class NewTaskPageCommand implements Command {
         String paramApplicationId = request.getParameter(APPLICATION);
         if (paramApplicationId != null) {
             int applicationId = Integer.parseInt(paramApplicationId);
-            Application application = applicationService
-                    .getApplicationById(applicationId);
-            request.setAttribute(APPLICATION, application);
+            request.setAttribute(APPLICATION, applicationId);
             request.setAttribute(WORKERS, workerService.getAllWorkers());
             return ADD_TASK_JSP_PATH;
         }

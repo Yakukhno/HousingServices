@@ -27,6 +27,7 @@ public final class CommandHolder {
 
     {
         commands.put(HOME, new HomePage());
+        commands.put(GET_HOME, new HomePage());
         commands.put(GET_USER, new GetUserCommand());
         commands.put(POST_USER, new PostUserCommand());
         commands.put(UPDATE_USER, new UpdateUserCommand());

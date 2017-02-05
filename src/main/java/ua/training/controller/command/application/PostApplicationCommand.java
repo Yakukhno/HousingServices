@@ -63,18 +63,18 @@ public class PostApplicationCommand implements Command {
                 && (paramProblemScale != null) && (paramDateTime != null)) {
             int typeOfWorkId = Integer.parseInt(paramTypeOfWork);
             ProblemScale problemScale = ProblemScale.valueOf(paramProblemScale);
-            LocalDateTime localDateTime = getLocalDateTime(paramDateTime);
-            Application application = new Application.Builder()
-                    .setTenant(new User.Builder()
-                            .setId(sessionUser.getId())
-                            .build())
-                    .setTypeOfWork(new TypeOfWork.Builder()
-                            .setId(typeOfWorkId)
-                            .build())
-                    .setScaleOfProblem(problemScale)
-                    .setDesiredTime(localDateTime)
-                    .build();
             try {
+                LocalDateTime localDateTime = getLocalDateTime(paramDateTime);
+                Application application = new Application.Builder()
+                        .setTenant(new User.Builder()
+                                .setId(sessionUser.getId())
+                                .build())
+                        .setTypeOfWork(new TypeOfWork.Builder()
+                                .setId(typeOfWorkId)
+                                .build())
+                        .setScaleOfProblem(problemScale)
+                        .setDesiredTime(localDateTime)
+                        .build();
                 applicationService.createNewApplication(application);
                 pageToGo = TENANT_APPLICATIONS_PATH;
             } catch (ApplicationException e) {

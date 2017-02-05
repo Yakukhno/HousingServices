@@ -52,7 +52,9 @@
                     <c:if test="${not empty requestScope[Attributes.PARAMS]}">
                         <c:forEach var="parameter"
                                    items="${requestScope[Attributes.PARAMS]}">
-                            <fmt:param value="${parameter}"/>
+                            <fmt:param>
+                                <custom:dateTime>${parameter}</custom:dateTime>
+                            </fmt:param>
                         </c:forEach>
                     </c:if>
                 </fmt:message>
