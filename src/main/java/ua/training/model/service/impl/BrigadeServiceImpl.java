@@ -8,8 +8,6 @@ import ua.training.model.dao.DaoFactory;
 import ua.training.model.entities.Brigade;
 import ua.training.model.service.BrigadeService;
 
-import java.util.List;
-
 public class BrigadeServiceImpl implements BrigadeService {
 
     private static final String EXCEPTION_BRIGADE_WITH_ID_NOT_FOUND
@@ -42,22 +40,6 @@ public class BrigadeServiceImpl implements BrigadeService {
                         return e;
                     }
             );
-        }
-    }
-
-    @Override
-    public List<Brigade> getAllBrigades() {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
-            return brigadeDao.getAll();
-        }
-    }
-
-    @Override
-    public void createNewBrigade(Brigade brigade) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
-            brigadeDao.add(brigade);
         }
     }
 }

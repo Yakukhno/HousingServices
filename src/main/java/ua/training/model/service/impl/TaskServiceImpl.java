@@ -12,9 +12,9 @@ import ua.training.model.entities.person.User;
 import ua.training.model.entities.person.Worker;
 import ua.training.model.service.TaskService;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public class TaskServiceImpl implements TaskService {
@@ -38,34 +38,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Optional<Task> getTaskById(int id) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            TaskDao taskDao = daoFactory.createTaskDao(connection);
-            return taskDao.get(id);
-        }
-    }
-
-    @Override
     public List<Task> getActiveTasks() {
         try (DaoConnection connection = daoFactory.getConnection()) {
             TaskDao taskDao = daoFactory.createTaskDao(connection);
             return taskDao.getActiveTasks();
-        }
-    }
-
-    @Override
-    public List<Task> getAllTasks() {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            TaskDao taskDao = daoFactory.createTaskDao(connection);
-            return taskDao.getAll();
-        }
-    }
-
-    @Override
-    public void createNewTask(Task task) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            TaskDao taskDao = daoFactory.createTaskDao(connection);
-            taskDao.add(task);
         }
     }
 
@@ -78,15 +54,17 @@ public class TaskServiceImpl implements TaskService {
                 TaskDao taskDao = daoFactory.createTaskDao(connection);
                 ApplicationDao applicationDao
                         = daoFactory.createApplicationDao(connection);
+
+                connection.setIsolationLevel(Connection.TRANSACTION_READ_COMMITTED);
                 connection.begin();
                 Worker manager = getWorker(workerDao, taskDto.getManagerId());
-                List<Worker> workers = getWorkers(workerDao, taskDto.getWorkersIds());
+                List<Worker> workers = getWorkers(workerDao,
+                        taskDto.getWorkersIds());
                 Brigade brigade = getBrigade(manager, workers);
                 brigadeDao.add(brigade);
 
-                Application application = getApplication(applicationDao,
+                Application application = getAndUpdateApplication(applicationDao,
                         taskDto.getApplicationId());
-                applicationDao.update(application);
 
                 taskDao.add(new Task.Builder()
                         .setBrigade(brigade)
@@ -103,7 +81,7 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    private Application getApplication(ApplicationDao applicationDao,
+    private Application getAndUpdateApplication(ApplicationDao applicationDao,
                                        int id) {
         Application application = applicationDao.get(id)
                 .orElseThrow(
@@ -112,6 +90,7 @@ public class TaskServiceImpl implements TaskService {
                         )
                 );
         application.setStatus(Application.Status.CONSIDERED);
+        applicationDao.update(application);
         return application;
     }
 

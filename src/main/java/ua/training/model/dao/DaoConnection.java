@@ -5,4 +5,5 @@ public interface DaoConnection extends AutoCloseable {
     void commit();
     void rollback();
     void close();
+    void setIsolationLevel(int isolationLevel);
 }

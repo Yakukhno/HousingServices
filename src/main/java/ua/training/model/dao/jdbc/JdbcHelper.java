@@ -21,6 +21,10 @@ class JdbcHelper {
     private static final String TASK_WORKER_TYPE_ID = "worker_type_id";
     private static final String TASK_WORKER_TYPE_DESCRIPTION
             = "worker_type_description";
+    private static final String BRIGADE_MANAGER_NAME = "manager_name";
+    private static final String BRIGADE_MANAGER_TYPE_ID = "manager_type_id";
+    private static final String BRIGADE_MANAGER_TYPE_DESCRIPTION
+            = "manager_type_description";
 
     User getUserFromResultSet(ResultSet resultSet)
             throws SQLException {
@@ -69,7 +73,7 @@ class JdbcHelper {
                 .setId(resultSet.getInt(WORKER_ID))
                 .setName(resultSet.getString(WORKER_NAME))
                 .addTypeOfWork(getTypeOfWorkFromResultSet(resultSet));
-        while (resultSet.next() && resultSet.getInt(WORKER_ID) == currentId) {
+        while (resultSet.next() && (resultSet.getInt(WORKER_ID) == currentId)) {
             builder.addTypeOfWork(getTypeOfWorkFromResultSet(resultSet));
         }
         return builder.build();
@@ -78,17 +82,44 @@ class JdbcHelper {
     Brigade getBrigadeFromResultSet(ResultSet resultSet)
             throws SQLException {
         int currentId = resultSet.getInt(BRIGADE_ID);
-        Brigade.Builder builder = new Brigade.Builder()
+        Brigade.Builder builderBrigade = new Brigade.Builder()
                 .setId(currentId);
+        Worker.Builder builderManager = new Worker.Builder()
+                .setId(resultSet.getInt(MANAGER))
+                .setName(resultSet.getString(BRIGADE_MANAGER_NAME))
+                .addTypeOfWork(
+                        getTypeOfWorkFromResultSet(resultSet,
+                                BRIGADE_MANAGER_TYPE_ID,
+                                BRIGADE_MANAGER_TYPE_DESCRIPTION)
+                );
         resultSet.getInt(WORKER_ID);
         if (!resultSet.wasNull()) {
-            builder.addWorker(getWorkerFromResultSet(resultSet));
-            while ((!resultSet.isAfterLast())
+            setBrigadeWorkers(resultSet, currentId,
+                    builderBrigade, builderManager);
+        } else {
+            while (resultSet.next()
                     && (resultSet.getInt(BRIGADE_ID) == currentId)) {
-                builder.addWorker(getWorkerFromResultSet(resultSet));
+                builderManager.addTypeOfWork(
+                        getTypeOfWorkFromResultSet(resultSet,
+                                BRIGADE_MANAGER_TYPE_ID,
+                                BRIGADE_MANAGER_TYPE_DESCRIPTION)
+                );
             }
         }
-        return builder.build();
+        return builderBrigade.setManager(builderManager.build()).build();
+    }
+
+    private void setBrigadeWorkers(ResultSet resultSet, int currentId,
+                                   Brigade.Builder builderBrigade,
+                                   Worker.Builder builderManager)
+            throws SQLException {
+        builderBrigade.addWorker(
+                getBrigadeWorkerFromResultSet(resultSet, builderManager)
+        );
+        while ((!resultSet.isAfterLast())
+                && (resultSet.getInt(BRIGADE_ID) == currentId)) {
+            builderBrigade.addWorker(getBrigadeWorkerFromResultSet(resultSet));
+        }
     }
 
     Task getTaskFromResultSet(ResultSet resultSet)
@@ -107,6 +138,57 @@ class JdbcHelper {
                 .setBrigade(brigade)
                 .setActive(isActive);
         return builderTask.build();
+    }
+
+    private Worker getBrigadeWorkerFromResultSet(ResultSet resultSet)
+            throws SQLException {
+        int workerId = resultSet.getInt(WORKER_ID);
+        int managerTypeId = resultSet.getInt(BRIGADE_MANAGER_TYPE_ID);
+        Worker.Builder builder = new Worker.Builder()
+                .setId(resultSet.getInt(WORKER_ID))
+                .setName(resultSet.getString(WORKER_NAME))
+                .addTypeOfWork(getTypeOfWorkFromResultSet(resultSet));
+        while (resultSet.next() && (resultSet.getInt(WORKER_ID) == workerId)
+                && (resultSet.getInt(BRIGADE_MANAGER_TYPE_ID) == managerTypeId)) {
+            builder.addTypeOfWork(getTypeOfWorkFromResultSet(resultSet));
+        }
+        while (resultSet.next() && resultSet.getInt(WORKER_ID) == workerId);
+        return builder.build();
+    }
+
+    private Worker getBrigadeWorkerFromResultSet(ResultSet resultSet,
+                                                 Worker.Builder builderManager)
+            throws SQLException {
+        int workerId = resultSet.getInt(WORKER_ID);
+        int managerTypeId = resultSet.getInt(BRIGADE_MANAGER_TYPE_ID);
+        Worker.Builder builderWorker = new Worker.Builder()
+                .setId(resultSet.getInt(WORKER_ID))
+                .setName(resultSet.getString(WORKER_NAME))
+                .addTypeOfWork(getTypeOfWorkFromResultSet(resultSet));
+        while (resultSet.next() && (resultSet.getInt(WORKER_ID) == workerId)
+                && (resultSet.getInt(BRIGADE_MANAGER_TYPE_ID) == managerTypeId)) {
+            builderWorker.addTypeOfWork(getTypeOfWorkFromResultSet(resultSet));
+        }
+        setBrigadeManagerTypes(resultSet, workerId, builderManager);
+        return builderWorker.build();
+    }
+
+    private void setBrigadeManagerTypes(ResultSet resultSet,
+                                        int workerId,
+                                        Worker.Builder builderManager)
+            throws SQLException {
+        int managerTypeId;
+        while (!resultSet.isAfterLast()
+                && (workerId == resultSet.getInt(WORKER_ID))) {
+            managerTypeId = resultSet.getInt(BRIGADE_MANAGER_TYPE_ID);
+            builderManager.addTypeOfWork(
+                    getTypeOfWorkFromResultSet(resultSet,
+                            BRIGADE_MANAGER_TYPE_ID,
+                            BRIGADE_MANAGER_TYPE_DESCRIPTION)
+            );
+            while (resultSet.next() && (managerTypeId == resultSet.getInt(
+                    BRIGADE_MANAGER_TYPE_ID)));
+        }
     }
 
     private Brigade getTaskBrigadeFromResultSet(ResultSet resultSet,

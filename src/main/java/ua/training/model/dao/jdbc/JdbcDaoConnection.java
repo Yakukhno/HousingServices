@@ -57,6 +57,15 @@ public class JdbcDaoConnection implements DaoConnection {
         }
     }
 
+    @Override
+    public void setIsolationLevel(int isolationLevel) {
+        try {
+            connection.setTransactionIsolation(isolationLevel);
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
     Connection getConnection() {
         return connection;
     }

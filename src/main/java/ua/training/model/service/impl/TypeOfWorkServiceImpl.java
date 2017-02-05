@@ -7,7 +7,6 @@ import ua.training.model.entities.TypeOfWork;
 import ua.training.model.service.TypeOfWorkService;
 
 import java.util.List;
-import java.util.Optional;
 
 public class TypeOfWorkServiceImpl implements TypeOfWorkService {
 
@@ -24,38 +23,11 @@ public class TypeOfWorkServiceImpl implements TypeOfWorkService {
     }
 
     @Override
-    public Optional<TypeOfWork> getTypeOfWorkById(int id) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            TypeOfWorkDao typeOfWorkDao
-                    = daoFactory.createTypeOfWorkDao(connection);
-            return typeOfWorkDao.get(id);
-        }
-    }
-
-    @Override
-    public List<TypeOfWork> getTypeOfWorkByDescription(String string) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            TypeOfWorkDao typeOfWorkDao
-                    = daoFactory.createTypeOfWorkDao(connection);
-            return typeOfWorkDao.getByDescription(string);
-        }
-    }
-
-    @Override
     public List<TypeOfWork> getAllTypesOfWork() {
         try (DaoConnection connection = daoFactory.getConnection()) {
             TypeOfWorkDao typeOfWorkDao
                     = daoFactory.createTypeOfWorkDao(connection);
             return typeOfWorkDao.getAll();
-        }
-    }
-
-    @Override
-    public void createNewTypeOfWork(TypeOfWork typeOfWork) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            TypeOfWorkDao typeOfWorkDao
-                    = daoFactory.createTypeOfWorkDao(connection);
-            typeOfWorkDao.add(typeOfWork);
         }
     }
 }

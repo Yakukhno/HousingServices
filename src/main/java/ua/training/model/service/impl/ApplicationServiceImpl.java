@@ -18,8 +18,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             = "User with id = %d not found";
     private static final String EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND
             = "Type of work with id = %d not found";
-    private static final String EXCEPTION_APPLICATION_WITH_ID_NOT_FOUND
-            = "Application with id = %d not found";
 
     private DaoFactory daoFactory = DaoFactory.getInstance();
     private Logger logger = Logger.getLogger(ApplicationServiceImpl.class);
@@ -35,43 +33,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Application getApplicationById(int id) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            ApplicationDao applicationDao
-                    = daoFactory.createApplicationDao(connection);
-            return applicationDao.get(id)
-                    .orElseThrow(
-                            getResourceNotFoundExceptionSupplier(
-                                    EXCEPTION_APPLICATION_WITH_ID_NOT_FOUND, id
-                            )
-                    );
-        }
-    }
-
-    @Override
-    public List<Application> getApplicationsByTypeOfWork(String typeOfWork) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            ApplicationDao applicationDao
-                    = daoFactory.createApplicationDao(connection);
-            return applicationDao.getApplicationsByTypeOfWork(typeOfWork);
-        }
-    }
-
-    @Override
     public List<Application> getApplicationsByUserId(int userId) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             ApplicationDao applicationDao
                     = daoFactory.createApplicationDao(connection);
             return applicationDao.getApplicationsByUserId(userId);
-        }
-    }
-
-    @Override
-    public List<Application> getApplicationsByStatus(Application.Status status) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            ApplicationDao applicationDao
-                    = daoFactory.createApplicationDao(connection);
-            return applicationDao.getApplicationsByStatus(status);
         }
     }
 
@@ -116,6 +82,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         try (DaoConnection connection = daoFactory.getConnection()) {
             ApplicationDao applicationDao
                     = daoFactory.createApplicationDao(connection);
+
             connection.begin();
             applicationDao.get(applicationId)
                     .filter(application

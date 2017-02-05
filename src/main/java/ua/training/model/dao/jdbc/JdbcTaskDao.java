@@ -22,12 +22,12 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
             "FROM task " +
                 "JOIN application USING (id_application) " +
                 "LEFT JOIN user USING (id_user) " +
-                "JOIN type_of_work USING (id_type_of_work) " +
-                "JOIN brigade USING (id_brigade) " +
-                "JOIN brigade_has_worker USING (id_brigade) " +
-                "JOIN worker USING (id_worker) " +
-                "JOIN worker_has_type_of_work USING (id_worker)) AS table1 " +
-            "JOIN type_of_work ON table1.worker_type_id = type_of_work.id_type_of_work ";
+                "LEFT JOIN type_of_work USING (id_type_of_work) " +
+                "LEFT JOIN brigade USING (id_brigade) " +
+                "LEFT JOIN brigade_has_worker USING (id_brigade) " +
+                "LEFT JOIN worker USING (id_worker) " +
+                "LEFT JOIN worker_has_type_of_work USING (id_worker)) AS table1 " +
+            "LEFT JOIN type_of_work ON table1.worker_type_id = type_of_work.id_type_of_work ";
     private static final String ORDER_BY = "ORDER BY scheduled_time, id_task, id_worker";
 
     private static final String SELECT_ALL = SELECT + ORDER_BY;

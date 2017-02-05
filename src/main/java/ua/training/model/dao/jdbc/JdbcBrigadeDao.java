@@ -12,13 +12,20 @@ import java.util.Optional;
 
 public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
 
-    private static final String SELECT =
-            "SELECT * FROM brigade " +
-                    "LEFT JOIN brigade_has_worker USING (id_brigade) " +
-                    "LEFT JOIN worker USING (id_worker) " +
-                    "LEFT JOIN worker_has_type_of_work USING (id_worker)" +
-                    "LEFT JOIN type_of_work USING (id_type_of_work) ";
-    private static final String ORDER_BY = "ORDER BY id_brigade, id_worker";
+    private static final String SELECT = "SELECT * FROM brigade " +
+        "LEFT JOIN brigade_has_worker USING (id_brigade) " +
+        "LEFT JOIN worker USING (id_worker) " +
+        "LEFT JOIN worker_has_type_of_work USING (id_worker) " +
+        "LEFT JOIN type_of_work USING (id_type_of_work) " +
+        "LEFT JOIN " +
+            "(SELECT id_worker as manager, name as manager_name, " +
+            "id_type_of_work as manager_type_id, " +
+            "description as manager_type_description FROM worker " +
+            "JOIN worker_has_type_of_work USING (id_worker) " +
+            "JOIN type_of_work USING (id_type_of_work)) as table1 " +
+        "USING (manager) ";
+    private static final String ORDER_BY
+            = "ORDER BY id_brigade, id_worker, manager_type_id";
 
     private static final String SELECT_ALL = SELECT + ORDER_BY;
     private static final String SELECT_BY_ID = SELECT +
@@ -61,24 +68,13 @@ public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
     @Override
     public Optional<Brigade> get(int id) {
         Optional<Brigade> brigade = Optional.empty();
-        try (PreparedStatement brigadeStatement
-                     = connection.prepareStatement(SELECT_BY_ID);
-             PreparedStatement managerStatement
-                     = connection.prepareStatement(SELECT_MANAGER)) {
-            brigadeStatement.setInt(1, id);
+        try (PreparedStatement statement
+                     = connection.prepareStatement(SELECT_BY_ID)) {
+            statement.setInt(1, id);
 
-            ResultSet brigadeResultSet = brigadeStatement.executeQuery();
-            if (brigadeResultSet.first()) {
-                managerStatement.setInt(1, brigadeResultSet.getInt(MANAGER));
-                Brigade tempBrigade
-                        = helper.getBrigadeFromResultSet(brigadeResultSet);
-                ResultSet managerResultSet = managerStatement.executeQuery();
-                if (managerResultSet.next()) {
-                    tempBrigade.setManager(
-                            helper.getWorkerFromResultSet(managerResultSet)
-                    );
-                }
-                brigade = Optional.of(tempBrigade);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.first()) {
+                brigade = Optional.of(helper.getBrigadeFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -90,22 +86,12 @@ public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
     @Override
     public List<Brigade> getAll() {
         List<Brigade> brigades = new ArrayList<>();
-        try (Statement statement
-                     = connection.createStatement();
-             ResultSet brigadeResultSet
-                     = statement.executeQuery(SELECT_ALL);
-             PreparedStatement managerStatement
-                     = connection.prepareStatement(SELECT_MANAGER)) {
+        try (Statement statement = connection.createStatement();
+            ResultSet brigadeResultSet = statement.executeQuery(SELECT_ALL)) {
+
             brigadeResultSet.next();
             while (!brigadeResultSet.isAfterLast()) {
-                managerStatement.setInt(1, brigadeResultSet.getInt(MANAGER));
-                Brigade brigade = helper.getBrigadeFromResultSet(brigadeResultSet);
-                ResultSet managerResultSet = managerStatement.executeQuery();
-                if (managerResultSet.next()) {
-                    brigade.setManager(helper
-                            .getWorkerFromResultSet(managerResultSet));
-                }
-                brigades.add(brigade);
+                brigades.add(helper.getBrigadeFromResultSet(brigadeResultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_ALL, e);
@@ -126,7 +112,9 @@ public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
             if (resultSet.next()) {
                 brigade.setId(resultSet.getInt(1));
             }
-            insertWorkers(brigade);
+            if (!brigade.getWorkers().isEmpty()) {
+                insertWorkers(brigade);
+            }
 
             connection.commit();
         } catch (SQLException e) {
