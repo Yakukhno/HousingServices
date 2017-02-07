@@ -14,7 +14,11 @@
         <div class="col-md-8">
             <select id="typeOfWork" name="typeOfWork" class="form-control">
                 <c:forEach var="typeOfWork" items="${requestScope[Attributes.TYPE_OF_WORK]}">
-                    <option value="${typeOfWork.id}">${typeOfWork.description}</option>
+                    <option value="${typeOfWork.id}">
+                        <fmt:message>
+                            ${typeOfWork.description}
+                        </fmt:message>
+                    </option>
                 </c:forEach>
             </select>
         </div>
@@ -27,7 +31,13 @@
             <select id="problemScale" name="problemScale" class="form-control">
                 <c:forEach var="problemScale"
                            items="${requestScope[Attributes.PROBLEM_SCALE]}">
-                    <option>${problemScale}</option>
+                    <option value="${problemScale}">
+                        <fmt:message>
+                            <custom:enumLocale enumClass="${problemScale.getClass().getSimpleName()}">
+                                ${problemScale}
+                            </custom:enumLocale>
+                        </fmt:message>
+                    </option>
                 </c:forEach>
             </select>
         </div>

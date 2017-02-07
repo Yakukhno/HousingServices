@@ -7,4 +7,13 @@
         <tag-class>ua.training.view.tag.DateTimeFormatTag</tag-class>
         <body-content>scriptless</body-content>
     </tag>
+    <tag>
+        <name>enumLocale</name>
+        <tag-class>ua.training.view.tag.EnumLocalizationFormatTag</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>enumClass</name>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 </taglib>

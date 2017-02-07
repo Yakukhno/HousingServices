@@ -22,8 +22,18 @@
                     <c:forEach var="application"
                                items="${requestScope[Attributes.APPLICATIONS]}">
                        <tr>
-                            <td>${application.typeOfWork.description}</td>
-                            <td>${application.scaleOfProblem}</td>
+                            <td>
+                                <fmt:message>
+                                    ${application.typeOfWork.description}
+                                </fmt:message>
+                            </td>
+                            <td>
+                                <fmt:message>
+                                    <custom:enumLocale enumClass="${application.scaleOfProblem.getClass().getSimpleName()}">
+                                        ${application.scaleOfProblem}
+                                    </custom:enumLocale>
+                                </fmt:message>
+                            </td>
                             <td>
                                 <c:if test="${not empty application.desiredTime}">
                                     <custom:dateTime>${application.desiredTime}</custom:dateTime>

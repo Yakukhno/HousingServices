@@ -22,6 +22,4 @@ public class DateTimeFormatTag extends SimpleTagSupport {
         String str = localDateTime.format(formatter);
         getJspContext().getOut().println(str);
     }
-
-
 }

@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class Validator {
 
     private Pattern patternName
-            = Pattern.compile("^[A-zА-яЁёЇїІі]+\\s+[A-zА-яЁёЇїІі]+\\s*$");
+            = Pattern.compile("^[A-zА-яЁё'ЇїІі]+\\s+[A-zА-яЁё'ЇїІі]+\\s*$");
     private Pattern patternEmail
             = Pattern.compile("^[\\w.%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
     private Pattern patternPassword

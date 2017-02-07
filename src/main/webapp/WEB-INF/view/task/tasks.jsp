@@ -20,8 +20,18 @@
                     <tbody>
                     <c:forEach var="task" items="${requestScope[Attributes.TASKS]}">
                         <tr>
-                            <td>${task.application.typeOfWork.description}</td>
-                            <td>${task.application.scaleOfProblem}</td>
+                            <td>
+                                <fmt:message>
+                                    ${task.application.typeOfWork.description}
+                                </fmt:message>
+                            </td>
+                            <td>
+                                <fmt:message>
+                                    <custom:enumLocale enumClass="${task.application.scaleOfProblem.getClass().getSimpleName()}">
+                                        ${task.application.scaleOfProblem}
+                                    </custom:enumLocale>
+                                </fmt:message>
+                            </td>
                             <td>
                                 <custom:dateTime>${task.scheduledTime}</custom:dateTime>
                             </td>

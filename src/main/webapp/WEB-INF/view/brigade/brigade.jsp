@@ -20,7 +20,9 @@
                 <td>
                     <c:forEach var="typeOfWork"
                                items="${requestScope[Attributes.BRIGADE].manager.typesOfWork}">
-                        <c:out value="${typeOfWork.description}; "/>
+                        <fmt:message>
+                            ${typeOfWork.description}
+                        </fmt:message>;
                     </c:forEach>
                 </td>
                 <td>
@@ -32,7 +34,9 @@
                     <td>${worker.name}</td>
                     <td>
                         <c:forEach var="typeOfWork" items="${worker.typesOfWork}">
-                            <c:out value="${typeOfWork.description}; "/>
+                            <fmt:message>
+                                ${typeOfWork.description}
+                            </fmt:message>;
                         </c:forEach>
                     </td>
                     <td></td>
