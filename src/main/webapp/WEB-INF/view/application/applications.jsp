@@ -39,7 +39,13 @@
                                     <custom:dateTime>${application.desiredTime}</custom:dateTime>
                                 </c:if>
                             </td>
-                            <td>${application.status}</td>
+                            <td>
+                                <fmt:message>
+                                    <custom:enumLocale enumClass="${application.status.getClass().getSimpleName()}">
+                                        ${application.status}
+                                    </custom:enumLocale>
+                                </fmt:message>
+                            </td>
                             <td>
                                 <c:if test="${application.status eq requestScope[Attributes.STATUS_NEW]}">
                                     <form style="margin-bottom: 0"

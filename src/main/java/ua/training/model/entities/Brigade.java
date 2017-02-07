@@ -2,13 +2,13 @@ package ua.training.model.entities;
 
 import ua.training.model.entities.person.Worker;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Brigade {
     private int id;
     private Worker manager;
-    private List<Worker> workers = new ArrayList<>();
+    private Set<Worker> workers = new HashSet<>();
 
     public int getId() {
         return id;
@@ -26,11 +26,11 @@ public class Brigade {
         this.manager = manager;
     }
 
-    public List<Worker> getWorkers() {
+    public Set<Worker> getWorkers() {
         return workers;
     }
 
-    public void setWorkers(List<Worker> workers) {
+    public void setWorkers(Set<Worker> workers) {
         this.workers = workers;
     }
 
@@ -60,7 +60,7 @@ public class Brigade {
             return this;
         }
 
-        public Builder setWorkers(List<Worker> workers) {
+        public Builder setWorkers(Set<Worker> workers) {
             brigade.setWorkers(workers);
             return this;
         }

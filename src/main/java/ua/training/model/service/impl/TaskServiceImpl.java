@@ -13,8 +13,9 @@ import ua.training.model.entities.person.Worker;
 import ua.training.model.service.TaskService;
 
 import java.sql.Connection;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class TaskServiceImpl implements TaskService {
@@ -58,7 +59,7 @@ public class TaskServiceImpl implements TaskService {
                 connection.setIsolationLevel(Connection.TRANSACTION_READ_COMMITTED);
                 connection.begin();
                 Worker manager = getWorker(workerDao, taskDto.getManagerId());
-                List<Worker> workers = getWorkers(workerDao,
+                Set<Worker> workers = getWorkers(workerDao,
                         taskDto.getWorkersIds());
                 Brigade brigade = getBrigade(manager, workers);
                 brigadeDao.add(brigade);
@@ -94,7 +95,7 @@ public class TaskServiceImpl implements TaskService {
         return application;
     }
 
-    private Brigade getBrigade(Worker manager, List<Worker> workers) {
+    private Brigade getBrigade(Worker manager, Set<Worker> workers) {
         workers.removeIf(worker -> worker.equals(manager));
         return new Brigade.Builder()
                 .setManager(manager)
@@ -111,9 +112,9 @@ public class TaskServiceImpl implements TaskService {
                 );
     }
 
-    private List<Worker> getWorkers(WorkerDao workerDao,
+    private Set<Worker> getWorkers(WorkerDao workerDao,
                                     List<Integer> workersIds) {
-        List<Worker> workers = new ArrayList<>();
+        Set<Worker> workers = new HashSet<>();
         for (int workerId : workersIds) {
             workers.add(getWorker(workerDao, workerId));
         }

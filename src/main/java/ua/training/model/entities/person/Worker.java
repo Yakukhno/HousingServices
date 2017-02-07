@@ -2,19 +2,14 @@ package ua.training.model.entities.person;
 
 import ua.training.model.entities.TypeOfWork;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Worker extends Person {
 
-    private List<TypeOfWork> typesOfWork = new ArrayList<>();
+    private Set<TypeOfWork> typesOfWork = new HashSet<>();
 
-    public List<TypeOfWork> getTypesOfWork() {
+    public Set<TypeOfWork> getTypesOfWork() {
         return typesOfWork;
-    }
-
-    public void setTypesOfWork(List<TypeOfWork> typesOfWork) {
-        this.typesOfWork = typesOfWork;
     }
 
     public void addTypeOfWork(TypeOfWork typeOfWork) {
@@ -29,18 +24,14 @@ public class Worker extends Person {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Worker)) return false;
-
         Worker worker = (Worker) o;
-
-        if (id != worker.id) return false;
-        return name.equals(worker.name);
+        return Objects.equals(name, worker.name) &&
+                Objects.equals(typesOfWork, worker.typesOfWork);
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + name.hashCode();
-        return result;
+        return Objects.hash(name, typesOfWork);
     }
 
     @Override
@@ -62,11 +53,6 @@ public class Worker extends Person {
 
         public Builder addTypeOfWork(TypeOfWork typeOfWork) {
             worker.addTypeOfWork(typeOfWork);
-            return this;
-        }
-
-        public Builder setTypesOfWork(List<TypeOfWork> typesOfWork) {
-            worker.setTypesOfWork(typesOfWork);
             return this;
         }
 

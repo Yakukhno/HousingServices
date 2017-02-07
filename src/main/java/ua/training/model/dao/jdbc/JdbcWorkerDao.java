@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
 
@@ -154,7 +155,7 @@ public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
 
     private void insertTypesOfWork(Worker worker) throws SQLException {
         StringBuilder query = new StringBuilder();
-        List<TypeOfWork> typesOfWorks = worker.getTypesOfWork();
+        Set<TypeOfWork> typesOfWorks = worker.getTypesOfWork();
         typesOfWorks.forEach(typeOfWork -> query.append(INSERT_TYPE_OF_WORK));
         try (PreparedStatement statement =
                      connection.prepareStatement(query.toString())) {

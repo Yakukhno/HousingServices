@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
 
@@ -148,7 +149,7 @@ public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
 
     private void insertWorkers(Brigade brigade) throws SQLException {
         StringBuilder query = new StringBuilder();
-        List<Worker> workers = brigade.getWorkers();
+        Set<Worker> workers = brigade.getWorkers();
         workers.forEach(typeOfWork -> query.append(INSERT_WORKER));
         try (PreparedStatement statement
                      = connection.prepareStatement(query.toString())) {
