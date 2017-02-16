@@ -10,10 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static ua.training.controller.Attributes.TASKS;
+import static ua.training.controller.Routes.TASKS_JSP_PATH;
 
 public class GetTasksCommand implements Command {
-
-    private static final String TASKS_JSP_PATH = "/WEB-INF/view/task/tasks.jsp";
 
     private TaskService taskService;
 

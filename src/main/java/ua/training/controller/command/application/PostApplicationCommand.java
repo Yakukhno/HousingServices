@@ -1,6 +1,7 @@
 package ua.training.controller.command.application;
 
 import ua.training.controller.command.Command;
+import ua.training.controller.validator.DateTimeValidator;
 import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
 import ua.training.model.entities.Application;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static ua.training.controller.Attributes.*;
+import static ua.training.controller.Routes.ADD_APPLICATION_JSP_PATH;
 
 public class PostApplicationCommand implements Command {
 
@@ -28,13 +30,11 @@ public class PostApplicationCommand implements Command {
     private static final String PARAM_PROBLEM_SCALE = "problemScale";
     private static final String PARAM_DATE_TIME = "dateTime";
 
-    private static final String ADD_APPLICATION_JSP_PATH
-            = "/WEB-INF/view/application/new_application.jsp";
     private static final String ADD_APPLICATION_PATH = "/rest/new_application";
     private static final String TENANT_APPLICATIONS_PATH
             = "/rest/user/application";
 
-    private Validator validator = new Validator();
+    private Validator dateTimeValidator = new DateTimeValidator();
 
     private TypeOfWorkService typeOfWorkService;
     private ApplicationService applicationService;
@@ -86,7 +86,7 @@ public class PostApplicationCommand implements Command {
 
     private LocalDateTime getLocalDateTime(String paramDateTime) {
         if (!paramDateTime.isEmpty()) {
-            validator.validateDateTime(paramDateTime);
+            dateTimeValidator.validate(paramDateTime);
             return LocalDateTime.parse(paramDateTime);
         }
         return null;

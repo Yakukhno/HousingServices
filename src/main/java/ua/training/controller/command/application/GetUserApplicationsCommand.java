@@ -12,11 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static ua.training.controller.Attributes.*;
+import static ua.training.controller.Routes.TENANT_APPLICATIONS_JSP_PATH;
 
 public class GetUserApplicationsCommand implements Command {
-
-    private static final String TENANT_APPLICATIONS_JSP_PATH
-            = "/WEB-INF/view/application/tenant_applications.jsp";
 
     private ApplicationService applicationService;
 
@@ -37,12 +35,5 @@ public class GetUserApplicationsCommand implements Command {
                 applicationService.getApplicationsByUserId(userId));
         request.setAttribute(STATUS_NEW, Application.Status.NEW);
         return TENANT_APPLICATIONS_JSP_PATH;
-    }
-
-    private String getUserIdFromRequest(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        uri = uri.substring(0, uri.lastIndexOf('/'));
-        uri = uri.substring(uri.lastIndexOf('/') + 1);
-        return uri;
     }
 }

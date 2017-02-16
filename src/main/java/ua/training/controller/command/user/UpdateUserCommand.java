@@ -1,6 +1,8 @@
 package ua.training.controller.command.user;
 
 import ua.training.controller.command.Command;
+import ua.training.controller.validator.EmailValidator;
+import ua.training.controller.validator.PasswordValidator;
 import ua.training.controller.validator.Validator;
 import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ApplicationException;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static ua.training.controller.Attributes.*;
+import static ua.training.controller.Routes.USER_JSP_PATH;
 
 public class UpdateUserCommand implements Command {
 
@@ -24,9 +27,8 @@ public class UpdateUserCommand implements Command {
 
     private static final String USER_PATH = "/rest/user/%s";
 
-    private static final String USER_JSP_PATH = "/WEB-INF/view/user/user.jsp";
-
-    private Validator validator = new Validator();
+    private Validator emailValidator = new EmailValidator();
+    private Validator passwordValidator = new PasswordValidator();
 
     private UserService userService;
 
@@ -68,11 +70,11 @@ public class UpdateUserCommand implements Command {
                                       String email,
                                       String password) {
         if (!email.isEmpty()) {
-            validator.validateEmail(email);
+            emailValidator.validate(email);
             user.setEmail(email);
         }
         if (!password.isEmpty()) {
-            validator.validatePassword(password);
+            passwordValidator.validate(password);
             user.setPassword(password);
         }
         return user;

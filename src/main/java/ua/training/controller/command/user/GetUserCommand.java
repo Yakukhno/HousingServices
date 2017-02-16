@@ -12,10 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static ua.training.controller.Attributes.USER;
+import static ua.training.controller.Routes.USER_JSP_PATH;
 
 public class GetUserCommand implements Command {
-
-    private static final String USER_JSP_PATH = "/WEB-INF/view/user/user.jsp";
 
     private UserService userService;
 
@@ -31,9 +30,9 @@ public class GetUserCommand implements Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
-        User user;
         User sessionUser = (User) request.getSession().getAttribute(USER);
         int userId = getUserIdFromRequest(request);
+        User user;
         if (userId == sessionUser.getId()) {
             user = userService.getUserById(userId);
         } else {

@@ -11,10 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static ua.training.controller.Attributes.BRIGADE;
+import static ua.training.controller.Routes.BRIGADE_JSP_PATH;
 
 public class GetBrigadeCommand implements Command {
-
-    private static final String BRIGADE_JSP_PATH = "/WEB-INF/view/brigade/brigade.jsp";
 
     private BrigadeService brigadeService;
 

@@ -1,6 +1,7 @@
 package ua.training.controller.command.task;
 
 import ua.training.controller.command.Command;
+import ua.training.controller.validator.DateTimeValidator;
 import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
 import ua.training.exception.ValidationException;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static ua.training.controller.Attributes.*;
+import static ua.training.controller.Routes.ADD_TASK_JSP_PATH;
 
 public class PostTaskCommand implements Command {
 
@@ -33,11 +35,9 @@ public class PostTaskCommand implements Command {
     private static final String EXCEPTION_INCORRECT_DATE = "exception.date";
     private static final String EXCEPTION_NULL_MANAGER = "exception.manager";
 
-    private static final String ADD_TASK_JSP_PATH
-            = "/WEB-INF/view/task/new_task.jsp";
     private static final String APPLICATIONS_PATH = "/rest/application";
 
-    private Validator validator = new Validator();
+    private Validator dateTimeValidator = new DateTimeValidator();
 
     private TaskService taskService;
     private WorkerService workerService;
@@ -101,7 +101,7 @@ public class PostTaskCommand implements Command {
 
     private LocalDateTime getLocalDateTime(String paramDateTime) {
         if (!paramDateTime.isEmpty()) {
-            validator.validateDateTime(paramDateTime);
+            dateTimeValidator.validate(paramDateTime);
             return LocalDateTime.parse(paramDateTime);
         }
         throw new ValidationException()

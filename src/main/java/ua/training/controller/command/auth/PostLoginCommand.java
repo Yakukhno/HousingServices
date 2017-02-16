@@ -13,6 +13,7 @@ import java.io.IOException;
 
 import static ua.training.controller.Attributes.MESSAGE;
 import static ua.training.controller.Attributes.USER;
+import static ua.training.controller.Routes.LOGIN_JSP_PATH;
 
 public class PostLoginCommand implements Command {
 
@@ -21,7 +22,6 @@ public class PostLoginCommand implements Command {
 
     private static final String USER_PATH = "/rest/user/%d";
     private static final String LOGIN_PATH = "/rest/login";
-    private static final String LOGIN_JSP = "/WEB-INF/view/auth/login.jsp";
 
     private UserService userService;
 
@@ -56,7 +56,7 @@ public class PostLoginCommand implements Command {
                                ApplicationException e) {
         if (e.isUserMessage()) {
             request.setAttribute(MESSAGE, e.getUserMessage());
-            return LOGIN_JSP;
+            return LOGIN_JSP_PATH;
         } else {
             throw e;
         }

@@ -12,11 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static ua.training.controller.Attributes.*;
+import static ua.training.controller.Routes.APPLICATIONS_JSP_PATH;
 
 public class GetApplicationsCommand implements Command {
-
-    private static final String APPLICATIONS_JSP_PATH
-            = "/WEB-INF/view/application/applications.jsp";
 
     private ApplicationService applicationService;
 

@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class ErrorPageCommand implements Command {
+import static ua.training.controller.Routes.ERROR_JSP_PATH;
 
-    private static final String ERROR_JSP_PATH = "/WEB-INF/view/error/error.jsp";
+public class ErrorPageCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request,

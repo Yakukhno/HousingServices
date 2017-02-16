@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class LoginPageCommand implements Command {
+import static ua.training.controller.Routes.LOGIN_JSP_PATH;
 
-    private static final String LOGIN_JSP_PATH = "/WEB-INF/view/auth/login.jsp";
+public class LoginPageCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request,

@@ -7,10 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class NewUserPageCommand implements Command {
+import static ua.training.controller.Routes.REGISTER_USER_JSP_PATH;
 
-    private static final String REGISTER_USER_JSP_PATH
-            = "/WEB-INF/view/user/new_user.jsp";
+public class NewUserPageCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request,
