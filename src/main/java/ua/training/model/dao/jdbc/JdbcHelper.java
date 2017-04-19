@@ -15,7 +15,7 @@ import static ua.training.model.dao.jdbc.JdbcTypeOfWorkDao.*;
 import static ua.training.model.dao.jdbc.JdbcUserDao.*;
 import static ua.training.model.dao.jdbc.JdbcWorkerDao.*;
 
-class JdbcHelper {
+public class JdbcHelper {
 
     private static final String TASK_WORKER_NAME = "worker_name";
     private static final String TASK_WORKER_TYPE_ID = "worker_type_id";
@@ -26,7 +26,7 @@ class JdbcHelper {
     private static final String BRIGADE_MANAGER_TYPE_DESCRIPTION
             = "manager_type_description";
 
-    User getUserFromResultSet(ResultSet resultSet)
+    public User getUserFromResultSet(ResultSet resultSet)
             throws SQLException {
         return new User.Builder()
                 .setId(resultSet.getInt(USER_ID))
