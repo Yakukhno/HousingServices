@@ -9,8 +9,7 @@ import ua.training.model.dao.jdbc.JdbcHelper;
 import ua.training.model.entities.person.User;
 
 import javax.sql.DataSource;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class JdbcUserDao implements UserDao {
@@ -45,8 +44,7 @@ public class JdbcUserDao implements UserDao {
     @Override
     public Optional<User> get(int id) {
         return Optional.of(
-                jdbcTemplate.queryForObject(SELECT_BY_ID,
-                        new Object[]{id},
+                jdbcTemplate.queryForObject(SELECT_BY_ID, new Object[]{id},
                         getUserRowMapper())
         );
     }
@@ -56,28 +54,30 @@ public class JdbcUserDao implements UserDao {
         return jdbcTemplate.query(SELECT_ALL, getUserRowMapper());
     }
 
-    private RowMapper<User> getUserRowMapper() {
-        return (resultSet, i) -> helper.getUserFromResultSet(resultSet);
+    @Override
+    public void add(User user) {
+        jdbcTemplate.update(INSERT, getUpdateQueryParams(user).toArray());
     }
 
     @Override
-    public void add(User user) {
-        updateUser(user, INSERT);
+    public void update(User user) {
+        List<Object> params = getUpdateQueryParams(user);
+        params.add(user.getId());
+        jdbcTemplate.update(UPDATE, params.toArray());
+    }
+
+    private List<Object> getUpdateQueryParams(User user) {
+        List<Object> params = new ArrayList<>();
+        params.add(user.getName());
+        params.add(user.getEmail());
+        params.add(user.getPassword());
+        params.add(user.getRole().name());
+        return params;
     }
 
     @Override
     public void delete(int id) {
         jdbcTemplate.update(DELETE_BY_ID, id);
-    }
-
-    @Override
-    public void update(User user) {
-        updateUser(user, UPDATE);
-    }
-
-    private void updateUser(User user, String query) {
-        jdbcTemplate.update(query, user.getName(), user.getEmail(),
-                user.getPassword(), user.getRole().name());
     }
 
     @Override
@@ -94,5 +94,9 @@ public class JdbcUserDao implements UserDao {
         return jdbcTemplate.query(SELECT_BY_ROLE,
                 new Object[]{role.name()},
                 getUserRowMapper());
+    }
+
+    private RowMapper<User> getUserRowMapper() {
+        return (resultSet, i) -> helper.getUserFromResultSet(resultSet);
     }
 }

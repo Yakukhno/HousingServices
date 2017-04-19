@@ -39,7 +39,7 @@ public class JdbcHelper {
                 .build();
     }
 
-    Application getApplicationFromResultSet(ResultSet resultSet)
+    public Application getApplicationFromResultSet(ResultSet resultSet)
             throws SQLException {
         LocalDateTime localDateTime = null;
         if (resultSet.getTimestamp(APPLICATION_DESIRED_TIME) != null) {
