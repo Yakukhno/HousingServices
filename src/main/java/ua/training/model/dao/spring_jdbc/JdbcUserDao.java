@@ -3,13 +3,18 @@ package ua.training.model.dao.spring_jdbc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ua.training.model.dao.UserDao;
 import ua.training.model.dao.jdbc.JdbcHelper;
 import ua.training.model.entities.person.User;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class JdbcUserDao implements UserDao {
@@ -44,8 +49,9 @@ public class JdbcUserDao implements UserDao {
     @Override
     public Optional<User> get(int id) {
         return Optional.of(
-                jdbcTemplate.queryForObject(SELECT_BY_ID, new Object[]{id},
-                        getUserRowMapper())
+                jdbcTemplate.queryForObject(
+                        SELECT_BY_ID, new Object[]{id}, getUserRowMapper()
+                )
         );
     }
 
@@ -56,23 +62,19 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public void add(User user) {
-        jdbcTemplate.update(INSERT, getUpdateQueryParams(user).toArray());
-    }
-
-    @Override
-    public void update(User user) {
-        List<Object> params = getUpdateQueryParams(user);
-        params.add(user.getId());
-        jdbcTemplate.update(UPDATE, params.toArray());
-    }
-
-    private List<Object> getUpdateQueryParams(User user) {
-        List<Object> params = new ArrayList<>();
-        params.add(user.getName());
-        params.add(user.getEmail());
-        params.add(user.getPassword());
-        params.add(user.getRole().name());
-        return params;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(
+                connection -> {
+                    PreparedStatement ps = connection.prepareStatement(INSERT,
+                            Statement.RETURN_GENERATED_KEYS);
+                    ps.setString(1, user.getName());
+                    ps.setString(2, user.getEmail());
+                    ps.setString(3, user.getPassword());
+                    ps.setString(4, user.getRole().name());
+                    return ps;
+                },
+                keyHolder);
+        user.setId(keyHolder.getKey().intValue());
     }
 
     @Override
@@ -81,19 +83,29 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
+    public void update(User user) {
+        jdbcTemplate.update(UPDATE,
+                user.getName(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getRole().name(),
+                user.getId());
+    }
+
+    @Override
     public Optional<User> getUserByEmail(String email) {
         return Optional.of(
-                jdbcTemplate.queryForObject(SELECT_BY_EMAIL,
-                        new Object[]{email},
-                        getUserRowMapper())
+                jdbcTemplate.queryForObject(
+                        SELECT_BY_EMAIL, new Object[]{email}, getUserRowMapper()
+                )
         );
     }
 
     @Override
     public List<User> getUsersByRole(User.Role role) {
-        return jdbcTemplate.query(SELECT_BY_ROLE,
-                new Object[]{role.name()},
-                getUserRowMapper());
+        return jdbcTemplate.query(
+                SELECT_BY_ROLE, new Object[]{role.name()}, getUserRowMapper()
+        );
     }
 
     private RowMapper<User> getUserRowMapper() {

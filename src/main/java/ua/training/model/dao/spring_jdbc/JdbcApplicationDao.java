@@ -3,13 +3,18 @@ package ua.training.model.dao.spring_jdbc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ua.training.model.dao.ApplicationDao;
 import ua.training.model.dao.jdbc.JdbcHelper;
 import ua.training.model.entities.Application;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -56,8 +61,9 @@ public class JdbcApplicationDao implements ApplicationDao {
     @Override
     public Optional<Application> get(int id) {
         return Optional.of(
-                jdbcTemplate.queryForObject(SELECT_BY_ID, new Object[]{id},
-                        getApplicationRowMapper())
+                jdbcTemplate.queryForObject(
+                        SELECT_BY_ID, new Object[]{id}, getApplicationRowMapper()
+                )
         );
     }
 
@@ -68,27 +74,20 @@ public class JdbcApplicationDao implements ApplicationDao {
 
     @Override
     public void add(Application application) {
-        jdbcTemplate.update(INSERT, getUpdateQueryParams(application).toArray());
-    }
-
-    @Override
-    public void update(Application application) {
-        List<Object> params = getUpdateQueryParams(application);
-        params.add(application.getId());
-        jdbcTemplate.update(UPDATE, getUpdateQueryParams(application).toArray());
-    }
-
-    private List<Object> getUpdateQueryParams(Application application) {
-        List<Object> params = new ArrayList<>();
-        Timestamp timestamp = (application.getDesiredTime() != null)
-                ? Timestamp.valueOf(application.getDesiredTime())
-                : null;
-        params.add(application.getTenant().getId());
-        params.add(application.getTypeOfWork().getId());
-        params.add(application.getScaleOfProblem().name());
-        params.add(timestamp);
-        params.add(application.getStatus().name());
-        return params;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(
+                connection -> {
+                    PreparedStatement ps = connection.prepareStatement(INSERT,
+                            Statement.RETURN_GENERATED_KEYS);
+                    ps.setInt(1, application.getTenant().getId());
+                    ps.setInt(2, application.getTypeOfWork().getId());
+                    ps.setString(3, application.getScaleOfProblem().name());
+                    ps.setTimestamp(4, convertLocalDateTimeInTimestamp(application.getDesiredTime()));
+                    ps.setString(5, application.getStatus().name());
+                    return ps;
+                },
+                keyHolder);
+        application.setId(keyHolder.getKey().intValue());
     }
 
     @Override
@@ -97,24 +96,43 @@ public class JdbcApplicationDao implements ApplicationDao {
     }
 
     @Override
+    public void update(Application application) {
+        jdbcTemplate.update(UPDATE,
+                application.getTenant().getId(),
+                application.getTypeOfWork().getId(),
+                application.getScaleOfProblem().name(),
+                convertLocalDateTimeInTimestamp(application.getDesiredTime()),
+                application.getStatus().name(),
+                application.getId());
+    }
+
+    private Timestamp convertLocalDateTimeInTimestamp(LocalDateTime localDateTime) {
+        return (localDateTime != null)
+                ? Timestamp.valueOf(localDateTime)
+                : null;
+    }
+
+    @Override
     public List<Application> getApplicationsByTypeOfWork(String typeOfWork) {
-        return jdbcTemplate.query(SELECT_BY_TYPE_OF_WORK,
-                new Object[]{typeOfWork},
-                getApplicationRowMapper());
+        return jdbcTemplate.query(
+                SELECT_BY_TYPE_OF_WORK, new Object[]{typeOfWork},
+                getApplicationRowMapper()
+        );
     }
 
     @Override
     public List<Application> getApplicationsByUserId(int userId) {
-        return jdbcTemplate.query(SELECT_BY_TENANT,
-                new Object[]{userId},
-                getApplicationRowMapper());
+        return jdbcTemplate.query(
+                SELECT_BY_TENANT, new Object[]{userId}, getApplicationRowMapper()
+        );
     }
 
     @Override
     public List<Application> getApplicationsByStatus(Application.Status status) {
-        return jdbcTemplate.query(SELECT_BY_STATUS,
-                new Object[]{status.name()},
-                getApplicationRowMapper());
+        return jdbcTemplate.query(
+                SELECT_BY_STATUS, new Object[]{status.name()},
+                getApplicationRowMapper()
+        );
     }
 
     private RowMapper<Application> getApplicationRowMapper() {
