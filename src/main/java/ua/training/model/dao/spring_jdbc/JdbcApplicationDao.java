@@ -15,7 +15,6 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -115,7 +114,8 @@ public class JdbcApplicationDao implements ApplicationDao {
     @Override
     public List<Application> getApplicationsByTypeOfWork(String typeOfWork) {
         return jdbcTemplate.query(
-                SELECT_BY_TYPE_OF_WORK, new Object[]{typeOfWork},
+                SELECT_BY_TYPE_OF_WORK,
+                new Object[]{'%' + typeOfWork + '%'},
                 getApplicationRowMapper()
         );
     }

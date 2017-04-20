@@ -60,7 +60,7 @@ public class JdbcHelper {
                 .build();
     }
 
-    TypeOfWork getTypeOfWorkFromResultSet(ResultSet resultSet)
+    public TypeOfWork getTypeOfWorkFromResultSet(ResultSet resultSet)
             throws SQLException {
         return getTypeOfWorkFromResultSet(resultSet, TYPE_OF_WORK_ID,
                 TYPE_OF_WORK_DESCRIPTION);
