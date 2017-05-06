@@ -80,7 +80,7 @@ public class JdbcApplicationDao implements ApplicationDao {
                             Statement.RETURN_GENERATED_KEYS);
                     ps.setInt(1, application.getTenant().getId());
                     ps.setInt(2, application.getTypeOfWork().getId());
-                    ps.setString(3, application.getScaleOfProblem().name());
+                    ps.setString(3, application.getProblemScale().name());
                     ps.setTimestamp(4, convertLocalDateTimeInTimestamp(application.getDesiredTime()));
                     ps.setString(5, application.getStatus().name());
                     return ps;
@@ -99,7 +99,7 @@ public class JdbcApplicationDao implements ApplicationDao {
         jdbcTemplate.update(UPDATE,
                 application.getTenant().getId(),
                 application.getTypeOfWork().getId(),
-                application.getScaleOfProblem().name(),
+                application.getProblemScale().name(),
                 convertLocalDateTimeInTimestamp(application.getDesiredTime()),
                 application.getStatus().name(),
                 application.getId());

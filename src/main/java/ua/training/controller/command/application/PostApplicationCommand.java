@@ -72,7 +72,7 @@ public class PostApplicationCommand implements Command {
                         .setTypeOfWork(new TypeOfWork.Builder()
                                 .setId(typeOfWorkId)
                                 .build())
-                        .setScaleOfProblem(problemScale)
+                        .setProblemScale(problemScale)
                         .setDesiredTime(localDateTime)
                         .build();
                 applicationService.createNewApplication(application);

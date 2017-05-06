@@ -198,7 +198,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
                 : null;
         statement.setInt(1, application.getTenant().getId());
         statement.setInt(2, application.getTypeOfWork().getId());
-        statement.setString(3, application.getScaleOfProblem().name());
+        statement.setString(3, application.getProblemScale().name());
         statement.setTimestamp(4, timestamp);
         statement.setString(5, application.getStatus().name());
     }

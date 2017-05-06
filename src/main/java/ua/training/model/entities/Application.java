@@ -8,7 +8,7 @@ public class Application {
     private int id;
     private TypeOfWork typeOfWork;
     private User tenant;
-    private ProblemScale scaleOfProblem;
+    private ProblemScale problemScale;
     private LocalDateTime desiredTime;
     private Status status;
 
@@ -40,12 +40,12 @@ public class Application {
         this.tenant = tenant;
     }
 
-    public ProblemScale getScaleOfProblem() {
-        return scaleOfProblem;
+    public ProblemScale getProblemScale() {
+        return problemScale;
     }
 
-    public void setScaleOfProblem(ProblemScale scaleOfProblem) {
-        this.scaleOfProblem = scaleOfProblem;
+    public void setProblemScale(ProblemScale problemScale) {
+        this.problemScale = problemScale;
     }
 
     public LocalDateTime getDesiredTime() {
@@ -70,7 +70,7 @@ public class Application {
                 "id=" + id +
                 ", typeOfWork=" + typeOfWork +
                 ", tenant=" + tenant +
-                ", scaleOfProblem=" + scaleOfProblem +
+                ", problemScale=" + problemScale +
                 ", desiredTime=" + desiredTime +
                 ", status=" + status +
                 '}';
@@ -94,8 +94,8 @@ public class Application {
             return this;
         }
 
-        public Builder setScaleOfProblem(ProblemScale scaleOfProblem) {
-            application.setScaleOfProblem(scaleOfProblem);
+        public Builder setProblemScale(ProblemScale problemScale) {
+            application.setProblemScale(problemScale);
             return this;
         }
 

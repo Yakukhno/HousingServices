@@ -25,11 +25,11 @@
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <c:choose>
-                    <c:when test="${sessionScope.user != null
+                    <c:when test="${not empty sessionScope.user
                                         and sessionScope.user.role.equals(applicationScope.tenant)}">
                         <li>
-                            <a href="/rest/user/${sessionScope[Attributes.USER].id}"><
-                                fmt:message key="header.profile"/>
+                            <a href="/rest/user/${sessionScope[Attributes.USER].id}">
+                                <fmt:message key="header.profile"/>
                             </a>
                         </li>
                         <li>
@@ -38,7 +38,7 @@
                             </a>
                         </li>
                     </c:when>
-                    <c:when test="${sessionScope.user != null
+                    <c:when test="${not empty sessionScope.user
                                         and sessionScope.user.role.equals(applicationScope.dispatcher)}">
                         <li>
                             <a href="/rest/user/${sessionScope[Attributes.USER].id}">

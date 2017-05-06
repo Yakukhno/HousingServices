@@ -51,7 +51,7 @@ public class JdbcHelper {
                 .setTenant(getUserFromResultSet(resultSet))
                 .setTypeOfWork(getTypeOfWorkFromResultSet(resultSet))
                 .setDesiredTime(localDateTime)
-                .setScaleOfProblem(ProblemScale.valueOf(
+                .setProblemScale(ProblemScale.valueOf(
                         resultSet.getString(APPLICATION_SCALE_OF_PROBLEM)
                 ))
                 .setStatus(Application.Status.valueOf(

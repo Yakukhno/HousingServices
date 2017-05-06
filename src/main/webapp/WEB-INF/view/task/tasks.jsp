@@ -27,8 +27,8 @@
                             </td>
                             <td>
                                 <fmt:message>
-                                    <custom:enumLocale enumClass="${task.application.scaleOfProblem.getClass().getSimpleName()}">
-                                        ${task.application.scaleOfProblem}
+                                    <custom:enumLocale enumClass="${task.application.problemScale.getClass().getSimpleName()}">
+                                        ${task.application.problemScale}
                                     </custom:enumLocale>
                                 </fmt:message>
                             </td>
