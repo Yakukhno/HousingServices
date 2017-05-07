@@ -49,9 +49,7 @@ public class ApplicationController {
     public String addApplication(@RequestParam("typeOfWork") int typeOfWorkId,
                                  @RequestParam ProblemScale problemScale,
                                  @RequestParam("dateTime") String paramDateTime,
-                                 @RequestParam String street,
-                                 @RequestParam String houseNumber,
-                                 @RequestParam String flatNumber,
+                                 @RequestParam String address,
                                  @SessionAttribute("user") User sessionUser,
                                  Model model) {
         String pageToGo;
@@ -66,9 +64,7 @@ public class ApplicationController {
                             .build())
                     .setProblemScale(problemScale)
                     .setDesiredTime(localDateTime)
-                    .setStreet(street)
-                    .setHouseNumber(houseNumber)
-                    .setFlatNumber(flatNumber)
+                    .setAddress(address)
                     .build();
             applicationService.createNewApplication(application);
             pageToGo = TENANT_APPLICATIONS_PATH;
