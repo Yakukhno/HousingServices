@@ -32,12 +32,14 @@ public class JdbcApplicationDao extends AbstractJdbcDao
     private static final String INSERT =
             "INSERT INTO application " +
                     "(id_user, id_type_of_work, scale_of_problem, " +
-                    "desired_time, status) VALUES (?, ?, ?, ?, ?)";
+                    "desired_time, status, street, house_number, flat) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String DELETE_BY_ID =
             "DELETE FROM application WHERE id_application = ?";
     private static final String UPDATE =
             "UPDATE application SET id_user = ?, id_type_of_work = ?, " +
-                    "scale_of_problem = ?, desired_time = ?, status = ? " +
+                    "scale_of_problem = ?, desired_time = ?, status = ?, " +
+                    "street = ?, house_number = ?, flat = ?" +
                     "WHERE id_application = ?";
 
     private static final String EXCEPTION_GET_BY_ID
@@ -127,7 +129,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
         try (PreparedStatement statement =
                      connection.prepareStatement(UPDATE)) {
             setStatementFromApplication(statement, application);
-            statement.setInt(6, application.getId());
+            statement.setInt(9, application.getId());
             statement.execute();
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_UPDATE, application);
@@ -201,5 +203,8 @@ public class JdbcApplicationDao extends AbstractJdbcDao
         statement.setString(3, application.getProblemScale().name());
         statement.setTimestamp(4, timestamp);
         statement.setString(5, application.getStatus().name());
+        statement.setString(6, application.getStreet());
+        statement.setString(7, application.getHouseNumber());
+        statement.setString(8, application.getFlatNumber());
     }
 }

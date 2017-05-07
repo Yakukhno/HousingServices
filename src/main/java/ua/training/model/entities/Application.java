@@ -11,6 +11,9 @@ public class Application {
     private ProblemScale problemScale;
     private LocalDateTime desiredTime;
     private Status status;
+    private String street;
+    private String houseNumber;
+    private String flatNumber;
 
     public enum Status {
         NEW, CONSIDERED
@@ -64,6 +67,30 @@ public class Application {
         this.status = status;
     }
 
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getHouseNumber() {
+        return houseNumber;
+    }
+
+    public void setHouseNumber(String houseNumber) {
+        this.houseNumber = houseNumber;
+    }
+
+    public String getFlatNumber() {
+        return flatNumber;
+    }
+
+    public void setFlatNumber(String flatNumber) {
+        this.flatNumber = flatNumber;
+    }
+
     @Override
     public String toString() {
         return "Application{" +
@@ -106,6 +133,21 @@ public class Application {
 
         public Builder setStatus(Status status) {
             application.setStatus(status);
+            return this;
+        }
+
+        public Builder setStreet(String street) {
+            application.setStreet(street);
+            return this;
+        }
+
+        public Builder setHouseNumber(String houseNumber) {
+            application.setHouseNumber(houseNumber);
+            return this;
+        }
+
+        public Builder setFlatNumber(String flatNumber) {
+            application.setFlatNumber(flatNumber);
             return this;
         }
 

@@ -51,6 +51,30 @@
         </div>
     </div>
     <div class="form-group">
+        <label for="street" class="control-label col-md-4">
+            <fmt:message key="street"/>
+        </label>
+        <div class="col-md-8">
+            <input type="text" id="street" name="street" class="form-control"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="houseNumber" class="control-label col-md-4">
+            <fmt:message key="houseNumber"/>
+        </label>
+        <div class="col-md-8">
+            <input type="text" id="houseNumber" name="houseNumber" class="form-control"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="flatNumber" class="control-label col-md-4">
+            <fmt:message key="flatNumber"/>
+        </label>
+        <div class="col-md-8">
+            <input type="text" id="flatNumber" name="flatNumber" class="form-control"/>
+        </div>
+    </div>
+    <div class="form-group">
         <div class="col-md-offset-4 col-md-8">
             <button class="btn btn-default" type="submit"><fmt:message key="send"/></button>
         </div>
