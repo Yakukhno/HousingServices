@@ -1,6 +1,7 @@
 package ua.training.configuration;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+import ua.training.controller.filter.CharsetFilter;
 import ua.training.controller.spring.listener.SessionListener;
 import ua.training.model.entities.person.User;
 
@@ -32,5 +33,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
         servletContext.setAttribute(TENANT, User.Role.TENANT);
         servletContext.setAttribute(DISPATCHER, User.Role.DISPATCHER);
         servletContext.addListener(new SessionListener());
+        servletContext.addFilter("EncodeFilter", CharsetFilter.class)
+                .addMappingForUrlPatterns(null, false, "/*");
     }
 }
