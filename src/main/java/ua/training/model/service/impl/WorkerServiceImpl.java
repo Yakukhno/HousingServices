@@ -1,5 +1,6 @@
 package ua.training.model.service.impl;
 
+import org.springframework.stereotype.Service;
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.WorkerDao;
@@ -8,19 +9,10 @@ import ua.training.model.service.WorkerService;
 
 import java.util.List;
 
+@Service("workerService")
 public class WorkerServiceImpl implements WorkerService {
 
     private DaoFactory daoFactory = DaoFactory.getInstance();
-
-    private WorkerServiceImpl() {}
-
-    private static class InstanceHolder {
-        static final WorkerService INSTANCE = new WorkerServiceImpl();
-    }
-
-    public static WorkerService getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
 
     @Override
     public List<Worker> getAllWorkers() {

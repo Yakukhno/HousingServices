@@ -1,5 +1,6 @@
 package ua.training.controller.spring;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +33,11 @@ public class ApplicationController {
     private ApplicationService applicationService;
     private TypeOfWorkService typeOfWorkService;
 
-    public ApplicationController() {
-        applicationService = ApplicationServiceImpl.getInstance();
-        typeOfWorkService = TypeOfWorkServiceImpl.getInstance();
+    @Autowired
+    public ApplicationController(ApplicationService applicationService,
+                                 TypeOfWorkService typeOfWorkService) {
+        this.applicationService = applicationService;
+        this.typeOfWorkService = typeOfWorkService;
     }
 
     @GetMapping("/application")

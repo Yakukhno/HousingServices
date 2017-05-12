@@ -28,14 +28,14 @@ public final class CommandHolder {
     {
         commands.put(HOME, new HomePage());
         commands.put(GET_HOME, new HomePage());
-        commands.put(GET_USER, new GetUserCommand());
-        commands.put(POST_USER, new PostUserCommand());
-        commands.put(UPDATE_USER, new UpdateUserCommand());
+//        commands.put(GET_USER, new GetUserCommand());
+//        commands.put(POST_USER, new PostUserCommand());
+//        commands.put(UPDATE_USER, new UpdateUserCommand());
         commands.put(GET_USER_APPLICATION, new GetUserApplicationsCommand());
         commands.put(GET_APPLICATIONS, new GetApplicationsCommand());
         commands.put(POST_APPLICATION, new PostApplicationCommand());
         commands.put(DELETE_APPLICATION, new DeleteApplicationCommand());
-        commands.put(POST_LOGIN, new PostLoginCommand());
+//        commands.put(POST_LOGIN, new PostLoginCommand());
         commands.put(POST_LOGOUT, new PostLogoutCommand());
         commands.put(GET_LOGIN_PAGE, new LoginPageCommand());
         commands.put(GET_NEW_USER_PAGE, new NewUserPageCommand());

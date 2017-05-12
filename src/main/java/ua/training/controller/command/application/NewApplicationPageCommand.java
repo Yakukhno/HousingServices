@@ -19,7 +19,7 @@ public class NewApplicationPageCommand implements Command {
     private TypeOfWorkService typeOfWorkService;
 
     public NewApplicationPageCommand() {
-        typeOfWorkService = TypeOfWorkServiceImpl.getInstance();
+//        typeOfWorkService = TypeOfWorkServiceImpl.getInstance();
     }
 
     NewApplicationPageCommand(TypeOfWorkService typeOfWorkService) {

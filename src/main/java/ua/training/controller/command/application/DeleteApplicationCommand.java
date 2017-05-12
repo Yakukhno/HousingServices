@@ -20,7 +20,7 @@ public class DeleteApplicationCommand implements Command {
     private ApplicationService applicationService;
 
     public DeleteApplicationCommand() {
-        applicationService = ApplicationServiceImpl.getInstance();
+//        applicationService = ApplicationServiceImpl.getInstance();
     }
 
     DeleteApplicationCommand(ApplicationService applicationService) {

@@ -18,9 +18,9 @@ public class GetUserCommand implements Command {
 
     private UserService userService;
 
-    public GetUserCommand() {
-        userService = UserServiceImpl.getInstance();
-    }
+//    public GetUserCommand() {
+//        userService = UserServiceImpl.getInstance();
+//    }
 
     GetUserCommand(UserService userService) {
         this.userService = userService;

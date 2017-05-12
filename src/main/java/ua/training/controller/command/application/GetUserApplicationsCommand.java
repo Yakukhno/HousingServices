@@ -19,7 +19,7 @@ public class GetUserApplicationsCommand implements Command {
     private ApplicationService applicationService;
 
     public GetUserApplicationsCommand() {
-        applicationService = ApplicationServiceImpl.getInstance();
+//        applicationService = ApplicationServiceImpl.getInstance();
     }
 
     GetUserApplicationsCommand(ApplicationService applicationService) {

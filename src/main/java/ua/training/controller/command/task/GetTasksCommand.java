@@ -17,7 +17,7 @@ public class GetTasksCommand implements Command {
     private TaskService taskService;
 
     public GetTasksCommand() {
-        taskService = TaskServiceImpl.getInstance();
+//        taskService = TaskServiceImpl.getInstance();
     }
 
     GetTasksCommand(TaskService taskService) {

@@ -43,8 +43,8 @@ public class PostTaskCommand implements Command {
     private WorkerService workerService;
 
     public PostTaskCommand() {
-        taskService = TaskServiceImpl.getInstance();
-        workerService = WorkerServiceImpl.getInstance();
+//        taskService = TaskServiceImpl.getInstance();
+//        workerService = WorkerServiceImpl.getInstance();
     }
 
     PostTaskCommand(TaskService taskService, WorkerService workerService) {

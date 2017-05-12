@@ -40,8 +40,8 @@ public class PostApplicationCommand implements Command {
     private ApplicationService applicationService;
 
     public PostApplicationCommand() {
-        typeOfWorkService = TypeOfWorkServiceImpl.getInstance();
-        applicationService = ApplicationServiceImpl.getInstance();
+//        typeOfWorkService = TypeOfWorkServiceImpl.getInstance();
+//        applicationService = ApplicationServiceImpl.getInstance();
     }
 
     PostApplicationCommand(TypeOfWorkService typeOfWorkService,

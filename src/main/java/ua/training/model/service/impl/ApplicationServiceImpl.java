@@ -1,6 +1,7 @@
 package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.*;
@@ -12,6 +13,7 @@ import ua.training.model.service.ApplicationService;
 import java.util.List;
 import java.util.function.Supplier;
 
+@Service("applicationService")
 public class ApplicationServiceImpl implements ApplicationService {
 
     private static final String EXCEPTION_USER_WITH_ID_NOT_FOUND
@@ -21,16 +23,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private DaoFactory daoFactory = DaoFactory.getInstance();
     private Logger logger = Logger.getLogger(ApplicationServiceImpl.class);
-
-    private ApplicationServiceImpl() {}
-
-    private static class InstanceHolder {
-        static final ApplicationService INSTANCE = new ApplicationServiceImpl();
-    }
-
-    public static ApplicationService getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
 
     @Override
     public List<Application> getApplicationsByUserId(int userId) {

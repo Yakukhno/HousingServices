@@ -1,6 +1,7 @@
 package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.BrigadeDao;
 import ua.training.model.dao.DaoConnection;
@@ -8,6 +9,7 @@ import ua.training.model.dao.DaoFactory;
 import ua.training.model.entities.Brigade;
 import ua.training.model.service.BrigadeService;
 
+@Service("brigadeService")
 public class BrigadeServiceImpl implements BrigadeService {
 
     private static final String EXCEPTION_BRIGADE_WITH_ID_NOT_FOUND
@@ -15,16 +17,6 @@ public class BrigadeServiceImpl implements BrigadeService {
 
     private DaoFactory daoFactory = DaoFactory.getInstance();
     private Logger logger = Logger.getLogger(BrigadeServiceImpl.class);
-
-    private BrigadeServiceImpl() {}
-
-    private static class InstanceHolder {
-        static final BrigadeService INSTANCE = new BrigadeServiceImpl();
-    }
-
-    public static BrigadeService getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
 
     @Override
     public Brigade getBrigadeById(int id) {

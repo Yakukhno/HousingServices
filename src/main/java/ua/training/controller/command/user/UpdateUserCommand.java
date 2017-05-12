@@ -32,9 +32,9 @@ public class UpdateUserCommand implements Command {
 
     private UserService userService;
 
-    public UpdateUserCommand() {
-        userService = UserServiceImpl.getInstance();
-    }
+//    public UpdateUserCommand() {
+//        userService = UserServiceImpl.getInstance();
+//    }
 
     UpdateUserCommand(UserService userService) {
         this.userService = userService;

@@ -25,9 +25,9 @@ public class PostLoginCommand implements Command {
 
     private UserService userService;
 
-    public PostLoginCommand() {
-        userService = UserServiceImpl.getInstance();
-    }
+//    public PostLoginCommand() {
+//        userService = UserServiceImpl.getInstance();
+//    }
 
     PostLoginCommand(UserService userService) {
         this.userService = userService;

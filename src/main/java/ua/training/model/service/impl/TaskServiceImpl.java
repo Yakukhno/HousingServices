@@ -1,6 +1,7 @@
 package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.*;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+@Service("taskService")
 public class TaskServiceImpl implements TaskService {
 
     private static final String EXCEPTION_APPLICATION_WITH_ID_NOT_FOUND
@@ -27,16 +29,6 @@ public class TaskServiceImpl implements TaskService {
 
     private DaoFactory daoFactory = DaoFactory.getInstance();
     private Logger logger = Logger.getLogger(TaskServiceImpl.class);
-
-    private TaskServiceImpl() {}
-
-    private static class InstanceHolder {
-        static final TaskService INSTANCE = new TaskServiceImpl();
-    }
-
-    public static TaskService getInstance() {
-        return InstanceHolder.INSTANCE;
-    }
 
     @Override
     public List<Task> getActiveTasks() {

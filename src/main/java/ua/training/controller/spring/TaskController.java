@@ -1,5 +1,6 @@
 package ua.training.controller.spring;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -36,9 +37,11 @@ public class TaskController {
     private TaskService taskService;
     private WorkerService workerService;
 
-    public TaskController() {
-        taskService = TaskServiceImpl.getInstance();
-        workerService = WorkerServiceImpl.getInstance();
+    @Autowired
+    public TaskController(TaskService taskService,
+                          WorkerService workerService) {
+        this.taskService = taskService;
+        this.workerService = workerService;
     }
 
     @GetMapping("/task")

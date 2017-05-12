@@ -2,6 +2,7 @@ package ua.training.model.service.impl;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 import ua.training.exception.ApplicationException;
 import ua.training.exception.ResourceNotFoundException;
 import ua.training.exception.ServiceException;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@Service("userService")
 public class UserServiceImpl implements UserService {
 
     private static final String EXCEPTION_USER_WITH_ID_NOT_FOUND
@@ -28,20 +30,12 @@ public class UserServiceImpl implements UserService {
     private DaoFactory daoFactory;
     private Logger logger = Logger.getLogger(UserServiceImpl.class);
 
-    private UserServiceImpl() {
+    public UserServiceImpl() {
         daoFactory = DaoFactory.getInstance();
     }
 
     UserServiceImpl(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
-    }
-
-    private static class InstanceHolder {
-        static final UserService INSTANCE = new UserServiceImpl();
-    }
-
-    public static UserService getInstance() {
-        return InstanceHolder.INSTANCE;
     }
 
     @Override

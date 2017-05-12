@@ -20,7 +20,7 @@ public class NewTaskPageCommand implements Command {
     private WorkerService workerService;
 
     public NewTaskPageCommand() {
-        workerService = WorkerServiceImpl.getInstance();
+//        workerService = WorkerServiceImpl.getInstance();
     }
 
     NewTaskPageCommand(WorkerService workerService) {

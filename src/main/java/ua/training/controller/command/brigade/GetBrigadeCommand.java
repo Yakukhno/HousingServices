@@ -18,7 +18,7 @@ public class GetBrigadeCommand implements Command {
     private BrigadeService brigadeService;
 
     public GetBrigadeCommand() {
-        brigadeService = BrigadeServiceImpl.getInstance();
+//        brigadeService = BrigadeServiceImpl.getInstance();
     }
 
     GetBrigadeCommand(BrigadeService brigadeService) {
