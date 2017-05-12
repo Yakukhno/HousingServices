@@ -21,4 +21,12 @@ public class WorkerServiceImpl implements WorkerService {
             return workerDao.getAll();
         }
     }
+
+    @Override
+    public void addNewWorker(Worker worker) {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            WorkerDao workerDao = daoFactory.createWorkerDao(connection);
+            workerDao.add(worker);
+        }
+    }
 }

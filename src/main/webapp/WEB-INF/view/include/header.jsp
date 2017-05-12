@@ -50,6 +50,11 @@
                                 <fmt:message key="header.applications"/>
                             </a>
                         </li>
+                        <li>
+                            <a href="/rest/worker">
+                                <fmt:message key="workers"/>
+                            </a>
+                        </li>
                     </c:when>
                 </c:choose>
                 <li><a href="/rest/task"><fmt:message key="header.tasks"/></a></li>

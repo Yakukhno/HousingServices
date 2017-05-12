@@ -2,10 +2,14 @@ package ua.training.controller.spring;
 
 import org.apache.log4j.Logger;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.InitBinder;
 import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ResourceNotFoundException;
+import ua.training.model.entities.TypeOfWork;
 
+import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 
 @org.springframework.web.bind.annotation.ControllerAdvice
@@ -37,5 +41,17 @@ public class ControllerAdvice {
         logger.error(e.getMessage(), e);
         model.addAttribute("exception", e);
         return "error/error";
+    }
+
+    @InitBinder
+    public void typeOfWorkBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(TypeOfWork.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String s) throws IllegalArgumentException {
+                TypeOfWork typeOfWork = new TypeOfWork();
+                typeOfWork.setId(Integer.parseInt(s));
+                setValue(typeOfWork);
+            }
+        });
     }
 }

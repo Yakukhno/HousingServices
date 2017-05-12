@@ -3,6 +3,7 @@ package ua.training.controller.spring;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import ua.training.controller.validator.DateTimeValidator;
 import ua.training.controller.validator.Validator;
@@ -16,6 +17,7 @@ import ua.training.model.service.TypeOfWorkService;
 import ua.training.model.service.impl.ApplicationServiceImpl;
 import ua.training.model.service.impl.TypeOfWorkServiceImpl;
 
+import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -49,24 +51,21 @@ public class ApplicationController {
     }
 
     @PostMapping("/application")
-    public String addApplication(@RequestParam("typeOfWork") int typeOfWorkId,
+    public String addApplication(@RequestParam TypeOfWork typeOfWork,
                                  @RequestParam ProblemScale problemScale,
-                                 @RequestParam("dateTime") String paramDateTime,
+                                 @RequestParam LocalDateTime dateTime,
                                  @RequestParam String address,
                                  @SessionAttribute("user") User sessionUser,
                                  Model model) {
         String pageToGo;
         try {
-            LocalDateTime localDateTime = getLocalDateTime(paramDateTime);
             Application application = new Application.Builder()
                     .setTenant(new User.Builder()
                             .setId(sessionUser.getId())
                             .build())
-                    .setTypeOfWork(new TypeOfWork.Builder()
-                            .setId(typeOfWorkId)
-                            .build())
+                    .setTypeOfWork(typeOfWork)
                     .setProblemScale(problemScale)
-                    .setDesiredTime(localDateTime)
+                    .setDesiredTime(dateTime)
                     .setAddress(address)
                     .build();
             applicationService.createNewApplication(application);
@@ -122,5 +121,20 @@ public class ApplicationController {
                                     @SessionAttribute User user) {
         applicationService.deleteApplication(applicationId, user.getId());
         return "redirect:/rest/user/application";
+    }
+
+    @InitBinder
+    public void localDateTimeBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(LocalDateTime.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String s) throws IllegalArgumentException {
+                LocalDateTime localDateTime = null;
+                if (!s.isEmpty()) {
+                    dateTimeValidator.validate(s);
+                    localDateTime = LocalDateTime.parse(s);
+                }
+                setValue(localDateTime);
+            }
+        });
     }
 }

@@ -154,17 +154,19 @@ public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
     }
 
     private void insertTypesOfWork(Worker worker) throws SQLException {
-        StringBuilder query = new StringBuilder();
         Set<TypeOfWork> typesOfWorks = worker.getTypesOfWork();
-        typesOfWorks.forEach(typeOfWork -> query.append(INSERT_TYPE_OF_WORK));
-        try (PreparedStatement statement =
-                     connection.prepareStatement(query.toString())) {
-            int count = 1;
-            for (TypeOfWork typeOfWork : typesOfWorks) {
-                statement.setInt(count++, worker.getId());
-                statement.setInt(count++, typeOfWork.getId());
+        if (!typesOfWorks.isEmpty()) {
+            StringBuilder query = new StringBuilder();
+            typesOfWorks.forEach(typeOfWork -> query.append(INSERT_TYPE_OF_WORK));
+            try (PreparedStatement statement =
+                         connection.prepareStatement(query.toString())) {
+                int count = 1;
+                for (TypeOfWork typeOfWork : typesOfWorks) {
+                    statement.setInt(count++, worker.getId());
+                    statement.setInt(count++, typeOfWork.getId());
+                }
+                statement.execute();
             }
-            statement.execute();
         }
     }
 }

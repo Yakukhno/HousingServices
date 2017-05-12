@@ -16,6 +16,10 @@ public class Worker extends Person {
         typesOfWork.add(typeOfWork);
     }
 
+    public void setTypesOfWork(Set<TypeOfWork> typesOfWork) {
+        this.typesOfWork = typesOfWork;
+    }
+
     public void removeTypeOfWork(TypeOfWork typeOfWork) {
         typesOfWork.remove(typeOfWork);
     }
