@@ -35,5 +35,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
         servletContext.addListener(new SessionListener());
         servletContext.addFilter("EncodeFilter", CharsetFilter.class)
                 .addMappingForUrlPatterns(null, false, "/*");
+//        servletContext.addFilter("AuthFilter", AuthFilter.class)
+//                .addMappingForUrlPatterns(null, false, "/rest/*");
     }
 }

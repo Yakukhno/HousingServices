@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ua.training.controller.validator.DateTimeValidator;
 import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
@@ -14,8 +15,6 @@ import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.ApplicationService;
 import ua.training.model.service.TypeOfWorkService;
-import ua.training.model.service.impl.ApplicationServiceImpl;
-import ua.training.model.service.impl.TypeOfWorkServiceImpl;
 
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;
@@ -27,7 +26,13 @@ import static ua.training.controller.Attributes.*;
 @RequestMapping("/rest")
 public class ApplicationController {
 
-    private static final String TENANT_APPLICATIONS_PATH
+    private final String ALL_APPLICATIONS_VIEW = "application/applications";
+    private final String NEW_APPLICATION_VIEW = "application/new_application";
+    private final String NEW_APPLICATION_REDIRECT
+            = "redirect:/rest/new_application";
+    private static final String USER_APPLICATIONS_VIEW
+            = "application/tenant_applications";
+    private static final String USER_APPLICATIONS_REDIRECT
             = "redirect:/rest/user/application";
 
     private Validator dateTimeValidator = new DateTimeValidator();
@@ -47,7 +52,7 @@ public class ApplicationController {
         model.addAttribute(STATUS_NEW, Application.Status.NEW);
         model.addAttribute(APPLICATIONS,
                 applicationService.getAllApplications(user.getRole()));
-        return "application/applications";
+        return ALL_APPLICATIONS_VIEW;
     }
 
     @PostMapping("/application")
@@ -57,48 +62,17 @@ public class ApplicationController {
                                  @RequestParam String address,
                                  @SessionAttribute("user") User sessionUser,
                                  Model model) {
-        String pageToGo;
-        try {
-            Application application = new Application.Builder()
-                    .setTenant(new User.Builder()
-                            .setId(sessionUser.getId())
-                            .build())
-                    .setTypeOfWork(typeOfWork)
-                    .setProblemScale(problemScale)
-                    .setDesiredTime(dateTime)
-                    .setAddress(address)
-                    .build();
-            applicationService.createNewApplication(application);
-            pageToGo = TENANT_APPLICATIONS_PATH;
-        } catch (ApplicationException e) {
-            pageToGo = getPageToGo(model, e);
-        }
-        return pageToGo;
-    }
-
-    private LocalDateTime getLocalDateTime(String paramDateTime) {
-        if (!paramDateTime.isEmpty()) {
-            dateTimeValidator.validate(paramDateTime);
-            return LocalDateTime.parse(paramDateTime);
-        }
-        return null;
-    }
-
-    private String getPageToGo(Model model,
-                               ApplicationException e) {
-        if (e.isUserMessage()) {
-            model.addAttribute(TYPE_OF_WORK,
-                    typeOfWorkService.getAllTypesOfWork());
-            model.addAttribute(PROBLEM_SCALE, ProblemScale.values());
-            model.addAttribute(MESSAGE, e.getUserMessage());
-            List<String> parameters = e.getParameters();
-            if (e.getParameters().size() != 0) {
-                model.addAttribute(PARAMS, parameters);
-            }
-            return "application/new_application";
-        } else {
-            throw e;
-        }
+        Application application = new Application.Builder()
+                .setTenant(new User.Builder()
+                        .setId(sessionUser.getId())
+                        .build())
+                .setTypeOfWork(typeOfWork)
+                .setProblemScale(problemScale)
+                .setDesiredTime(dateTime)
+                .setAddress(address)
+                .build();
+        applicationService.createNewApplication(application);
+        return USER_APPLICATIONS_REDIRECT;
     }
 
     @GetMapping("/user/application")
@@ -106,21 +80,36 @@ public class ApplicationController {
         model.addAttribute(STATUS_NEW, Application.Status.NEW);
         model.addAttribute(APPLICATIONS,
                 applicationService.getApplicationsByUserId(user.getId()));
-        return "application/tenant_applications";
+        return USER_APPLICATIONS_VIEW;
     }
 
     @GetMapping("/new_application")
     public String getNewApplicationPage(Model model) {
         model.addAttribute(TYPE_OF_WORK, typeOfWorkService.getAllTypesOfWork());
         model.addAttribute(PROBLEM_SCALE, ProblemScale.values());
-        return "application/new_application";
+        return NEW_APPLICATION_VIEW;
     }
 
     @PostMapping("/application/{applicationId}/delete")
     public String deleteApplication(@PathVariable int applicationId,
                                     @SessionAttribute User user) {
         applicationService.deleteApplication(applicationId, user.getId());
-        return "redirect:/rest/user/application";
+        return USER_APPLICATIONS_REDIRECT;
+    }
+
+    @ExceptionHandler(ApplicationException.class)
+    public String handleApplicationException(ApplicationException e,
+                                             RedirectAttributes model) {
+        if (e.isUserMessage()) {
+            model.addFlashAttribute(MESSAGE, e.getUserMessage());
+            List<String> parameters = e.getParameters();
+            if (parameters.size() != 0) {
+                model.addFlashAttribute(PARAMS, parameters);
+            }
+            return NEW_APPLICATION_REDIRECT;
+        } else {
+            throw e;
+        }
     }
 
     @InitBinder

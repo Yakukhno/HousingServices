@@ -34,9 +34,8 @@ public class ControllerAdvice {
         return "error/error";
     }
 
-    @ExceptionHandler(IOException.class)
-    public String handleOtherException(ResourceNotFoundException e,
-                                                  Model model)
+    @ExceptionHandler(Exception.class)
+    public String handleOtherException(Exception e, Model model)
             throws IOException {
         logger.error(e.getMessage(), e);
         model.addAttribute("exception", e);
