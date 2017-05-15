@@ -82,6 +82,7 @@ public class Application {
                 ", problemScale=" + problemScale +
                 ", desiredTime=" + desiredTime +
                 ", status=" + status +
+                ", address='" + address + '\'' +
                 '}';
     }
 

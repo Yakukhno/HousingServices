@@ -1,9 +1,11 @@
 package ua.training.controller.spring;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ua.training.controller.validator.EmailValidator;
 import ua.training.controller.validator.NameValidator;
 import ua.training.controller.validator.PasswordValidator;
@@ -12,8 +14,8 @@ import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ApplicationException;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
-import ua.training.model.service.impl.UserServiceImpl;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static ua.training.controller.Attributes.*;
@@ -22,9 +24,12 @@ import static ua.training.controller.Attributes.*;
 @RequestMapping("/rest")
 public class UserController {
 
-    private static final String LOGIN_PATH = "redirect:/rest/login";
-
-    private static final String USER_PATH = "redirect:/rest/user/%s";
+    private static final String USER_VIEW = "user/user";
+    private static final String NEW_USER_VIEW = "user/new_user";
+    private static final String NEW_USER_REDIRECT = "redirect:/rest/new_user";
+    private static final String LOGIN_REDIRECT = "redirect:/rest/login";
+    private static final String USER_REDIRECT = "redirect:/rest/user/{userId}";
+    private static final String USER_ID = "userId";
 
     private Validator nameValidator = new NameValidator();
     private Validator emailValidator = new EmailValidator();
@@ -41,26 +46,17 @@ public class UserController {
     public String getUser(@SessionAttribute("user") User sessionUser,
                           @PathVariable int userId,
                           Model model) {
-        if (userId == sessionUser.getId()) {
-            User user = userService.getUserById(userId);
-            model.addAttribute(USER, user);
-            return "user/user";
-        } else {
-            throw new AccessForbiddenException();
-        }
+        checkUserAccess(userId, sessionUser);
+        User user = userService.getUserById(userId);
+        model.addAttribute(USER, user);
+        return USER_VIEW;
     }
 
     @PostMapping("/user")
-    public String addUser(User user, Model model) {
-        String pageToGo;
-        try {
-            validateUserFieldsForCreate(user);
-            userService.createNewUser(user);
-            pageToGo = LOGIN_PATH;
-        } catch (ApplicationException e) {
-            pageToGo = getPageToGo(model, e);
-        }
-        return pageToGo;
+    public String addUser(User user) {
+        validateUserFieldsForCreate(user);
+        userService.createNewUser(user);
+        return LOGIN_REDIRECT;
     }
 
     private void validateUserFieldsForCreate(User user) {
@@ -69,37 +65,25 @@ public class UserController {
         passwordValidator.validate(user.getPassword());
     }
 
-    private String getPageToGo(Model model, ApplicationException e) {
-        if (e.isUserMessage()) {
-            model.addAttribute(MESSAGE, e.getUserMessage());
-            List<String> parameters = e.getParameters();
-            if (e.getParameters().size() != 0) {
-                model.addAttribute(PARAMS, parameters);
-            }
-            return "user/new_user";
-        } else {
-            throw e;
-        }
-    }
-
     @PostMapping("/user/{userId}")
     public String updateUser(@PathVariable int userId,
                              @RequestParam String email,
                              @RequestParam String oldPassword,
                              @RequestParam String newPassword,
                              @SessionAttribute("user") User sessionUser,
-                             Model model) {
-        String pageToGo = String.format(USER_PATH, sessionUser.getId());
-        if (sessionUser.getId() != userId) {
+                             HttpServletRequest request, Model model) {
+        request.setAttribute(USER_ID, userId);
+        model.addAttribute(USER_ID, userId);
+        checkUserAccess(userId, sessionUser);
+        User user = validateUserFieldsForUpdate(sessionUser, email, newPassword);
+        userService.updateUser(user, oldPassword);
+        return USER_REDIRECT;
+    }
+
+    private void checkUserAccess(int userId, User sessionUser) {
+        if (userId != sessionUser.getId()) {
             throw new AccessForbiddenException();
         }
-        try {
-            User user = validateUserFieldsForUpdate(sessionUser, email, newPassword);
-            userService.updateUser(user, oldPassword);
-        } catch (ApplicationException e) {
-            pageToGo = getPageToGo(model, e, userId);
-        }
-        return pageToGo;
     }
 
     private User validateUserFieldsForUpdate(User user,
@@ -116,25 +100,30 @@ public class UserController {
         return user;
     }
 
-    private String getPageToGo(Model model,
-                               ApplicationException e,
-                               int userId) {
-        if (e.isUserMessage()) {
-            User user = userService.getUserById(userId);
-            model.addAttribute(USER, user);
-            model.addAttribute(MESSAGE, e.getUserMessage());
-            List<String> parameters = e.getParameters();
-            if (e.getParameters().size() != 0) {
-                model.addAttribute(PARAMS, parameters);
-            }
-            return "user/user";
-        } else {
+    @ExceptionHandler(ApplicationException.class)
+    public String handleApplicationException(ApplicationException e,
+                                             RedirectAttributes model,
+                                             HttpServletRequest request) {
+        if (!e.isUserMessage()) {
             throw e;
+        }
+        model.addFlashAttribute(MESSAGE, e.getUserMessage());
+        List<String> parameters = e.getParameters();
+        if (parameters.size() != 0) {
+            model.addFlashAttribute(PARAMS, parameters);
+        }
+
+        Integer userId = (Integer) request.getAttribute(USER_ID);
+        if (userId != null) {
+            model.addFlashAttribute(USER, userService.getUserById(userId));
+            return USER_REDIRECT;
+        } else {
+            return NEW_USER_REDIRECT;
         }
     }
 
     @GetMapping("/new_user")
     public String getNewUserPage() {
-        return "user/new_user";
+        return NEW_USER_VIEW;
     }
 }

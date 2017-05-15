@@ -60,11 +60,10 @@ public class ApplicationController {
                                  @RequestParam ProblemScale problemScale,
                                  @RequestParam LocalDateTime dateTime,
                                  @RequestParam String address,
-                                 @SessionAttribute("user") User sessionUser,
-                                 Model model) {
+                                 @SessionAttribute User user) {
         Application application = new Application.Builder()
                 .setTenant(new User.Builder()
-                        .setId(sessionUser.getId())
+                        .setId(user.getId())
                         .build())
                 .setTypeOfWork(typeOfWork)
                 .setProblemScale(problemScale)
@@ -100,16 +99,16 @@ public class ApplicationController {
     @ExceptionHandler(ApplicationException.class)
     public String handleApplicationException(ApplicationException e,
                                              RedirectAttributes model) {
-        if (e.isUserMessage()) {
-            model.addFlashAttribute(MESSAGE, e.getUserMessage());
-            List<String> parameters = e.getParameters();
-            if (parameters.size() != 0) {
-                model.addFlashAttribute(PARAMS, parameters);
-            }
-            return NEW_APPLICATION_REDIRECT;
-        } else {
+
+        if (!e.isUserMessage()) {
             throw e;
         }
+        model.addFlashAttribute(MESSAGE, e.getUserMessage());
+        List<String> parameters = e.getParameters();
+        if (parameters.size() != 0) {
+            model.addFlashAttribute(PARAMS, parameters);
+        }
+        return NEW_APPLICATION_REDIRECT;
     }
 
     @InitBinder

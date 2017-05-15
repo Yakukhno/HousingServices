@@ -52,11 +52,10 @@ public class AuthController {
     @ExceptionHandler(ApplicationException.class)
     public String handleApplicationException(ApplicationException e,
                                              RedirectAttributes model) {
-        if (e.isUserMessage()) {
-            model.addFlashAttribute(MESSAGE, e.getUserMessage());
-            return LOGIN_REDIRECT;
-        } else {
+        if (!e.isUserMessage()) {
             throw e;
         }
+        model.addFlashAttribute(MESSAGE, e.getUserMessage());
+        return LOGIN_REDIRECT;
     }
 }

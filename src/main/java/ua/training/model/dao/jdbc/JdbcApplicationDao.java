@@ -39,7 +39,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
     private static final String UPDATE =
             "UPDATE application SET id_user = ?, id_type_of_work = ?, " +
                     "scale_of_problem = ?, desired_time = ?, status = ?, " +
-                    "address = ?" +
+                    "address = ? " +
                     "WHERE id_application = ?";
 
     private static final String EXCEPTION_GET_BY_ID
@@ -62,6 +62,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
     static final String APPLICATION_SCALE_OF_PROBLEM = "scale_of_problem";
     static final String APPLICATION_DESIRED_TIME = "desired_time";
     static final String APPLICATION_STATUS = "status";
+    static final String APPLICATION_ADDRESS = "address";
 
     JdbcApplicationDao(Connection connection) {
         this.connection = connection;

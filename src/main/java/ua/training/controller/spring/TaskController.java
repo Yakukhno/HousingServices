@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ua.training.controller.validator.DateTimeValidator;
 import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
@@ -34,6 +35,7 @@ public class TaskController {
     private static final String TASKS_VIEW = "/task/tasks";
     private static final String NEW_TASK_VIEW = "/task/new_task";
     private static final String ALL_APPLICATIONS_REDIRECT = "redirect:/rest/application";
+    private static final String NEW_TASK_REDIRECT = "redirect:/rest/new_task";
 
     private Validator dateTimeValidator = new DateTimeValidator();
 
@@ -55,8 +57,12 @@ public class TaskController {
 
     @PostMapping("/task")
     public String addTask(@RequestParam("application") int applicationId,
-                          @RequestParam(value = "workers", required = false) String[] paramWorkers,
-                          @RequestParam(value = "manager", required = false) String paramManager,
+                          @RequestParam(
+                                  value = "workers",
+                                  required = false) String[] paramWorkers,
+                          @RequestParam(
+                                  value = "manager",
+                                  required = false) String paramManager,
                           @RequestParam LocalDateTime dateTime,
                           @SessionAttribute User user) {
         TaskDto taskDto = new TaskDto.Builder()
@@ -81,34 +87,39 @@ public class TaskController {
     private int getManagerId(String managerId) {
         if (managerId != null) {
             return Integer.parseInt(managerId);
+        } else {
+            throw new ValidationException()
+                    .setUserMessage(EXCEPTION_NULL_MANAGER);
         }
-        throw new ValidationException()
-                .setUserMessage(EXCEPTION_NULL_MANAGER);
     }
 
     @PostMapping("/new_task")
-    public String getNewTaskPage(@RequestParam("application") int applicationId, Model model) {
-        model.addAttribute(APPLICATION, applicationId);
+    public String postNewTaskPage(@RequestParam int application,
+                                  RedirectAttributes model) {
+        model.addFlashAttribute(APPLICATION, application);
+        return NEW_TASK_REDIRECT;
+    }
+
+    @GetMapping("/new_task")
+    public String getNewTaskPage(Model model) {
         model.addAttribute(WORKERS, workerService.getAllWorkers());
         return NEW_TASK_VIEW;
     }
 
     @ExceptionHandler(ApplicationException.class)
     public String handleApplicationException(ApplicationException e,
-                                             Model model,
+                                             RedirectAttributes model,
                                              HttpServletRequest request) {
-        if (e.isUserMessage()) {
-            model.addAttribute(APPLICATION, request.getParameter(APPLICATION));
-            model.addAttribute(WORKERS, workerService.getAllWorkers());
-            model.addAttribute(MESSAGE, e.getUserMessage());
-            List<String> parameters = e.getParameters();
-            if (e.getParameters().size() != 0) {
-                model.addAttribute(PARAMS, parameters);
-            }
-            return NEW_TASK_VIEW;
-        } else {
+        if (!e.isUserMessage()) {
             throw e;
         }
+        model.addFlashAttribute(APPLICATION, request.getParameter(APPLICATION));
+        model.addFlashAttribute(MESSAGE, e.getUserMessage());
+        List<String> parameters = e.getParameters();
+        if (parameters.size() != 0) {
+            model.addFlashAttribute(PARAMS, parameters);
+        }
+        return NEW_TASK_REDIRECT;
     }
 
     @InitBinder

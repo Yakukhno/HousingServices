@@ -57,6 +57,7 @@ public class JdbcHelper {
                 .setStatus(Application.Status.valueOf(
                         resultSet.getString(APPLICATION_STATUS)
                 ))
+                .setAddress(resultSet.getString(APPLICATION_ADDRESS))
                 .build();
     }
 

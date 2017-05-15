@@ -15,8 +15,9 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
         "SELECT table1.*, type_of_work.description AS worker_type_description FROM " +
             "(SELECT task.id_task, task.scheduled_time, task.is_active, " +
             "application.id_application, application.scale_of_problem, " +
-            "application.desired_time, application.status, user.*, " +
-            "type_of_work.*, brigade.*, worker.id_worker, " +
+            "application.desired_time, application.status, " +
+            "application.address, user.*, type_of_work.*, " +
+            "brigade.*, worker.id_worker, " +
             "worker.name AS worker_name, " +
             "worker_has_type_of_work.id_type_of_work AS worker_type_id " +
             "FROM task " +

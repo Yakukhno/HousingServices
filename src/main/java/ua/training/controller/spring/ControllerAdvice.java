@@ -34,13 +34,13 @@ public class ControllerAdvice {
         return "error/error";
     }
 
-    @ExceptionHandler(Exception.class)
-    public String handleOtherException(Exception e, Model model)
-            throws IOException {
-        logger.error(e.getMessage(), e);
-        model.addAttribute("exception", e);
-        return "error/error";
-    }
+//    @ExceptionHandler(Exception.class)
+//    public String handleOtherException(Exception e, Model model)
+//            throws IOException {
+//        logger.error(e.getMessage(), e);
+//        model.addAttribute("exception", e);
+//        return "error/error";
+//    }
 
     @InitBinder
     public void typeOfWorkBinder(WebDataBinder binder) {
