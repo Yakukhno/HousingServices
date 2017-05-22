@@ -1,5 +1,6 @@
 package ua.training.model.service.impl;
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
@@ -15,6 +16,7 @@ public class WorkerServiceImpl implements WorkerService {
     private DaoFactory daoFactory = DaoFactory.getInstance();
 
     @Override
+    @Secured("ROLE_DISPATCHER")
     public List<Worker> getAllWorkers() {
         try (DaoConnection connection = daoFactory.getConnection()) {
             WorkerDao workerDao = daoFactory.createWorkerDao(connection);
@@ -23,6 +25,7 @@ public class WorkerServiceImpl implements WorkerService {
     }
 
     @Override
+    @Secured("ROLE_DISPATCHER")
     public void addNewWorker(Worker worker) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             WorkerDao workerDao = daoFactory.createWorkerDao(connection);

@@ -1,6 +1,5 @@
 package ua.training.controller.spring;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,7 +9,6 @@ import ua.training.controller.validator.EmailValidator;
 import ua.training.controller.validator.NameValidator;
 import ua.training.controller.validator.PasswordValidator;
 import ua.training.controller.validator.Validator;
-import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ApplicationException;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
@@ -43,10 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/user/{userId}")
-    public String getUser(@SessionAttribute("user") User sessionUser,
-                          @PathVariable int userId,
-                          Model model) {
-        checkUserAccess(userId, sessionUser);
+    public String getUser(@PathVariable int userId, Model model) {
         User user = userService.getUserById(userId);
         model.addAttribute(USER, user);
         return USER_VIEW;
@@ -70,20 +65,13 @@ public class UserController {
                              @RequestParam String email,
                              @RequestParam String oldPassword,
                              @RequestParam String newPassword,
-                             @SessionAttribute("user") User sessionUser,
                              HttpServletRequest request, Model model) {
         request.setAttribute(USER_ID, userId);
         model.addAttribute(USER_ID, userId);
-        checkUserAccess(userId, sessionUser);
-        User user = validateUserFieldsForUpdate(sessionUser, email, newPassword);
+        User user = validateUserFieldsForUpdate(userService.getUserById(userId),
+                email, newPassword);
         userService.updateUser(user, oldPassword);
         return USER_REDIRECT;
-    }
-
-    private void checkUserAccess(int userId, User sessionUser) {
-        if (userId != sessionUser.getId()) {
-            throw new AccessForbiddenException();
-        }
     }
 
     private User validateUserFieldsForUpdate(User user,

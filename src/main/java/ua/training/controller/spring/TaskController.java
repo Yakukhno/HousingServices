@@ -11,7 +11,6 @@ import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
 import ua.training.exception.ValidationException;
 import ua.training.model.dto.TaskDto;
-import ua.training.model.entities.person.User;
 import ua.training.model.service.TaskService;
 import ua.training.model.service.WorkerService;
 
@@ -63,15 +62,14 @@ public class TaskController {
                           @RequestParam(
                                   value = "manager",
                                   required = false) String paramManager,
-                          @RequestParam LocalDateTime dateTime,
-                          @SessionAttribute User user) {
+                          @RequestParam LocalDateTime dateTime) {
         TaskDto taskDto = new TaskDto.Builder()
                 .setApplicationId(applicationId)
                 .setManagerId(getManagerId(paramManager))
                 .setWorkersIds(getWorkersIds(paramWorkers))
                 .setDateTime(dateTime)
                 .build();
-        taskService.createNewTask(taskDto, user.getRole());
+        taskService.createNewTask(taskDto);
         return ALL_APPLICATIONS_REDIRECT;
     }
 

@@ -1,14 +1,12 @@
 <%@ include file="../include/header.jsp"%>
 <div class="row">
     <h2 align="center">
-        <c:choose>
-            <c:when test="${requestScope[Attributes.USER].role eq applicationScope[Attributes.TENANT]}">
-                <fmt:message key="tenant_profile"/>
-            </c:when>
-            <c:when test="${requestScope[Attributes.USER].role eq applicationScope[Attributes.DISPATCHER]}">
-                <fmt:message key="dispatcher_profile"/>
-            </c:when>
-        </c:choose>
+        <sec:authorize access="hasRole('ROLE_TENANT')">
+            <fmt:message key="tenant_profile"/>
+        </sec:authorize>
+        <sec:authorize access="hasRole('ROLE_DISPATCHER')">
+            <fmt:message key="dispatcher_profile"/>
+        </sec:authorize>
     </h2>
 </div>
 <div class="col-md-offset-3 col-md-6">

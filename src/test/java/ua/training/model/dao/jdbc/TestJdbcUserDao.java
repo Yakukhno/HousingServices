@@ -1,6 +1,7 @@
 package ua.training.model.dao.jdbc;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import ua.training.model.dao.DaoConnection;
 import ua.training.exception.DaoException;
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
+@Ignore
 public class TestJdbcUserDao {
 
     private UserDao userDao = DaoFactory.getInstance()

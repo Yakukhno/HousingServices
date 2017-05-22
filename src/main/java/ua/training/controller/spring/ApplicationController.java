@@ -1,6 +1,7 @@
 package ua.training.controller.spring;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -15,6 +16,7 @@ import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.ApplicationService;
 import ua.training.model.service.TypeOfWorkService;
+import ua.training.model.service.impl.UserDetailsImpl;
 
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;
@@ -48,10 +50,10 @@ public class ApplicationController {
     }
 
     @GetMapping("/application")
-    public String getAllApplication(@SessionAttribute User user, Model model) {
+    public String getAllApplication(Model model) {
         model.addAttribute(STATUS_NEW, Application.Status.NEW);
         model.addAttribute(APPLICATIONS,
-                applicationService.getAllApplications(user.getRole()));
+                applicationService.getAllApplications()); //to fix
         return ALL_APPLICATIONS_VIEW;
     }
 
@@ -60,10 +62,11 @@ public class ApplicationController {
                                  @RequestParam ProblemScale problemScale,
                                  @RequestParam LocalDateTime dateTime,
                                  @RequestParam String address,
-                                 @SessionAttribute User user) {
+                                 Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Application application = new Application.Builder()
                 .setTenant(new User.Builder()
-                        .setId(user.getId())
+                        .setId(userDetails.getUser().getId())
                         .build())
                 .setTypeOfWork(typeOfWork)
                 .setProblemScale(problemScale)
@@ -75,10 +78,11 @@ public class ApplicationController {
     }
 
     @GetMapping("/user/application")
-    public String getUserApplication(@SessionAttribute User user, Model model) {
+    public String getUserApplication(Authentication authentication, Model model) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         model.addAttribute(STATUS_NEW, Application.Status.NEW);
         model.addAttribute(APPLICATIONS,
-                applicationService.getApplicationsByUserId(user.getId()));
+                applicationService.getApplicationsByUserId(userDetails.getUser().getId()));
         return USER_APPLICATIONS_VIEW;
     }
 
@@ -91,8 +95,9 @@ public class ApplicationController {
 
     @PostMapping("/application/{applicationId}/delete")
     public String deleteApplication(@PathVariable int applicationId,
-                                    @SessionAttribute User user) {
-        applicationService.deleteApplication(applicationId, user.getId());
+                                    Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        applicationService.deleteApplication(applicationId, userDetails.getUser().getId());
         return USER_APPLICATIONS_REDIRECT;
     }
 

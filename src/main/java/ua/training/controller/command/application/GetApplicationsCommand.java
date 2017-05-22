@@ -32,8 +32,8 @@ public class GetApplicationsCommand implements Command {
             throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute(USER);
         request.setAttribute(STATUS_NEW, Application.Status.NEW);
-        request.setAttribute(APPLICATIONS,
-                applicationService.getAllApplications(user.getRole()));
+//        request.setAttribute(APPLICATIONS,
+//                applicationService.getAllApplications(user.getRole()));
         return APPLICATIONS_JSP_PATH;
     }
 }

@@ -74,7 +74,7 @@ public class PostTaskCommand implements Command {
                         .setWorkersIds(workersIdsList)
                         .setDateTime(dateTime)
                         .build();
-                taskService.createNewTask(taskDto, user.getRole());
+                taskService.createNewTask(taskDto);
             } catch (ApplicationException e) {
                 pageToGo = getPageToGo(request, e, applicationId);
             }

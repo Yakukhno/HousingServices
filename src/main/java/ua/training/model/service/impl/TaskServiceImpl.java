@@ -1,15 +1,14 @@
 package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
-import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.*;
 import ua.training.model.dto.TaskDto;
 import ua.training.model.entities.Application;
 import ua.training.model.entities.Brigade;
 import ua.training.model.entities.Task;
-import ua.training.model.entities.person.User;
 import ua.training.model.entities.person.Worker;
 import ua.training.model.service.TaskService;
 
@@ -39,38 +38,33 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void createNewTask(TaskDto taskDto, User.Role role) {
-        if (role.equals(User.Role.DISPATCHER)) {
-            try (DaoConnection connection = daoFactory.getConnection()) {
-                BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
-                WorkerDao workerDao = daoFactory.createWorkerDao(connection);
-                TaskDao taskDao = daoFactory.createTaskDao(connection);
-                ApplicationDao applicationDao
-                        = daoFactory.createApplicationDao(connection);
+    @Secured("ROLE_DISPATCHER")
+    public void createNewTask(TaskDto taskDto) {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);
+            WorkerDao workerDao = daoFactory.createWorkerDao(connection);
+            TaskDao taskDao = daoFactory.createTaskDao(connection);
+            ApplicationDao applicationDao
+                    = daoFactory.createApplicationDao(connection);
 
-                connection.setIsolationLevel(Connection.TRANSACTION_READ_COMMITTED);
-                connection.begin();
-                Worker manager = getWorker(workerDao, taskDto.getManagerId());
-                Set<Worker> workers = getWorkers(workerDao,
-                        taskDto.getWorkersIds());
-                Brigade brigade = getBrigade(manager, workers);
-                brigadeDao.add(brigade);
+            connection.setIsolationLevel(Connection.TRANSACTION_READ_COMMITTED);
+            connection.begin();
+            Worker manager = getWorker(workerDao, taskDto.getManagerId());
+            Set<Worker> workers = getWorkers(workerDao,
+                    taskDto.getWorkersIds());
+            Brigade brigade = getBrigade(manager, workers);
+            brigadeDao.add(brigade);
 
-                Application application = getAndUpdateApplication(applicationDao,
-                        taskDto.getApplicationId());
+            Application application = getAndUpdateApplication(applicationDao,
+                    taskDto.getApplicationId());
 
-                taskDao.add(new Task.Builder()
-                        .setBrigade(brigade)
-                        .setApplication(application)
-                        .setScheduledTime(taskDto.getDateTime())
-                        .setActive(true)
-                        .build());
-                connection.commit();
-            }
-        } else {
-            AccessForbiddenException e = new AccessForbiddenException();
-            logger.warn(e.getMessage(), e);
-            throw e;
+            taskDao.add(new Task.Builder()
+                    .setBrigade(brigade)
+                    .setApplication(application)
+                    .setScheduledTime(taskDto.getDateTime())
+                    .setActive(true)
+                    .build());
+            connection.commit();
         }
     }
 

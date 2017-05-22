@@ -1,6 +1,7 @@
 package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ResourceNotFoundException;
@@ -25,6 +26,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private Logger logger = Logger.getLogger(ApplicationServiceImpl.class);
 
     @Override
+    @Secured("IS_AUTHENTICATED_FULLY")
     public List<Application> getApplicationsByUserId(int userId) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             ApplicationDao applicationDao
@@ -34,21 +36,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<Application> getAllApplications(User.Role role) {
-        if (role.equals(User.Role.DISPATCHER)) {
-            try (DaoConnection connection = daoFactory.getConnection()) {
-                ApplicationDao applicationDao
-                        = daoFactory.createApplicationDao(connection);
-                return applicationDao.getAll();
-            }
-        } else {
-            AccessForbiddenException e = new AccessForbiddenException();
-            logger.warn(e.getMessage(), e);
-            throw e;
+    @Secured("ROLE_DISPATCHER")
+    public List<Application> getAllApplications() {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            ApplicationDao applicationDao
+                    = daoFactory.createApplicationDao(connection);
+            return applicationDao.getAll();
         }
     }
 
     @Override
+    @Secured("ROLE_TENANT")
     public void createNewApplication(Application application) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
@@ -70,6 +68,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    @Secured("ROLE_TENANT")
     public void deleteApplication(int applicationId, int userId) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             ApplicationDao applicationDao

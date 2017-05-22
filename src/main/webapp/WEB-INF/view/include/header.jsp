@@ -1,6 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="custom" uri="/WEB-INF/custom.tld"%>
 <%@ page import="ua.training.controller.Attributes" %>
 <c:set var="language"
@@ -24,27 +26,21 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <c:choose>
-                    <c:when test="${not empty sessionScope.user
-                                        and sessionScope.user.role.equals(applicationScope.tenant)}">
-                        <li>
-                            <a href="/rest/user/${sessionScope[Attributes.USER].id}">
-                                <fmt:message key="header.profile"/>
-                            </a>
-                        </li>
+                <sec:authorize access="isAuthenticated()">
+                    <sec:authentication property="principal.user.id" var="userId"/>
+                    <li>
+                        <a href="/rest/user/${userId}">
+                            <fmt:message key="header.profile"/>
+                        </a>
+                    </li>
+                    <sec:authorize access="hasRole('ROLE_TENANT')">
                         <li>
                             <a href="/rest/user/application">
                                 <fmt:message key="header.applications"/>
                             </a>
                         </li>
-                    </c:when>
-                    <c:when test="${not empty sessionScope.user
-                                        and sessionScope.user.role.equals(applicationScope.dispatcher)}">
-                        <li>
-                            <a href="/rest/user/${sessionScope[Attributes.USER].id}">
-                                <fmt:message key="header.profile"/>
-                            </a>
-                        </li>
+                    </sec:authorize>
+                    <sec:authorize access="hasRole('ROLE_DISPATCHER')">
                         <li>
                             <a href="/rest/application">
                                 <fmt:message key="header.applications"/>
@@ -55,8 +51,8 @@
                                 <fmt:message key="workers"/>
                             </a>
                         </li>
-                    </c:when>
-                </c:choose>
+                    </sec:authorize>
+                </sec:authorize>
                 <li><a href="/rest/task"><fmt:message key="header.tasks"/></a></li>
             </ul>
             <div class="nav navbar-nav navbar-right">
@@ -77,23 +73,21 @@
                             </option>
                         </select>
                     </form>
-                    <c:choose>
-                        <c:when test="${empty sessionScope.user}">
-                            <a class="btn btn-default navbar-btn" href="/rest/new_user" role="button">
-                                <fmt:message key="header.sign_up"/>
-                            </a>
-                            <a class="btn btn-default navbar-btn" href="/rest/login" role="button">
-                                <fmt:message key="header.login"/>
-                            </a>
-                        </c:when>
-                        <c:otherwise>
-                            <form method="post" action="/rest/logout" style="margin-bottom: 0; display: inline-flex;">
-                                <button class="btn btn-default navbar-btn">
-                                    <fmt:message key="header.logout"/>
-                                </button>
-                            </form>
-                        </c:otherwise>
-                    </c:choose>
+                    <sec:authorize access="isAnonymous()">
+                        <a class="btn btn-default navbar-btn" href="/rest/new_user" role="button">
+                            <fmt:message key="header.sign_up"/>
+                        </a>
+                        <a class="btn btn-default navbar-btn" href="/rest/login" role="button">
+                            <fmt:message key="header.login"/>
+                        </a>
+                    </sec:authorize>
+                    <sec:authorize access="isAuthenticated()">
+                        <form method="post" action="/rest/logout" style="margin-bottom: 0; display: inline-flex;">
+                            <button class="btn btn-default navbar-btn">
+                                <fmt:message key="header.logout"/>
+                            </button>
+                        </form>
+                    </sec:authorize>
                 </div>
             </div>
         </div>

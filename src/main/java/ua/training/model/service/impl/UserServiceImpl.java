@@ -2,6 +2,10 @@ package ua.training.model.service.impl;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ua.training.exception.ApplicationException;
 import ua.training.exception.ResourceNotFoundException;
@@ -18,7 +22,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 @Service("userService")
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private static final String EXCEPTION_USER_WITH_ID_NOT_FOUND
             = "User with id = %d not found";
@@ -39,6 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Secured("IS_AUTHENTICATED_FULLY")
     public User getUserById(int id) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
@@ -67,6 +72,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDetails loadUserByUsername(String email)
+            throws UsernameNotFoundException {
+        try (DaoConnection connection = daoFactory.getConnection()) {
+            UserDao userDao = daoFactory.createUserDao(connection);
+            User user = userDao.getUserByEmail(email)
+                    .orElseThrow(getServiceExceptionSupplier(
+                            INCORRECT_EMAIL_OR_PASSWORD
+                    ));
+            return new UserDetailsImpl(user);
+        }
+    }
+
+    @Override
+    @Secured("ROLE_DISPATCHER")
     public List<User> getAllUsers() {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
@@ -75,6 +94,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Secured("IS_AUTHENTICATED_FULLY")
     public void updateUser(User user, String password) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
@@ -102,6 +122,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
     public void createNewUser(User user) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
