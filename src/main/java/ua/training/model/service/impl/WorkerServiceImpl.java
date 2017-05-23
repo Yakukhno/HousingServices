@@ -10,13 +10,15 @@ import ua.training.model.service.WorkerService;
 
 import java.util.List;
 
+import static ua.training.controller.Roles.ROLE_DISPATCHER;
+
 @Service("workerService")
 public class WorkerServiceImpl implements WorkerService {
 
     private DaoFactory daoFactory = DaoFactory.getInstance();
 
     @Override
-    @Secured("ROLE_DISPATCHER")
+    @Secured(ROLE_DISPATCHER)
     public List<Worker> getAllWorkers() {
         try (DaoConnection connection = daoFactory.getConnection()) {
             WorkerDao workerDao = daoFactory.createWorkerDao(connection);
@@ -25,7 +27,7 @@ public class WorkerServiceImpl implements WorkerService {
     }
 
     @Override
-    @Secured("ROLE_DISPATCHER")
+    @Secured(ROLE_DISPATCHER)
     public void addNewWorker(Worker worker) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             WorkerDao workerDao = daoFactory.createWorkerDao(connection);

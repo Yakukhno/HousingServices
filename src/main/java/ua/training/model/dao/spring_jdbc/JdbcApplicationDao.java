@@ -78,7 +78,7 @@ public class JdbcApplicationDao implements ApplicationDao {
                 connection -> {
                     PreparedStatement ps = connection.prepareStatement(INSERT,
                             Statement.RETURN_GENERATED_KEYS);
-                    ps.setInt(1, application.getTenant().getId());
+                    ps.setInt(1, application.getUser().getId());
                     ps.setInt(2, application.getTypeOfWork().getId());
                     ps.setString(3, application.getProblemScale().name());
                     ps.setTimestamp(4, convertLocalDateTimeInTimestamp(application.getDesiredTime()));
@@ -97,7 +97,7 @@ public class JdbcApplicationDao implements ApplicationDao {
     @Override
     public void update(Application application) {
         jdbcTemplate.update(UPDATE,
-                application.getTenant().getId(),
+                application.getUser().getId(),
                 application.getTypeOfWork().getId(),
                 application.getProblemScale().name(),
                 convertLocalDateTimeInTimestamp(application.getDesiredTime()),

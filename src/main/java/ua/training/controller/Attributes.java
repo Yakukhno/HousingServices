@@ -10,6 +10,7 @@ public class Attributes {
     public static final String BRIGADE = "brigade";
     public static final String TASKS = "tasks";
     public static final String USER = "user";
+    public static final String EMAIL = "email";
     public static final String MESSAGE = "message";
     public static final String TENANT = "tenant";
     public static final String DISPATCHER = "dispatcher";

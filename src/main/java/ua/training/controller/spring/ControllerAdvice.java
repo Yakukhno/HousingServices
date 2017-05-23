@@ -12,6 +12,10 @@ import ua.training.model.entities.TypeOfWork;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 
+import static ua.training.controller.Attributes.MESSAGE;
+import static ua.training.controller.Views.ERROR_VIEW;
+import static ua.training.controller.Views.EXCEPTION_VIEW;
+
 @org.springframework.web.bind.annotation.ControllerAdvice
 public class ControllerAdvice {
 
@@ -22,16 +26,16 @@ public class ControllerAdvice {
     public String handleAccessForbiddenException(AccessForbiddenException e,
                                                  Model model)
             throws IOException {
-        model.addAttribute("message", e.getMessage());
-        return "error/error";
+        model.addAttribute(MESSAGE, e.getMessage());
+        return ERROR_VIEW;
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public String handleResourceNotFoundException(ResourceNotFoundException e,
-                                                 Model model)
+                                                  Model model)
             throws IOException {
-        model.addAttribute("message", e.getMessage());
-        return "error/error";
+        model.addAttribute(MESSAGE, e.getMessage());
+        return ERROR_VIEW;
     }
 
 //    @ExceptionHandler(Exception.class)
@@ -39,7 +43,7 @@ public class ControllerAdvice {
 //            throws IOException {
 //        logger.error(e.getMessage(), e);
 //        model.addAttribute("exception", e);
-//        return "error/error";
+//        return EXCEPTION_VIEW;
 //    }
 
     @InitBinder

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class Application {
     private int id;
     private TypeOfWork typeOfWork;
-    private User tenant;
+    private User user;
     private ProblemScale problemScale;
     private LocalDateTime desiredTime;
     private Status status;
@@ -33,12 +33,12 @@ public class Application {
         this.typeOfWork = typeOfWork;
     }
 
-    public User getTenant() {
-        return tenant;
+    public User getUser() {
+        return user;
     }
 
-    public void setTenant(User tenant) {
-        this.tenant = tenant;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public ProblemScale getProblemScale() {
@@ -78,7 +78,7 @@ public class Application {
         return "Application{" +
                 "id=" + id +
                 ", typeOfWork=" + typeOfWork +
-                ", tenant=" + tenant +
+                ", user=" + user +
                 ", problemScale=" + problemScale +
                 ", desiredTime=" + desiredTime +
                 ", status=" + status +
@@ -99,8 +99,8 @@ public class Application {
             return this;
         }
 
-        public Builder setTenant(User tenant) {
-            application.setTenant(tenant);
+        public Builder setUser(User user) {
+            application.setUser(user);
             return this;
         }
 

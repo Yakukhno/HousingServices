@@ -2,6 +2,7 @@ package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ResourceNotFoundException;
@@ -13,6 +14,9 @@ import ua.training.model.service.ApplicationService;
 
 import java.util.List;
 import java.util.function.Supplier;
+
+import static ua.training.controller.Roles.ROLE_DISPATCHER;
+import static ua.training.controller.Roles.ROLE_TENANT;
 
 @Service("applicationService")
 public class ApplicationServiceImpl implements ApplicationService {
@@ -26,7 +30,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private Logger logger = Logger.getLogger(ApplicationServiceImpl.class);
 
     @Override
-    @Secured("IS_AUTHENTICATED_FULLY")
+    @Secured(ROLE_TENANT)
     public List<Application> getApplicationsByUserId(int userId) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             ApplicationDao applicationDao
@@ -36,7 +40,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    @Secured("ROLE_DISPATCHER")
+    @Secured(ROLE_DISPATCHER)
     public List<Application> getAllApplications() {
         try (DaoConnection connection = daoFactory.getConnection()) {
             ApplicationDao applicationDao
@@ -46,7 +50,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    @Secured("ROLE_TENANT")
+    @Secured(ROLE_TENANT)
     public void createNewApplication(Application application) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
@@ -56,10 +60,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                     = daoFactory.createApplicationDao(connection);
 
             connection.begin();
-            User user = getUser(userDao, application.getTenant().getId());
+            User user = getUser(userDao, application.getUser().getId());
             TypeOfWork typeOfWork = getTypeOfWork(typeOfWorkDao,
                     application.getTypeOfWork().getId());
-            application.setTenant(user);
+            application.setUser(user);
             application.setTypeOfWork(typeOfWork);
             application.setStatus(Application.Status.NEW);
             applicationDao.add(application);
@@ -68,7 +72,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    @Secured("ROLE_TENANT")
+    @Secured(ROLE_TENANT)
     public void deleteApplication(int applicationId, int userId) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             ApplicationDao applicationDao
@@ -77,7 +81,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             connection.begin();
             applicationDao.get(applicationId)
                     .filter(application
-                            -> application.getTenant().getId() == userId)
+                            -> application.getUser().getId() == userId)
                     .orElseThrow(
                             () -> {
                                 AccessForbiddenException e

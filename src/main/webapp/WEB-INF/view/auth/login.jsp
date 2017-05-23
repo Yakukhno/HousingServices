@@ -27,10 +27,10 @@
             </button>
         </div>
     </div>
-    <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
+    <c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION}">
         <div class="row">
             <div class="alert alert-danger" align="center" role="alert">
-                <fmt:message key="${requestScope[Attributes.MESSAGE]}"/>
+                <fmt:message key="exception.email_password"/>
             </div>
         </div>
     </c:if>

@@ -48,7 +48,7 @@ public class JdbcHelper {
         }
         return new Application.Builder()
                 .setId(resultSet.getInt(APPLICATION_ID))
-                .setTenant(getUserFromResultSet(resultSet))
+                .setUser(getUserFromResultSet(resultSet))
                 .setTypeOfWork(getTypeOfWorkFromResultSet(resultSet))
                 .setDesiredTime(localDateTime)
                 .setProblemScale(ProblemScale.valueOf(

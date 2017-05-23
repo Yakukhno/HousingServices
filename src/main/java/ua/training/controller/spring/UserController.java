@@ -17,16 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static ua.training.controller.Attributes.*;
+import static ua.training.controller.NewRoutes.*;
+import static ua.training.controller.Views.NEW_USER_VIEW;
+import static ua.training.controller.Views.USER_VIEW;
 
 @Controller
 @RequestMapping("/rest")
 public class UserController {
 
-    private static final String USER_VIEW = "user/user";
-    private static final String NEW_USER_VIEW = "user/new_user";
-    private static final String NEW_USER_REDIRECT = "redirect:/rest/new_user";
-    private static final String LOGIN_REDIRECT = "redirect:/rest/login";
-    private static final String USER_REDIRECT = "redirect:/rest/user/{userId}";
+    private static final String USER_WITH_ID_REDIRECT
+            = REDIRECT + REST + "/user/{userId}";
     private static final String USER_ID = "userId";
 
     private Validator nameValidator = new NameValidator();
@@ -51,7 +51,7 @@ public class UserController {
     public String addUser(User user) {
         validateUserFieldsForCreate(user);
         userService.createNewUser(user);
-        return LOGIN_REDIRECT;
+        return REDIRECT + LOGIN_ROUTE;
     }
 
     private void validateUserFieldsForCreate(User user) {
@@ -71,7 +71,7 @@ public class UserController {
         User user = validateUserFieldsForUpdate(userService.getUserById(userId),
                 email, newPassword);
         userService.updateUser(user, oldPassword);
-        return USER_REDIRECT;
+        return USER_WITH_ID_REDIRECT;
     }
 
     private User validateUserFieldsForUpdate(User user,
@@ -104,9 +104,9 @@ public class UserController {
         Integer userId = (Integer) request.getAttribute(USER_ID);
         if (userId != null) {
             model.addFlashAttribute(USER, userService.getUserById(userId));
-            return USER_REDIRECT;
+            return USER_WITH_ID_REDIRECT;
         } else {
-            return NEW_USER_REDIRECT;
+            return REDIRECT + NEW_USER_ROUTE;
         }
     }
 

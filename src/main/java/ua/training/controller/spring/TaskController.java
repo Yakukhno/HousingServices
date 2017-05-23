@@ -23,6 +23,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static ua.training.controller.Attributes.*;
+import static ua.training.controller.NewRoutes.APPLICATION_ROUTE;
+import static ua.training.controller.NewRoutes.NEW_TASK_ROUTE;
+import static ua.training.controller.NewRoutes.REDIRECT;
+import static ua.training.controller.Views.NEW_TASK_VIEW;
+import static ua.training.controller.Views.TASKS_VIEW;
 
 @Controller
 @RequestMapping("/rest")
@@ -30,11 +35,6 @@ public class TaskController {
 
     private static final String EXCEPTION_INCORRECT_DATE = "exception.date";
     private static final String EXCEPTION_NULL_MANAGER = "exception.manager";
-
-    private static final String TASKS_VIEW = "/task/tasks";
-    private static final String NEW_TASK_VIEW = "/task/new_task";
-    private static final String ALL_APPLICATIONS_REDIRECT = "redirect:/rest/application";
-    private static final String NEW_TASK_REDIRECT = "redirect:/rest/new_task";
 
     private Validator dateTimeValidator = new DateTimeValidator();
 
@@ -70,7 +70,7 @@ public class TaskController {
                 .setDateTime(dateTime)
                 .build();
         taskService.createNewTask(taskDto);
-        return ALL_APPLICATIONS_REDIRECT;
+        return REDIRECT + APPLICATION_ROUTE;
     }
 
     private List<Integer> getWorkersIds(String[] paramWorkers) {
@@ -95,7 +95,7 @@ public class TaskController {
     public String postNewTaskPage(@RequestParam int application,
                                   RedirectAttributes model) {
         model.addFlashAttribute(APPLICATION, application);
-        return NEW_TASK_REDIRECT;
+        return REDIRECT + NEW_TASK_ROUTE;
     }
 
     @GetMapping("/new_task")
@@ -117,7 +117,7 @@ public class TaskController {
         if (parameters.size() != 0) {
             model.addFlashAttribute(PARAMS, parameters);
         }
-        return NEW_TASK_REDIRECT;
+        return REDIRECT + NEW_TASK_ROUTE;
     }
 
     @InitBinder

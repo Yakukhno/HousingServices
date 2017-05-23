@@ -11,15 +11,17 @@ import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
 
 import static ua.training.controller.Attributes.MESSAGE;
+import static ua.training.controller.NewRoutes.LOGIN_ROUTE;
+import static ua.training.controller.NewRoutes.REDIRECT;
+import static ua.training.controller.NewRoutes.REST;
+import static ua.training.controller.Views.LOGIN_VIEW;
 
 @Controller
 @SessionAttributes("user")
 @RequestMapping("/rest")
 public class AuthController {
 
-    private static final String LOGIN_VIEW = "auth/login";
-    private static final String USER_REDIRECT = "redirect:/rest/user/{userId}";
-    private static final String LOGIN_REDIRECT = "redirect:/rest/login";
+    private static final String USER_WITH_ID = REST + "/user/{userId}";
 
     private UserService userService;
 
@@ -40,13 +42,13 @@ public class AuthController {
         User user = userService.loginEmail(email, password);
         model.addAttribute(user);
         model.addAttribute("userId", user.getId());
-        return USER_REDIRECT;
+        return REDIRECT + USER_WITH_ID;
     }
 
     @PostMapping("/logout")
     public String logout(@ModelAttribute User user, SessionStatus status) {
         status.setComplete();
-        return LOGIN_REDIRECT;
+        return REDIRECT + LOGIN_ROUTE;
     }
 
     @ExceptionHandler(ApplicationException.class)
@@ -56,6 +58,6 @@ public class AuthController {
             throw e;
         }
         model.addFlashAttribute(MESSAGE, e.getUserMessage());
-        return LOGIN_REDIRECT;
+        return REDIRECT + LOGIN_ROUTE;
     }
 }

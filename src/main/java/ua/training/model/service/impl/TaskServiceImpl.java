@@ -2,6 +2,7 @@ package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.*;
@@ -17,6 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+
+import static ua.training.controller.Roles.ROLE_DISPATCHER;
 
 @Service("taskService")
 public class TaskServiceImpl implements TaskService {
@@ -38,7 +41,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @Secured("ROLE_DISPATCHER")
+    @Secured(ROLE_DISPATCHER)
     public void createNewTask(TaskDto taskDto) {
         try (DaoConnection connection = daoFactory.getConnection()) {
             BrigadeDao brigadeDao = daoFactory.createBrigadeDao(connection);

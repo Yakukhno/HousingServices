@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
 import static ua.training.controller.Attributes.LOCALE;
+import static ua.training.controller.NewRoutes.REDIRECT;
 
 @Controller
 @RequestMapping("/rest")
@@ -19,6 +20,6 @@ public class LocaleController {
                             @RequestParam String locale,
                             HttpServletRequest request) {
         request.getSession().setAttribute(LOCALE, new Locale(locale));
-        return "redirect:" + uri;
+        return REDIRECT + uri;
     }
 }

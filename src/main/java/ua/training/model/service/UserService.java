@@ -1,5 +1,6 @@
 package ua.training.model.service;
 
+import org.springframework.security.core.userdetails.UserDetailsService;
 import ua.training.model.entities.person.User;
 
 import java.util.List;

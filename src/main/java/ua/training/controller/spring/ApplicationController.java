@@ -23,19 +23,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static ua.training.controller.Attributes.*;
+import static ua.training.controller.NewRoutes.NEW_APPLICATION_ROUTE;
+import static ua.training.controller.NewRoutes.REDIRECT;
+import static ua.training.controller.NewRoutes.USER_APPLICATIONS_ROUTE;
+import static ua.training.controller.Views.ALL_APPLICATIONS_VIEW;
+import static ua.training.controller.Views.NEW_APPLICATION_VIEW;
+import static ua.training.controller.Views.USER_APPLICATIONS_VIEW;
 
 @Controller
 @RequestMapping("/rest")
 public class ApplicationController {
-
-    private final String ALL_APPLICATIONS_VIEW = "application/applications";
-    private final String NEW_APPLICATION_VIEW = "application/new_application";
-    private final String NEW_APPLICATION_REDIRECT
-            = "redirect:/rest/new_application";
-    private static final String USER_APPLICATIONS_VIEW
-            = "application/tenant_applications";
-    private static final String USER_APPLICATIONS_REDIRECT
-            = "redirect:/rest/user/application";
 
     private Validator dateTimeValidator = new DateTimeValidator();
 
@@ -52,8 +49,7 @@ public class ApplicationController {
     @GetMapping("/application")
     public String getAllApplication(Model model) {
         model.addAttribute(STATUS_NEW, Application.Status.NEW);
-        model.addAttribute(APPLICATIONS,
-                applicationService.getAllApplications()); //to fix
+        model.addAttribute(APPLICATIONS, applicationService.getAllApplications());
         return ALL_APPLICATIONS_VIEW;
     }
 
@@ -65,7 +61,7 @@ public class ApplicationController {
                                  Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Application application = new Application.Builder()
-                .setTenant(new User.Builder()
+                .setUser(new User.Builder()
                         .setId(userDetails.getUser().getId())
                         .build())
                 .setTypeOfWork(typeOfWork)
@@ -74,7 +70,7 @@ public class ApplicationController {
                 .setAddress(address)
                 .build();
         applicationService.createNewApplication(application);
-        return USER_APPLICATIONS_REDIRECT;
+        return REDIRECT + USER_APPLICATIONS_ROUTE;
     }
 
     @GetMapping("/user/application")
@@ -98,7 +94,7 @@ public class ApplicationController {
                                     Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         applicationService.deleteApplication(applicationId, userDetails.getUser().getId());
-        return USER_APPLICATIONS_REDIRECT;
+        return REDIRECT + USER_APPLICATIONS_ROUTE;
     }
 
     @ExceptionHandler(ApplicationException.class)
@@ -113,7 +109,7 @@ public class ApplicationController {
         if (parameters.size() != 0) {
             model.addFlashAttribute(PARAMS, parameters);
         }
-        return NEW_APPLICATION_REDIRECT;
+        return REDIRECT + NEW_APPLICATION_ROUTE;
     }
 
     @InitBinder

@@ -199,7 +199,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
         Timestamp timestamp = (application.getDesiredTime() != null)
                 ? Timestamp.valueOf(application.getDesiredTime())
                 : null;
-        statement.setInt(1, application.getTenant().getId());
+        statement.setInt(1, application.getUser().getId());
         statement.setInt(2, application.getTypeOfWork().getId());
         statement.setString(3, application.getProblemScale().name());
         statement.setTimestamp(4, timestamp);

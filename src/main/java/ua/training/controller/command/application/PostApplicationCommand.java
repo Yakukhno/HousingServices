@@ -66,7 +66,7 @@ public class PostApplicationCommand implements Command {
             try {
                 LocalDateTime localDateTime = getLocalDateTime(paramDateTime);
                 Application application = new Application.Builder()
-                        .setTenant(new User.Builder()
+                        .setUser(new User.Builder()
                                 .setId(sessionUser.getId())
                                 .build())
                         .setTypeOfWork(new TypeOfWork.Builder()
