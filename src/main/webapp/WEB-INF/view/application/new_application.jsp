@@ -6,7 +6,7 @@
     <form class="form-horizontal col-md-offset-1 col-md-5"
           method="post"
           action="/rest/application">
-        <input type="hidden" id="tenantId" value="${sessionScope[Attributes.USER].id}"/>
+        <input type="hidden" id="tenantId" value="${sessionScope.user.id}"/>
         <div class="form-group">
             <label for="typeOfWork" class="control-label col-md-4">
                 <fmt:message key="type_of_task"/>
@@ -83,5 +83,8 @@
     <div class="col-md-offset-1 col-md-4">
         <div id="map" style="height: 300px;" class="form-control"></div>
     </div>
+    <script src="/js/gmap.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCE-p23OjoJ0zAORC9FOq3qWl4OBGBebe0&libraries=places&callback=initMap&language=${language}"
+            async defer></script>
 </div>
 <%@ include file="../include/footer.jsp"%>
