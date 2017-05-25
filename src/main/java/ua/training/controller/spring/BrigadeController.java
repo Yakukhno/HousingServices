@@ -7,13 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ua.training.model.service.BrigadeService;
-import ua.training.model.service.impl.BrigadeServiceImpl;
 
 import static ua.training.controller.Attributes.BRIGADE;
 import static ua.training.controller.Views.BRIGADE_VIEW;
 
 @Controller
-@RequestMapping("/rest/brigade")
+@RequestMapping("/web/brigade")
 public class BrigadeController {
 
     private BrigadeService brigadeService;

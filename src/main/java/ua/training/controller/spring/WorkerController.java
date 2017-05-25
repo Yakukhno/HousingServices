@@ -18,7 +18,7 @@ import static ua.training.controller.Views.NEW_WORKER_VIEW;
 import static ua.training.controller.Views.WORKERS_VIEW;
 
 @Controller
-@RequestMapping("/rest")
+@RequestMapping("/web")
 public class WorkerController {
 
     private WorkerService workerService;

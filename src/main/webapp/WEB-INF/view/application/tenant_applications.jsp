@@ -4,7 +4,7 @@
             <h2 align="center"><fmt:message key="your_applications"/></h2>
         </div>
         <div class="col-lg-3" style="padding: 20px 30px 10px 0px; text-align: right">
-            <a class="btn btn-primary" href="/rest/new_application" role="button">
+            <a class="btn btn-primary" href="/web/new_application" role="button">
                 <fmt:message key="add_new"/>
             </a>
         </div>
@@ -52,7 +52,7 @@
                                 <c:if test="${application.status eq requestScope[Attributes.STATUS_NEW]}">
                                     <form style="margin-bottom: 0"
                                           method="post"
-                                          action="/rest/application/${application.id}/delete">
+                                          action="/web/application/${application.id}/delete">
                                         <button class="btn btn-danger" type="submit">
                                             <fmt:message key="delete"/>
                                         </button>

@@ -70,7 +70,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private void initRoutes() {
-        permitAllRoutesGET = new String[]{HOME_ROUTE, TASK_ROUTE, BRIGADE_WITH_ID_ROUTE};
+        permitAllRoutesGET = new String[]{ROOT_ROUTE, HOME_ROUTE,
+                TASK_ROUTE, BRIGADE_WITH_ID_ROUTE};
         permitAllRoutesPOST = new String[]{LOCALE_ROUTE};
         anonymousRoutesGET = new String[]{LOGIN_ROUTE, NEW_USER_ROUTE};
         anonymousRoutesPOST = new String[]{LOGIN_ROUTE, USER_ROUTE};
@@ -86,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/css/**", "/js/**", "/fonts/**",
-                "/WEB-INF/**", "/favicon.ico", "/welcome.jpg");
+                "/WEB-INF/**", "/favicon.ico", "/welcome.png");
     }
 
     @Override

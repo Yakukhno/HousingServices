@@ -29,7 +29,7 @@
     <div class="row">
         <h3 align="center"><fmt:message key="edit_profile"/></h3>
     </div>
-    <form class="form-horizontal" name="registerForm" method="post" action="/rest/user/${requestScope.user.id}">
+    <form class="form-horizontal" name="registerForm" method="post" action="/web/user/${requestScope.user.id}">
         <div class="form-group" id="emailForm">
             <label for="email" class="control-label col-md-5"><fmt:message key="new_email"/></label>
             <div class="col-md-7">

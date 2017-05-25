@@ -11,7 +11,7 @@
                 <form class="form-horizontal"
                       name="brigadeForm"
                       method="post"
-                      action="/rest/task">
+                      action="/web/task">
                     <table class="table table-striped" align="center">
                         <thead>
                         <tr>

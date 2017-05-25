@@ -4,7 +4,7 @@
         <h2 align="center"><fmt:message key="workers"/></h2>
     </div>
     <div class="col-lg-3" style="padding: 20px 30px 10px 0px; text-align: right">
-        <a class="btn btn-primary" href="/rest/new_worker" role="button">
+        <a class="btn btn-primary" href="/web/new_worker" role="button">
             <fmt:message key="add"/>
         </a>
     </div>

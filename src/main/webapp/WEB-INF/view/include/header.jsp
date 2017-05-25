@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="custom" uri="/WEB-INF/custom.tld"%>
 <%@ page import="ua.training.controller.Attributes" %>
@@ -22,42 +23,42 @@
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="/rest/home"><fmt:message key="header.housing_services"/></a>
+            <a class="navbar-brand" href="/web/home"><fmt:message key="header.housing_services"/></a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <sec:authorize access="isAuthenticated()">
                     <sec:authentication property="principal.user.id" var="userId"/>
                     <li>
-                        <a href="/rest/user/${userId}">
+                        <a href="/web/user/${userId}">
                             <fmt:message key="header.profile"/>
                         </a>
                     </li>
                     <sec:authorize access="hasRole('ROLE_TENANT')">
                         <li>
-                            <a href="/rest/user/application">
+                            <a href="/web/user/application">
                                 <fmt:message key="header.applications"/>
                             </a>
                         </li>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ROLE_DISPATCHER')">
                         <li>
-                            <a href="/rest/application">
+                            <a href="/web/application">
                                 <fmt:message key="header.applications"/>
                             </a>
                         </li>
                         <li>
-                            <a href="/rest/worker">
+                            <a href="/web/worker">
                                 <fmt:message key="workers"/>
                             </a>
                         </li>
                     </sec:authorize>
                 </sec:authorize>
-                <li><a href="/rest/task"><fmt:message key="header.tasks"/></a></li>
+                <li><a href="/web/task"><fmt:message key="header.tasks"/></a></li>
             </ul>
             <div class="nav navbar-nav navbar-right">
                 <div class="row">
-                    <form method="post" action="/rest/locale" style="margin-bottom: 0; display: inline-block; margin-right: 40px">
+                    <form method="post" action="/web/locale" style="margin-bottom: 0; display: inline-block; margin-right: 40px">
                         <input type="hidden"
                                name="uri"
                                value="${requestScope['javax.servlet.forward.request_uri']}"/>
@@ -74,15 +75,15 @@
                         </select>
                     </form>
                     <sec:authorize access="isAnonymous()">
-                        <a class="btn btn-default navbar-btn" href="/rest/new_user" role="button">
+                        <a class="btn btn-default navbar-btn" href="/web/new_user" role="button">
                             <fmt:message key="header.sign_up"/>
                         </a>
-                        <a class="btn btn-default navbar-btn" href="/rest/login" role="button">
+                        <a class="btn btn-default navbar-btn" href="/web/login" role="button">
                             <fmt:message key="header.login"/>
                         </a>
                     </sec:authorize>
                     <sec:authorize access="isAuthenticated()">
-                        <form method="post" action="/rest/logout" style="margin-bottom: 0; display: inline-flex;">
+                        <form method="post" action="/web/logout" style="margin-bottom: 0; display: inline-flex;">
                             <button class="btn btn-default navbar-btn">
                                 <fmt:message key="header.logout"/>
                             </button>

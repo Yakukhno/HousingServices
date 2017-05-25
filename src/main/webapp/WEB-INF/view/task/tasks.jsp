@@ -36,7 +36,7 @@
                                 <custom:dateTime>${task.scheduledTime}</custom:dateTime>
                             </td>
                             <td>
-                                ${task.brigade.id} <a href="/rest/brigade/${task.brigade.id}">
+                                ${task.brigade.id} <a href="/web/brigade/${task.brigade.id}">
                                     <fmt:message key="show"/>
                                 </a>
                             </td>

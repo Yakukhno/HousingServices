@@ -13,15 +13,15 @@ import ua.training.model.service.UserService;
 import static ua.training.controller.Attributes.MESSAGE;
 import static ua.training.controller.NewRoutes.LOGIN_ROUTE;
 import static ua.training.controller.NewRoutes.REDIRECT;
-import static ua.training.controller.NewRoutes.REST;
+import static ua.training.controller.NewRoutes.WEB;
 import static ua.training.controller.Views.LOGIN_VIEW;
 
 @Controller
 @SessionAttributes("user")
-@RequestMapping("/rest")
+@RequestMapping("/web")
 public class AuthController {
 
-    private static final String USER_WITH_ID = REST + "/user/{userId}";
+    private static final String USER_WITH_ID = WEB + "/user/{userId}";
 
     private UserService userService;
 

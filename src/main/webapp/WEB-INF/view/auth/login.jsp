@@ -3,7 +3,7 @@
 <div class="row">
     <h3 align="center"><fmt:message key="header.login"/></h3>
 </div>
-<form class="form-horizontal col-md-offset-3 col-md-6" method="post" action="/rest/login">
+<form class="form-horizontal col-md-offset-3 col-md-6" method="post" action="/web/login">
     <div class="form-group">
         <label for="email" class="control-label col-md-4">
             <fmt:message key="email"/>

@@ -5,7 +5,7 @@
 <div class="row">
     <form class="form-horizontal col-md-offset-1 col-md-5"
           method="post"
-          action="/rest/application">
+          action="/web/application">
         <input type="hidden" id="tenantId" value="${sessionScope.user.id}"/>
         <div class="form-group">
             <label for="typeOfWork" class="control-label col-md-4">

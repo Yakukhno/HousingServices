@@ -12,7 +12,7 @@ import static ua.training.controller.Attributes.LOCALE;
 import static ua.training.controller.NewRoutes.REDIRECT;
 
 @Controller
-@RequestMapping("/rest")
+@RequestMapping("/web")
 public class LocaleController {
 
     @PostMapping("/locale")

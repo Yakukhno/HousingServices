@@ -22,11 +22,11 @@ import static ua.training.controller.Views.NEW_USER_VIEW;
 import static ua.training.controller.Views.USER_VIEW;
 
 @Controller
-@RequestMapping("/rest")
+@RequestMapping("/web")
 public class UserController {
 
     private static final String USER_WITH_ID_REDIRECT
-            = REDIRECT + REST + "/user/{userId}";
+            = REDIRECT + WEB + "/user/{userId}";
     private static final String USER_ID = "userId";
 
     private Validator nameValidator = new NameValidator();

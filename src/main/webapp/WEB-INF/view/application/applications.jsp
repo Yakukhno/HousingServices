@@ -50,7 +50,7 @@
                                 <c:if test="${application.status eq requestScope[Attributes.STATUS_NEW]}">
                                     <form style="margin-bottom: 0"
                                           method="post"
-                                          action="/rest/new_task">
+                                          action="/web/new_task">
                                         <input type="hidden" name="application" value="${application.id}"/>
                                         <button class="btn btn-primary" type="submit">
                                             <fmt:message key="form_brigade"/>

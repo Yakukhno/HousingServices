@@ -30,7 +30,7 @@ import static ua.training.controller.Views.NEW_TASK_VIEW;
 import static ua.training.controller.Views.TASKS_VIEW;
 
 @Controller
-@RequestMapping("/rest")
+@RequestMapping("/web")
 public class TaskController {
 
     private static final String EXCEPTION_INCORRECT_DATE = "exception.date";

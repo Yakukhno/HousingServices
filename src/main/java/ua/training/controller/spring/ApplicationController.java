@@ -31,7 +31,7 @@ import static ua.training.controller.Views.NEW_APPLICATION_VIEW;
 import static ua.training.controller.Views.USER_APPLICATIONS_VIEW;
 
 @Controller
-@RequestMapping("/rest")
+@RequestMapping("/web")
 public class ApplicationController {
 
     private Validator dateTimeValidator = new DateTimeValidator();

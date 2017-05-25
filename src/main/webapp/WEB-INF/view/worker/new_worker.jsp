@@ -5,7 +5,7 @@
 <div class="row">
     <form class="form-horizontal col-md-offset-3 col-md-6"
           method="post"
-          action="/rest/worker">
+          action="/web/worker">
         <div class="form-group">
             <label for="name" class="control-label col-md-4">
                 <fmt:message key="name"/>
