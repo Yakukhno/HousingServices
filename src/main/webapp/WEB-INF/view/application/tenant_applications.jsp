@@ -53,6 +53,7 @@
                                     <form style="margin-bottom: 0"
                                           method="post"
                                           action="/web/application/${application.id}/delete">
+                                        <sec:csrfInput/>
                                         <button class="btn btn-danger" type="submit">
                                             <fmt:message key="delete"/>
                                         </button>

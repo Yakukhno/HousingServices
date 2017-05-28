@@ -65,8 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .anyRequest().denyAll().and()
                 .logout()
                     .logoutUrl(LOGOUT_ROUTE)
-                    .logoutSuccessUrl(LOGIN_ROUTE).and()
-                .csrf().disable();
+                    .logoutSuccessUrl(LOGIN_ROUTE);
     }
 
     private void initRoutes() {

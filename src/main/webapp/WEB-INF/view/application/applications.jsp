@@ -52,6 +52,7 @@
                                           method="post"
                                           action="/web/new_task">
                                         <input type="hidden" name="application" value="${application.id}"/>
+                                        <sec:csrfInput/>
                                         <button class="btn btn-primary" type="submit">
                                             <fmt:message key="form_brigade"/>
                                         </button>

@@ -23,7 +23,9 @@
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="/web/home"><fmt:message key="header.housing_services"/></a>
+            <a class="navbar-brand" href="/web/home">
+                <fmt:message key="header.housing_services"/>
+            </a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
@@ -54,7 +56,11 @@
                         </li>
                     </sec:authorize>
                 </sec:authorize>
-                <li><a href="/web/task"><fmt:message key="header.tasks"/></a></li>
+                <li>
+                    <a href="/web/task">
+                        <fmt:message key="header.tasks"/>
+                    </a>
+                </li>
             </ul>
             <div class="nav navbar-nav navbar-right">
                 <div class="row">
@@ -62,6 +68,7 @@
                         <input type="hidden"
                                name="uri"
                                value="${requestScope['javax.servlet.forward.request_uri']}"/>
+                        <sec:csrfInput/>
                         <select id="locale" name="locale" class="form-control" onchange="this.form.submit()">
                             <option value="en_us" ${language eq "en_us" ? "selected" : ""}>
                                 English
@@ -84,6 +91,7 @@
                     </sec:authorize>
                     <sec:authorize access="isAuthenticated()">
                         <form method="post" action="/web/logout" style="margin-bottom: 0; display: inline-flex;">
+                            <sec:csrfInput/>
                             <button class="btn btn-default navbar-btn">
                                 <fmt:message key="header.logout"/>
                             </button>

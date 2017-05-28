@@ -51,6 +51,7 @@
                 <span id="helpNewPass" class="help-block"></span>
             </div>
         </div>
+        <sec:csrfInput/>
         <div class="form-group">
             <div class="col-md-offset-5 col-md-7">
                 <button class="btn btn-default" type="submit"><fmt:message key="change"/></button>

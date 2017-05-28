@@ -20,6 +20,7 @@
             <input class="form-control col-md-8" type="password" id="password" name="password"/><br/>
         </div>
     </div>
+    <sec:csrfInput/>
     <div class="form-group">
         <div class="col-md-offset-4 col-md-8">
             <button class="btn btn-default" type="submit">

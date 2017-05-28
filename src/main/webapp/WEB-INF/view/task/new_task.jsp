@@ -88,8 +88,11 @@
                             </div>
                         </div>
                     </c:if>
+                    <sec:csrfInput/>
                     <div class="form-group" align="center">
-                        <button class="btn btn-default" type="submit">Form</button>
+                        <button class="btn btn-default" type="submit">
+                            <fmt:message key="form"/>
+                        </button>
                     </div>
                 </form>
             </c:when>

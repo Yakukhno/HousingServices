@@ -23,7 +23,7 @@ public class BrigadeController {
     }
 
     @GetMapping("/{id}")
-    public String getTasks(@PathVariable int id, Model model) {
+    public String getBrigade(@PathVariable int id, Model model) {
         model.addAttribute(BRIGADE, brigadeService.getBrigadeById(id));
         return BRIGADE_VIEW;
     }
