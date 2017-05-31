@@ -14,10 +14,10 @@ import ua.training.controller.validator.ApacheDigestPasswordEncoder;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
-import static ua.training.controller.Attributes.EMAIL;
-import static ua.training.controller.NewRoutes.*;
-import static ua.training.controller.Roles.DISPATCHER;
-import static ua.training.controller.Roles.TENANT;
+import static ua.training.controller.util.Attributes.EMAIL;
+import static ua.training.controller.util.Routes.*;
+import static ua.training.controller.util.Roles.DISPATCHER;
+import static ua.training.controller.util.Roles.TENANT;
 
 @Configuration
 @EnableWebSecurity

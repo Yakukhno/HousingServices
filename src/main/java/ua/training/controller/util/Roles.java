@@ -1,4 +1,4 @@
-package ua.training.controller;
+package ua.training.controller.util;
 
 public class Roles {
     public static final String TENANT = "TENANT";

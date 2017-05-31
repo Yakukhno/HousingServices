@@ -1,4 +1,4 @@
-package ua.training.controller.spring;
+package ua.training.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,12 +22,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ua.training.controller.Attributes.*;
-import static ua.training.controller.NewRoutes.APPLICATION_ROUTE;
-import static ua.training.controller.NewRoutes.NEW_TASK_ROUTE;
-import static ua.training.controller.NewRoutes.REDIRECT;
-import static ua.training.controller.Views.NEW_TASK_VIEW;
-import static ua.training.controller.Views.TASKS_VIEW;
+import static ua.training.controller.util.Attributes.*;
+import static ua.training.controller.util.Routes.APPLICATION_ROUTE;
+import static ua.training.controller.util.Routes.NEW_TASK_ROUTE;
+import static ua.training.controller.util.Routes.REDIRECT;
+import static ua.training.controller.util.Views.NEW_TASK_VIEW;
+import static ua.training.controller.util.Views.TASKS_VIEW;
 
 @Controller
 @RequestMapping("/web")

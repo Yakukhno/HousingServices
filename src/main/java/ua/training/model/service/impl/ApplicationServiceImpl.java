@@ -2,7 +2,6 @@ package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ResourceNotFoundException;
@@ -15,8 +14,8 @@ import ua.training.model.service.ApplicationService;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static ua.training.controller.Roles.ROLE_DISPATCHER;
-import static ua.training.controller.Roles.ROLE_TENANT;
+import static ua.training.controller.util.Roles.ROLE_DISPATCHER;
+import static ua.training.controller.util.Roles.ROLE_TENANT;
 
 @Service("applicationService")
 public class ApplicationServiceImpl implements ApplicationService {

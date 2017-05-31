@@ -1,4 +1,4 @@
-package ua.training.controller.spring.listener;
+package ua.training.controller.listener;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;

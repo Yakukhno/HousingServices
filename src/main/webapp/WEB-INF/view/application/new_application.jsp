@@ -9,7 +9,7 @@
         <input type="hidden" id="tenantId" value="${sessionScope.user.id}"/>
         <div class="form-group">
             <label for="typeOfWork" class="control-label col-md-4">
-                <fmt:message key="type_of_task"/>
+                <fmt:message key="type_of_work"/>
             </label>
             <div class="col-md-8">
                 <select id="typeOfWork" name="typeOfWork" class="form-control">

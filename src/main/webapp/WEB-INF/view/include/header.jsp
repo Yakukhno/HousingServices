@@ -5,7 +5,7 @@
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="custom" uri="/WEB-INF/custom.tld"%>
-<%@ page import="ua.training.controller.Attributes" %>
+<%@ page import="ua.training.controller.util.Attributes" %>
 <c:set var="language"
        value="${not empty sessionScope[Attributes.LOCALE]
                             ? sessionScope[Attributes.LOCALE].getDisplayLanguage()

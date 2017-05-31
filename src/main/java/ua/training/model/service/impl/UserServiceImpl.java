@@ -4,10 +4,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ua.training.exception.ApplicationException;
 import ua.training.exception.ResourceNotFoundException;
@@ -23,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static ua.training.controller.Roles.ROLE_DISPATCHER;
+import static ua.training.controller.util.Roles.ROLE_DISPATCHER;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {

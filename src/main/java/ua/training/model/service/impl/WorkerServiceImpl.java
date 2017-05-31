@@ -10,7 +10,7 @@ import ua.training.model.service.WorkerService;
 
 import java.util.List;
 
-import static ua.training.controller.Roles.ROLE_DISPATCHER;
+import static ua.training.controller.util.Roles.ROLE_DISPATCHER;
 
 @Service("workerService")
 public class WorkerServiceImpl implements WorkerService {

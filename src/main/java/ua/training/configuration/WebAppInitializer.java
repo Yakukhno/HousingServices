@@ -2,14 +2,14 @@ package ua.training.configuration;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 import ua.training.controller.filter.CharsetFilter;
-import ua.training.controller.spring.listener.SessionListener;
+import ua.training.controller.listener.SessionListener;
 import ua.training.model.entities.person.User;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import static ua.training.controller.Attributes.DISPATCHER;
-import static ua.training.controller.Attributes.TENANT;
+import static ua.training.controller.util.Attributes.DISPATCHER;
+import static ua.training.controller.util.Attributes.TENANT;
 
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
@@ -35,7 +35,5 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
         servletContext.addListener(new SessionListener());
         servletContext.addFilter("EncodeFilter", CharsetFilter.class)
                 .addMappingForUrlPatterns(null, false, "/*");
-//        servletContext.addFilter("AuthFilter", AuthFilter.class)
-//                .addMappingForUrlPatterns(null, false, "/rest/*");
     }
 }

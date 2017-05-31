@@ -1,4 +1,4 @@
-package ua.training.controller;
+package ua.training.controller.util;
 
 public class Views {
     public static final String HOME_VIEW = "index";

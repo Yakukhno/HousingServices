@@ -1,4 +1,4 @@
-package ua.training.controller.spring;
+package ua.training.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -22,13 +22,13 @@ import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ua.training.controller.Attributes.*;
-import static ua.training.controller.NewRoutes.NEW_APPLICATION_ROUTE;
-import static ua.training.controller.NewRoutes.REDIRECT;
-import static ua.training.controller.NewRoutes.USER_APPLICATIONS_ROUTE;
-import static ua.training.controller.Views.ALL_APPLICATIONS_VIEW;
-import static ua.training.controller.Views.NEW_APPLICATION_VIEW;
-import static ua.training.controller.Views.USER_APPLICATIONS_VIEW;
+import static ua.training.controller.util.Attributes.*;
+import static ua.training.controller.util.Routes.NEW_APPLICATION_ROUTE;
+import static ua.training.controller.util.Routes.REDIRECT;
+import static ua.training.controller.util.Routes.USER_APPLICATIONS_ROUTE;
+import static ua.training.controller.util.Views.ALL_APPLICATIONS_VIEW;
+import static ua.training.controller.util.Views.NEW_APPLICATION_VIEW;
+import static ua.training.controller.util.Views.USER_APPLICATIONS_VIEW;
 
 @Controller
 @RequestMapping("/web")

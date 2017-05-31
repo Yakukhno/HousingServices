@@ -2,7 +2,6 @@ package ua.training.model.service.impl;
 
 import org.apache.log4j.Logger;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.*;
@@ -19,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static ua.training.controller.Roles.ROLE_DISPATCHER;
+import static ua.training.controller.util.Roles.ROLE_DISPATCHER;
 
 @Service("taskService")
 public class TaskServiceImpl implements TaskService {

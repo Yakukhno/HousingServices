@@ -1,4 +1,4 @@
-package ua.training.controller.spring;
+package ua.training.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,10 +16,10 @@ import ua.training.model.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static ua.training.controller.Attributes.*;
-import static ua.training.controller.NewRoutes.*;
-import static ua.training.controller.Views.NEW_USER_VIEW;
-import static ua.training.controller.Views.USER_VIEW;
+import static ua.training.controller.util.Attributes.*;
+import static ua.training.controller.util.Routes.*;
+import static ua.training.controller.util.Views.NEW_USER_VIEW;
+import static ua.training.controller.util.Views.USER_VIEW;
 
 @Controller
 @RequestMapping("/web")

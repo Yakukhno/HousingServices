@@ -1,4 +1,4 @@
-package ua.training.controller.spring;
+package ua.training.controller;
 
 import org.apache.log4j.Logger;
 import org.springframework.ui.Model;
@@ -12,9 +12,8 @@ import ua.training.model.entities.TypeOfWork;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 
-import static ua.training.controller.Attributes.MESSAGE;
-import static ua.training.controller.Views.ERROR_VIEW;
-import static ua.training.controller.Views.EXCEPTION_VIEW;
+import static ua.training.controller.util.Attributes.MESSAGE;
+import static ua.training.controller.util.Views.ERROR_VIEW;
 
 @org.springframework.web.bind.annotation.ControllerAdvice
 public class ControllerAdvice {

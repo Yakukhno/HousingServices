@@ -11,7 +11,7 @@
                 <table class="table table-striped" align="center">
                     <thead>
                     <tr>
-                        <th><fmt:message key="type_of_task"/></th>
+                        <th><fmt:message key="type_of_work"/></th>
                         <th><fmt:message key="problem_scale"/></th>
                         <th><fmt:message key="desired_time"/></th>
                         <th><fmt:message key="status"/></th>
