@@ -1,7 +1,10 @@
 package ua.training.model.service.impl;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
@@ -20,99 +23,87 @@ import static org.mockito.Mockito.*;
 
 public class TestUserServiceImpl {
 
-    private DaoFactory daoFactory = mock(DaoFactory.class);
-    private UserService userService = new UserServiceImpl(daoFactory);
+    private static final int USER_ID = 3;
+    private static final String EMAIL = "a@a.com";
+    private static final String NOT_EXISTING_EMAIL = "a1@a.com";
+    private static final String PASSWORD = "qwerty";
+    private static final String WRONG_PASSWORD = "wrong";
+    private static final String NEW_PASSWORD = "newPass";
+
+    @Mock
+    private DaoFactory daoFactory;
+    @Mock
+    private UserDao userDao;
+
+    private UserService userService;
+
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+        when(daoFactory.createUserDao(any())).thenReturn(userDao);
+        userService = new UserServiceImpl(daoFactory);
+    }
 
     @Test
     public void testGetUserById() {
         User userFromDao = new User();
-        userFromDao.setId(3);
-        UserDao userDao = mock(UserDao.class);
-        when(userDao.get(3)).thenReturn(Optional.of(userFromDao));
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
+        userFromDao.setId(USER_ID);
+        when(userDao.get(USER_ID)).thenReturn(Optional.of(userFromDao));
 
-        User actualUser = userService.getUserById(3);
+        User actualUser = userService.getUserById(USER_ID);
 
+        verify(userDao, times(1)).get(USER_ID);
         assertEquals(userFromDao, actualUser);
     }
+
 
     @Test(expected = ResourceNotFoundException.class)
     public void testGetUserByIdDaoReturnsEmpty() {
-        UserDao userDao = mock(UserDao.class);
-        when(userDao.get(3))
-                .thenReturn(Optional.empty());
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
-        userService.getUserById(3);
-    }
+        when(userDao.get(USER_ID)).thenReturn(Optional.empty());
 
-    @Test
-    public void testGetUserByEmail() {
-        User userFromDao = new User();
-        userFromDao.setEmail("a@a.com");
-        UserDao userDao = mock(UserDao.class);
-        when(userDao.get(3))
-                .thenReturn(Optional.of(userFromDao));
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
-        User actualUser = userService.getUserById(3);
+        userService.getUserById(USER_ID);
 
-        assertEquals(userFromDao, actualUser);
+        verify(userDao, times(1)).get(USER_ID);
     }
 
     @Test
     public void testLoginEmail() {
         User userFromDao = new User();
-        String email = "a@a.com";
-        String password = "qwerty";
-        userFromDao.setEmail(email);
-        userFromDao.setPassword(DigestUtils.sha256Hex(password));
-        UserDao userDao = mock(UserDao.class);
-        when(userDao.getUserByEmail(email))
-                .thenReturn(Optional.of(userFromDao));
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
-        User actualUser = userService.loginEmail(email, password);
+        userFromDao.setEmail(EMAIL);
+        userFromDao.setPassword(DigestUtils.sha256Hex(PASSWORD));
+        when(userDao.getUserByEmail(EMAIL)).thenReturn(Optional.of(userFromDao));
+        User actualUser = userService.loginEmail(EMAIL, PASSWORD);
 
+        verify(userDao, times(1)).getUserByEmail(EMAIL);
         assertEquals(userFromDao, actualUser);
     }
 
     @Test(expected = ServiceException.class)
     public void testLoginEmailDaoReturnsEmpty() {
-        String email = "a1@a.com";
-        UserDao userDao = mock(UserDao.class);
-        when(userDao.getUserByEmail(email))
-                .thenReturn(Optional.empty());
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
-        userService.loginEmail(email, "qwerty");
+        when(userDao.getUserByEmail(NOT_EXISTING_EMAIL)).thenReturn(Optional.empty());
+
+        userService.loginEmail(NOT_EXISTING_EMAIL, PASSWORD);
+
+        verify(userDao, times(1)).getUserByEmail(NOT_EXISTING_EMAIL);
     }
 
     @Test(expected = ServiceException.class)
     public void testLoginEmailIncorrectPassword() {
         User userFromDao = new User();
-        String email = "a@a.com";
-        String password = "qwerty";
-        userFromDao.setEmail(email);
-        userFromDao.setPassword(password);
-        UserDao userDao = mock(UserDao.class);
-        when(userDao.getUserByEmail(email))
-                .thenReturn(Optional.of(userFromDao));
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
-        userService.loginEmail(email, "wrong");
+        userFromDao.setEmail(EMAIL);
+        userFromDao.setPassword(PASSWORD);
+        when(userDao.getUserByEmail(EMAIL)).thenReturn(Optional.of(userFromDao));
+
+        userService.loginEmail(EMAIL, WRONG_PASSWORD);
     }
 
     @Test(expected = ServiceException.class)
     public void testLoginEmailIncorrectEmailAndPassword() {
-        String email = "a@a.com";
-        UserDao userDao = mock(UserDao.class);
-        when(userDao.getUserByEmail(email))
-                .thenReturn(Optional.empty());
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
-        userService.loginEmail(email, "wrong");
+        when(userDao.getUserByEmail(NOT_EXISTING_EMAIL)).thenReturn(Optional.empty());
+
+        userService.loginEmail(NOT_EXISTING_EMAIL, WRONG_PASSWORD);
+
+        verify(userDao, times(1)).getUserByEmail(NOT_EXISTING_EMAIL);
     }
 
     @Test
@@ -121,89 +112,89 @@ public class TestUserServiceImpl {
         usersFromDao.add(mock(User.class));
         usersFromDao.add(mock(User.class));
         usersFromDao.add(mock(User.class));
-        UserDao userDao = mock(UserDao.class);
         when(userDao.getAll()).thenReturn(usersFromDao);
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
 
         List<User> actualUsers = userService.getAllUsers();
 
+        verify(userDao, times(1)).getAll();
         assertEquals(usersFromDao, actualUsers);
     }
 
     @Test
     public void testUpdateUser() {
+        when(daoFactory.getConnection()).thenReturn(mock(DaoConnection.class));
+
         User userFromDao = new User();
-        String password = "qwerty";
-        userFromDao.setId(3);
-        userFromDao.setPassword(DigestUtils.sha256Hex(password));
-        UserDao userDao = mock(UserDao.class);
-        when(userDao.get(3))
-                .thenReturn(Optional.of(userFromDao));
-        when(daoFactory.getConnection())
-                .thenReturn(mock(DaoConnection.class));
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
+        userFromDao.setId(USER_ID);
+        userFromDao.setPassword(DigestUtils.sha256Hex(PASSWORD));
+        when(userDao.get(USER_ID)).thenReturn(Optional.of(userFromDao));
+
         User paramUser = new User();
-        paramUser.setId(3);
-        paramUser.setPassword("newPass");
+        paramUser.setId(USER_ID);
+        paramUser.setPassword(NEW_PASSWORD);
+        User userCopy = getUserCopy(paramUser);
+        userCopy.setPassword(DigestUtils.sha256Hex(NEW_PASSWORD));
 
-        userService.updateUser(paramUser, password);
+        userService.updateUser(paramUser, PASSWORD);
 
-        verify(userDao).update(paramUser);
+        verify(userDao).update(userCopy);
     }
 
     @Test(expected = ServiceException.class)
     public void testUpdateUserIncorrectPassword() {
+        when(daoFactory.getConnection()).thenReturn(mock(DaoConnection.class));
+
         User userFromDao = new User();
-        userFromDao.setId(3);
-        userFromDao.setPassword("qwerty");
-        UserDao userDao = mock(UserDao.class);
-        when(userDao.get(3))
-                .thenReturn(Optional.of(userFromDao));
-        when(daoFactory.getConnection())
-                .thenReturn(mock(DaoConnection.class));
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
+        userFromDao.setId(USER_ID);
+        userFromDao.setPassword(PASSWORD);
+        when(userDao.get(USER_ID)).thenReturn(Optional.of(userFromDao));
+
         User paramUser = new User();
-        paramUser.setId(3);
-        paramUser.setPassword("newPass");
+        paramUser.setId(USER_ID);
+        paramUser.setPassword(NEW_PASSWORD);
+        User userCopy = getUserCopy(paramUser);
+        userCopy.setPassword(DigestUtils.sha256Hex(NEW_PASSWORD));
 
-        userService.updateUser(paramUser, "wrong");
+        userService.updateUser(paramUser, WRONG_PASSWORD);
 
-        verify(userDao, never()).update(paramUser);
+        verify(userDao, never()).update(any());
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void testUpdateUserIncorrectUser() {
-        UserDao userDao = mock(UserDao.class);
-        when(userDao.get(3))
-                .thenReturn(Optional.empty());
-        when(daoFactory.getConnection())
-                .thenReturn(mock(DaoConnection.class));
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
+        when(daoFactory.getConnection()).thenReturn(mock(DaoConnection.class));
+        when(userDao.get(USER_ID)).thenReturn(Optional.empty());
         User paramUser = new User();
-        paramUser.setId(3);
-        paramUser.setPassword("newPass");
+        paramUser.setId(USER_ID);
+        paramUser.setPassword(NEW_PASSWORD);
+        User userCopy = getUserCopy(paramUser);
+        userCopy.setPassword(DigestUtils.sha256Hex(NEW_PASSWORD));
 
-        userService.updateUser(paramUser, "qwerty");
+        userService.updateUser(paramUser, PASSWORD);
 
-        verify(userDao, never()).update(paramUser);
+        verify(userDao, never()).update(any());
     }
 
     @Test
     public void testCreateUser() {
-        UserDao userDao = mock(UserDao.class);
         User paramUser = new User();
-        paramUser.setId(3);
-        paramUser.setPassword("qwerty");
-        when(daoFactory.createUserDao(any()))
-                .thenReturn(userDao);
-
+        paramUser.setId(USER_ID);
+        paramUser.setPassword(PASSWORD);
+        User userCopy = getUserCopy(paramUser);
+        userCopy.setPassword(DigestUtils.sha256Hex(PASSWORD));
 
         userService.createNewUser(paramUser);
 
-        verify(userDao).add(paramUser);
+        verify(userDao, times(1)).add(userCopy);
+    }
+
+    private User getUserCopy(User user) {
+        return new User.Builder()
+                .setId(user.getId())
+                .setName(user.getName())
+                .setEmail(user.getEmail())
+                .setPassword(user.getPassword())
+                .setRole(user.getRole())
+                .build();
     }
 }

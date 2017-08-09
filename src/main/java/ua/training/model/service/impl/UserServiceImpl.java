@@ -88,9 +88,7 @@ public class UserServiceImpl implements UserService {
         try (DaoConnection connection = daoFactory.getConnection()) {
             UserDao userDao = daoFactory.createUserDao(connection);
             String hashedPassword = DigestUtils.sha256Hex(password);
-            if (user.getPassword().length() < PASS_MAX_LENGTH) {
-                user.setPassword(DigestUtils.sha256Hex(user.getPassword()));
-            }
+            hashNewPassword(user);
 
             connection.setIsolationLevel(Connection.TRANSACTION_READ_COMMITTED);
             connection.begin();
@@ -107,6 +105,12 @@ public class UserServiceImpl implements UserService {
                     );
             userDao.update(user);
             connection.commit();
+        }
+    }
+
+    private void hashNewPassword(User user) {
+        if (user.getPassword().length() < PASS_MAX_LENGTH) {
+            user.setPassword(DigestUtils.sha256Hex(user.getPassword()));
         }
     }
 
