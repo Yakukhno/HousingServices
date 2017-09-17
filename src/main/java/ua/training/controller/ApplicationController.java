@@ -16,7 +16,7 @@ import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.ApplicationService;
 import ua.training.model.service.TypeOfWorkService;
-import ua.training.model.service.impl.UserDetailsImpl;
+import ua.training.model.UserDetailsImpl;
 
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package ua.training.model.service.impl;
+package ua.training.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

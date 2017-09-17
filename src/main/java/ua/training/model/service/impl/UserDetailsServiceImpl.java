@@ -8,7 +8,7 @@ import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.UserDao;
 import ua.training.model.entities.person.User;
-import ua.training.model.service.impl.UserDetailsImpl;
+import ua.training.model.UserDetailsImpl;
 
 import java.util.function.Supplier;
 

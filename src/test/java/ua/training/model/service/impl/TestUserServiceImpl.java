@@ -6,12 +6,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ua.training.exception.ResourceNotFoundException;
+import ua.training.exception.ServiceException;
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.UserDao;
 import ua.training.model.entities.person.User;
-import ua.training.exception.ServiceException;
-import ua.training.model.service.UserService;
+import ua.training.model.util.ServiceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +33,22 @@ public class TestUserServiceImpl {
     @Mock
     private DaoFactory daoFactory;
     @Mock
+    private ServiceHelper serviceHelper;
+    @Mock
     private UserDao userDao;
 
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
         when(daoFactory.createUserDao(any())).thenReturn(userDao);
+        when(serviceHelper.getResourceNotFoundExceptionSupplier(any(), anyInt()))
+                .thenReturn(ResourceNotFoundException::new);
+        when(serviceHelper.getServiceExceptionSupplier(any()))
+                .thenReturn(ServiceException::new);
         userService = new UserServiceImpl(daoFactory);
+        userService.setServiceHelper(serviceHelper);
     }
 
     @Test
