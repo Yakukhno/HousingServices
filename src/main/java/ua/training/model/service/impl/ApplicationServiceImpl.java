@@ -25,7 +25,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private ServiceHelper serviceHelper;
 
-    private DaoFactory daoFactory = DaoFactory.getInstance();
+    private DaoFactory daoFactory;
+
+    public ApplicationServiceImpl() {
+        daoFactory = DaoFactory.getInstance();
+    }
+
+    ApplicationServiceImpl(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Override
     @Secured(ROLE_TENANT)
@@ -81,11 +89,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private User getUser(UserDao userDao, int id) {
-        return userDao.get(id)
-                .filter(user -> user.getRole().equals(User.Role.TENANT))
-                .orElseThrow(serviceHelper
-                        .getResourceNotFoundExceptionSupplier(EXCEPTION_USER_WITH_ID_NOT_FOUND,
-                                id));
+        User user = userDao.get(id).orElseThrow(serviceHelper
+                .getResourceNotFoundExceptionSupplier(EXCEPTION_USER_WITH_ID_NOT_FOUND, id));
+
+        if (!user.getRole().equals(User.Role.TENANT)) {
+            throw new AccessForbiddenException();
+        }
+
+        return user;
     }
 
     private TypeOfWork getTypeOfWork(TypeOfWorkDao typeOfWorkDao, int id) {

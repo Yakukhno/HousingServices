@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-public class TestUserServiceImpl {
+public class UserServiceImplTest {
 
     private static final int USER_ID = 3;
     private static final String EMAIL = "a@a.com";
@@ -33,20 +33,22 @@ public class TestUserServiceImpl {
     @Mock
     private DaoFactory daoFactory;
     @Mock
-    private ServiceHelper serviceHelper;
+    private DaoConnection daoConnection;
     @Mock
     private UserDao userDao;
+    @Mock
+    private ServiceHelper serviceHelper;
 
     private UserServiceImpl userService;
 
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
+        when(daoFactory.getConnection()).thenReturn(daoConnection);
         when(daoFactory.createUserDao(any())).thenReturn(userDao);
         when(serviceHelper.getResourceNotFoundExceptionSupplier(any(), anyInt()))
                 .thenReturn(ResourceNotFoundException::new);
-        when(serviceHelper.getServiceExceptionSupplier(any()))
-                .thenReturn(ServiceException::new);
+        when(serviceHelper.getServiceExceptionSupplier(any())).thenReturn(ServiceException::new);
         userService = new UserServiceImpl(daoFactory);
         userService.setServiceHelper(serviceHelper);
     }
@@ -129,8 +131,6 @@ public class TestUserServiceImpl {
 
     @Test
     public void testUpdateUser() {
-        when(daoFactory.getConnection()).thenReturn(mock(DaoConnection.class));
-
         User userFromDao = new User();
         userFromDao.setId(USER_ID);
         userFromDao.setPassword(DigestUtils.sha256Hex(PASSWORD));
@@ -149,8 +149,6 @@ public class TestUserServiceImpl {
 
     @Test(expected = ServiceException.class)
     public void testUpdateUserIncorrectPassword() {
-        when(daoFactory.getConnection()).thenReturn(mock(DaoConnection.class));
-
         User userFromDao = new User();
         userFromDao.setId(USER_ID);
         userFromDao.setPassword(PASSWORD);
@@ -169,7 +167,6 @@ public class TestUserServiceImpl {
 
     @Test(expected = ResourceNotFoundException.class)
     public void testUpdateUserIncorrectUser() {
-        when(daoFactory.getConnection()).thenReturn(mock(DaoConnection.class));
         when(userDao.get(USER_ID)).thenReturn(Optional.empty());
         User paramUser = new User();
         paramUser.setId(USER_ID);
