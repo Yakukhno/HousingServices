@@ -1,6 +1,6 @@
 package ua.training.controller.util;
 
-public class Routes {
+public class RouteConstants {
     public static final String REDIRECT = "redirect:";
 
     public static final String WEB = "/web";

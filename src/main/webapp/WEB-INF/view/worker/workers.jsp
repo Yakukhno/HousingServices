@@ -12,7 +12,7 @@
 <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
         <c:choose>
-            <c:when test="${requestScope[Attributes.WORKERS].size() != 0}">
+            <c:when test="${requestScope[AttributeConstants.WORKERS].size() != 0}">
                 <table class="table table-striped" align="center">
                     <thead>
                     <tr>
@@ -23,7 +23,7 @@
                     </thead>
                     <tbody>
                     <c:forEach var="worker"
-                               items="${requestScope[Attributes.WORKERS]}">
+                               items="${requestScope[AttributeConstants.WORKERS]}">
                         <tr>
                             <td>${worker.id}</td>
                             <td>${worker.name}</td>

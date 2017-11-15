@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-lg-offset-3 col-lg-6">
         <h2 align="center">
-            <fmt:message key="brigade"/> ${requestScope[Attributes.BRIGADE].id}
+            <fmt:message key="brigade"/> ${requestScope[AttributeConstants.BRIGADE].id}
         </h2>
     </div>
 </div>
@@ -16,10 +16,10 @@
         </thead>
         <tbody>
             <tr>
-                <td>${requestScope[Attributes.BRIGADE].manager.name}</td>
+                <td>${requestScope[AttributeConstants.BRIGADE].manager.name}</td>
                 <td>
                     <c:forEach var="typeOfWork"
-                               items="${requestScope[Attributes.BRIGADE].manager.typesOfWork}">
+                               items="${requestScope[AttributeConstants.BRIGADE].manager.typesOfWork}">
                         <fmt:message>
                             ${typeOfWork.description}
                         </fmt:message>;
@@ -29,7 +29,7 @@
                     <fmt:message key="manager"/>
                 </td>
             </tr>
-            <c:forEach var="worker" items="${requestScope[Attributes.BRIGADE].workers}">
+            <c:forEach var="worker" items="${requestScope[AttributeConstants.BRIGADE].workers}">
                 <tr>
                     <td>${worker.name}</td>
                     <td>

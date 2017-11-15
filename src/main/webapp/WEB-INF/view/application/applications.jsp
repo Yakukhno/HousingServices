@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
         <c:choose>
-            <c:when test="${requestScope[Attributes.APPLICATIONS].size() != 0}">
+            <c:when test="${requestScope[AttributeConstants.APPLICATIONS].size() != 0}">
                 <table class="table table-striped" align="center">
                     <thead>
                     <tr>
@@ -20,7 +20,7 @@
                     </thead>
                     <tbody>
                     <c:forEach var="application"
-                               items="${requestScope[Attributes.APPLICATIONS]}">
+                               items="${requestScope[AttributeConstants.APPLICATIONS]}">
                        <tr>
                             <td>
                                 <fmt:message>
@@ -47,7 +47,7 @@
                                 </fmt:message>
                             </td>
                             <td>
-                                <c:if test="${application.status eq requestScope[Attributes.STATUS_NEW]}">
+                                <c:if test="${application.status eq requestScope[AttributeConstants.STATUS_NEW]}">
                                     <form style="margin-bottom: 0"
                                           method="post"
                                           action="/web/new_task">

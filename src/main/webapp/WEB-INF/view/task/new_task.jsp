@@ -7,7 +7,7 @@
 <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
         <c:choose>
-            <c:when test="${requestScope[Attributes.WORKERS].size() != 0}">
+            <c:when test="${requestScope[AttributeConstants.WORKERS].size() != 0}">
                 <form class="form-horizontal"
                       name="brigadeForm"
                       method="post"
@@ -24,7 +24,7 @@
                         </thead>
                         <tbody>
                             <c:forEach var="worker"
-                                       items="${requestScope[Attributes.WORKERS]}">
+                                       items="${requestScope[AttributeConstants.WORKERS]}">
                                 <tr>
                                     <td>${worker.id}</td>
                                     <td>${worker.name}</td>
@@ -54,7 +54,7 @@
                     </table>
                     <input type="hidden"
                            name="application"
-                           value="${requestScope[Attributes.APPLICATION]}"/>
+                           value="${requestScope[AttributeConstants.APPLICATION]}"/>
                     <div class="row">
                         <div class="col-lg-offset-4 col-lg-4 col-md-offset-3 col-md-6">
                             <div class="form-group" align="center">
@@ -72,13 +72,13 @@
                         </div>
                     </div>
                     <div id="message"></div>
-                    <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
+                    <c:if test="${not empty requestScope[AttributeConstants.MESSAGE]}">
                         <div class="row">
                             <div class="alert alert-danger" align="center" role="alert">
-                                <fmt:message key="${requestScope[Attributes.MESSAGE]}">
-                                    <c:if test="${not empty requestScope[Attributes.PARAMS]}">
+                                <fmt:message key="${requestScope[AttributeConstants.MESSAGE]}">
+                                    <c:if test="${not empty requestScope[AttributeConstants.PARAMS]}">
                                         <c:forEach var="parameter"
-                                                   items="${requestScope[Attributes.PARAMS]}">
+                                                   items="${requestScope[AttributeConstants.PARAMS]}">
                                             <fmt:param>
                                                 <custom:dateTime>${parameter}</custom:dateTime>
                                             </fmt:param>

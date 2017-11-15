@@ -1,6 +1,6 @@
 package ua.training.controller.util;
 
-public class Views {
+public class ViewConstants {
     public static final String HOME_VIEW = "index";
 
     public static final String ALL_APPLICATIONS_VIEW = "application/applications";

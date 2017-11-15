@@ -1,13 +1,14 @@
 package ua.training.model.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
+
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.TypeOfWorkDao;
 import ua.training.model.entities.TypeOfWork;
 import ua.training.model.service.TypeOfWorkService;
-
-import java.util.List;
 
 @Service("typeOfWorkService")
 public class TypeOfWorkServiceImpl implements TypeOfWorkService {
@@ -17,8 +18,7 @@ public class TypeOfWorkServiceImpl implements TypeOfWorkService {
     @Override
     public List<TypeOfWork> getAllTypesOfWork() {
         try (DaoConnection connection = daoFactory.getConnection()) {
-            TypeOfWorkDao typeOfWorkDao
-                    = daoFactory.createTypeOfWorkDao(connection);
+            TypeOfWorkDao typeOfWorkDao = daoFactory.createTypeOfWorkDao(connection);
             return typeOfWorkDao.getAll();
         }
     }

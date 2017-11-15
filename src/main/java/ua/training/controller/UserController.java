@@ -1,10 +1,30 @@
 package ua.training.controller;
 
+import static ua.training.controller.util.AttributeConstants.MESSAGE;
+import static ua.training.controller.util.AttributeConstants.PARAMS;
+import static ua.training.controller.util.AttributeConstants.USER;
+import static ua.training.controller.util.RouteConstants.LOGIN_ROUTE;
+import static ua.training.controller.util.RouteConstants.NEW_USER_ROUTE;
+import static ua.training.controller.util.RouteConstants.REDIRECT;
+import static ua.training.controller.util.RouteConstants.WEB;
+import static ua.training.controller.util.ViewConstants.NEW_USER_VIEW;
+import static ua.training.controller.util.ViewConstants.USER_VIEW;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import ua.training.controller.validator.EmailValidator;
 import ua.training.controller.validator.NameValidator;
 import ua.training.controller.validator.PasswordValidator;
@@ -13,20 +33,11 @@ import ua.training.exception.ApplicationException;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
-import static ua.training.controller.util.Attributes.*;
-import static ua.training.controller.util.Routes.*;
-import static ua.training.controller.util.Views.NEW_USER_VIEW;
-import static ua.training.controller.util.Views.USER_VIEW;
-
 @Controller
 @RequestMapping("/web")
 public class UserController {
 
-    private static final String USER_WITH_ID_REDIRECT
-            = REDIRECT + WEB + "/user/{userId}";
+    private static final String USER_WITH_ID_REDIRECT = REDIRECT + WEB + "/user/{userId}";
     private static final String USER_ID = "userId";
 
     private Validator nameValidator = new NameValidator();
@@ -61,22 +72,16 @@ public class UserController {
     }
 
     @PostMapping("/user/{userId}")
-    public String updateUser(@PathVariable int userId,
-                             @RequestParam String email,
-                             @RequestParam String oldPassword,
-                             @RequestParam String newPassword,
-                             HttpServletRequest request, Model model) {
+    public String updateUser(@PathVariable int userId, @RequestParam String email, @RequestParam String oldPassword,
+                             @RequestParam String newPassword, HttpServletRequest request, Model model) {
         request.setAttribute(USER_ID, userId);
         model.addAttribute(USER_ID, userId);
-        User user = validateUserFieldsForUpdate(userService.getUserById(userId),
-                email, newPassword);
+        User user = validateUserFieldsForUpdate(userService.getUserById(userId), email, newPassword);
         userService.updateUser(user, oldPassword);
         return USER_WITH_ID_REDIRECT;
     }
 
-    private User validateUserFieldsForUpdate(User user,
-                                             String email,
-                                             String password) {
+    private User validateUserFieldsForUpdate(User user, String email, String password) {
         if (!email.isEmpty()) {
             emailValidator.validate(email);
             user.setEmail(email);
@@ -89,8 +94,7 @@ public class UserController {
     }
 
     @ExceptionHandler(ApplicationException.class)
-    public String handleApplicationException(ApplicationException e,
-                                             RedirectAttributes model,
+    public String handleApplicationException(ApplicationException e, RedirectAttributes model,
                                              HttpServletRequest request) {
         if (!e.isUserMessage()) {
             throw e;

@@ -1,9 +1,9 @@
 package ua.training.model.entities;
 
-import ua.training.model.entities.person.Worker;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import ua.training.model.entities.person.Worker;
 
 public class Brigade {
     private int id;

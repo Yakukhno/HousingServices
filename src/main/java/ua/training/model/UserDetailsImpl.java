@@ -1,15 +1,17 @@
 package ua.training.model;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import ua.training.model.entities.person.User;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import ua.training.model.entities.person.User;
+
 public class UserDetailsImpl implements UserDetails {
+
     private User user;
 
     public UserDetailsImpl(User user) {
@@ -19,9 +21,7 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(
-                "ROLE_" + user.getRole().name().toUpperCase()
-        ));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name().toUpperCase()));
         return authorities;
     }
 

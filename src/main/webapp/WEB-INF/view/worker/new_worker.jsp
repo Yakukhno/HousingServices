@@ -17,7 +17,7 @@
         </div>
         <div class="form-group">
             <div class="col-md-offset-4 col-md-8">
-                <c:forEach var="typeOfWork" items="${requestScope[Attributes.TYPE_OF_WORK]}">
+                <c:forEach var="typeOfWork" items="${requestScope[AttributeConstants.TYPE_OF_WORK]}">
                     <label>
                         <input type="checkbox" name="typesOfWork" value="${typeOfWork.id}">
                             <fmt:message>
@@ -34,13 +34,13 @@
                 <button class="btn btn-default" type="submit"><fmt:message key="send"/></button>
             </div>
         </div>
-        <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
+        <c:if test="${not empty requestScope[AttributeConstants.MESSAGE]}">
             <div class="row">
                 <div class="alert alert-danger" align="center" role="alert">
-                    <fmt:message key="${requestScope[Attributes.MESSAGE]}">
-                        <c:if test="${not empty requestScope[Attributes.PARAMS]}">
+                    <fmt:message key="${requestScope[AttributeConstants.MESSAGE]}">
+                        <c:if test="${not empty requestScope[AttributeConstants.PARAMS]}">
                             <c:forEach var="parameter"
-                                       items="${requestScope[Attributes.PARAMS]}">
+                                       items="${requestScope[AttributeConstants.PARAMS]}">
                                 <fmt:param>${parameter}</fmt:param>
                             </c:forEach>
                         </c:if>

@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
+
 import ua.training.exception.AccessForbiddenException;
 import ua.training.exception.ResourceNotFoundException;
 import ua.training.model.entities.TypeOfWork;
@@ -12,8 +13,8 @@ import ua.training.model.entities.TypeOfWork;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 
-import static ua.training.controller.util.Attributes.MESSAGE;
-import static ua.training.controller.util.Views.ERROR_VIEW;
+import static ua.training.controller.util.AttributeConstants.MESSAGE;
+import static ua.training.controller.util.ViewConstants.ERROR_VIEW;
 
 @org.springframework.web.bind.annotation.ControllerAdvice
 public class ControllerAdvice {
@@ -22,17 +23,13 @@ public class ControllerAdvice {
 
     // TODO: 06.05.2017 send 403 status code
     @ExceptionHandler(AccessForbiddenException.class)
-    public String handleAccessForbiddenException(AccessForbiddenException e,
-                                                 Model model)
-            throws IOException {
+    public String handleAccessForbiddenException(AccessForbiddenException e, Model model) throws IOException {
         model.addAttribute(MESSAGE, e.getMessage());
         return ERROR_VIEW;
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public String handleResourceNotFoundException(ResourceNotFoundException e,
-                                                  Model model)
-            throws IOException {
+    public String handleResourceNotFoundException(ResourceNotFoundException e, Model model) throws IOException {
         model.addAttribute(MESSAGE, e.getMessage());
         return ERROR_VIEW;
     }

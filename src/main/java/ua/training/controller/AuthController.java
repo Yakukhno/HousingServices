@@ -1,10 +1,10 @@
 package ua.training.controller;
 
+import static ua.training.controller.util.ViewConstants.LOGIN_VIEW;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import static ua.training.controller.util.Views.LOGIN_VIEW;
 
 @Controller
 @RequestMapping("/web")

@@ -1,6 +1,7 @@
 package ua.training.exception;
 
 public class ServiceException extends ApplicationException {
+
     public ServiceException() {
         super();
     }

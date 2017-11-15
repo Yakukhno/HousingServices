@@ -5,10 +5,10 @@
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="custom" uri="/WEB-INF/custom.tld"%>
-<%@ page import="ua.training.controller.util.Attributes" %>
+<%@ page import="ua.training.controller.util.AttributeConstants" %>
 <c:set var="language"
-       value="${not empty sessionScope[Attributes.LOCALE]
-                            ? sessionScope[Attributes.LOCALE].getDisplayLanguage()
+       value="${not empty sessionScope[AttributeConstants.LOCALE]
+                            ? sessionScope[AttributeConstants.LOCALE].getDisplayLanguage()
                             : 'en_US'}"
        scope="session" />
 <fmt:setLocale value="${language}" />

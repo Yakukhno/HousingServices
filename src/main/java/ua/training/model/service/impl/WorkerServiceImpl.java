@@ -1,16 +1,17 @@
 package ua.training.model.service.impl;
 
+import static ua.training.controller.util.RoleConstants.ROLE_DISPATCHER;
+
+import java.util.List;
+
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
+
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.WorkerDao;
 import ua.training.model.entities.person.Worker;
 import ua.training.model.service.WorkerService;
-
-import java.util.List;
-
-import static ua.training.controller.util.Roles.ROLE_DISPATCHER;
 
 @Service("workerService")
 public class WorkerServiceImpl implements WorkerService {

@@ -1,24 +1,21 @@
 package ua.training.controller.validator;
 
-import ua.training.exception.ValidationException;
+import static ua.training.controller.util.ExceptionConstants.EXCEPTION_VALIDATION_INCORRECT_EMAIL;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ua.training.exception.ValidationException;
+
 public class EmailValidator implements Validator {
 
-    private static final String EXCEPTION_INCORRECT_EMAIL
-            = "exception.validation.email";
-    private Pattern patternEmail
-            = Pattern.compile("^[\\w.%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
+    private Pattern patternEmail = Pattern.compile("^[\\w.%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
 
     @Override
     public void validate(String email) {
         Matcher matcher = patternEmail.matcher(email);
         if (!matcher.matches()) {
-            throw new ValidationException()
-                    .setUserMessage(EXCEPTION_INCORRECT_EMAIL)
-                    .addParameter(email);
+            throw new ValidationException().setUserMessage(EXCEPTION_VALIDATION_INCORRECT_EMAIL).addParameter(email);
         }
     }
 }

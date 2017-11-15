@@ -1,9 +1,9 @@
 package ua.training.controller;
 
+import static ua.training.controller.util.ViewConstants.HOME_VIEW;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import static ua.training.controller.util.Views.HOME_VIEW;
 
 @Controller
 public class HomeController {

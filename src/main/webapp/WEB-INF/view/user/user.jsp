@@ -15,7 +15,7 @@
             <p><fmt:message key="name"/></p>
         </div>
         <div class="col-md-6">
-            <p>${requestScope[Attributes.USER].name}</p>
+            <p>${requestScope[AttributeConstants.USER].name}</p>
         </div>
     </div>
     <div class="row">
@@ -23,7 +23,7 @@
             <p><fmt:message key="email"/></p>
         </div>
         <div class="col-md-6">
-            <p>${requestScope[Attributes.USER].email}</p>
+            <p>${requestScope[AttributeConstants.USER].email}</p>
         </div>
     </div>
     <div class="row">
@@ -57,12 +57,12 @@
                 <button class="btn btn-default" type="submit"><fmt:message key="change"/></button>
             </div>
         </div>
-        <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
+        <c:if test="${not empty requestScope[AttributeConstants.MESSAGE]}">
             <div class="row">
                 <div class="alert alert-danger" align="center" role="alert">
-                    <fmt:message key="${requestScope[Attributes.MESSAGE]}">
-                        <c:if test="${not empty requestScope[Attributes.PARAMS]}">
-                            <c:forEach var="parameter" items="${requestScope[Attributes.PARAMS]}">
+                    <fmt:message key="${requestScope[AttributeConstants.MESSAGE]}">
+                        <c:if test="${not empty requestScope[AttributeConstants.PARAMS]}">
+                            <c:forEach var="parameter" items="${requestScope[AttributeConstants.PARAMS]}">
                                 <fmt:param value="${parameter}"/>
                             </c:forEach>
                         </c:if>

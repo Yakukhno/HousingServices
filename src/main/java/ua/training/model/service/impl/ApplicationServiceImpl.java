@@ -1,31 +1,34 @@
 package ua.training.model.service.impl;
 
+import static ua.training.controller.util.RoleConstants.ROLE_DISPATCHER;
+import static ua.training.controller.util.RoleConstants.ROLE_TENANT;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
+
 import ua.training.exception.AccessForbiddenException;
-import ua.training.model.dao.*;
+import ua.training.model.dao.ApplicationDao;
+import ua.training.model.dao.DaoConnection;
+import ua.training.model.dao.DaoFactory;
+import ua.training.model.dao.TypeOfWorkDao;
+import ua.training.model.dao.UserDao;
 import ua.training.model.entities.Application;
 import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.ApplicationService;
 import ua.training.model.util.ServiceHelper;
 
-import java.util.List;
-
-import static ua.training.controller.util.Roles.ROLE_DISPATCHER;
-import static ua.training.controller.util.Roles.ROLE_TENANT;
-
 @Service("applicationService")
 public class ApplicationServiceImpl implements ApplicationService {
 
     private static final String EXCEPTION_USER_WITH_ID_NOT_FOUND = "User with id = %d not found";
-    private static final String EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND
-            = "Type of work with id = %d not found";
-
-    private ServiceHelper serviceHelper;
+    private static final String EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND = "Type of work with id = %d not found";
 
     private DaoFactory daoFactory;
+    private ServiceHelper serviceHelper;
 
     public ApplicationServiceImpl() {
         daoFactory = DaoFactory.getInstance();
@@ -62,6 +65,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             ApplicationDao applicationDao = daoFactory.createApplicationDao(connection);
 
             connection.begin();
+
             User user = getUser(userDao, application.getUser().getId());
             TypeOfWork typeOfWork = getTypeOfWork(typeOfWorkDao,
                     application.getTypeOfWork().getId());
@@ -69,6 +73,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             application.setTypeOfWork(typeOfWork);
             application.setStatus(Application.Status.NEW);
             applicationDao.add(application);
+
             connection.commit();
         }
     }
@@ -80,17 +85,19 @@ public class ApplicationServiceImpl implements ApplicationService {
             ApplicationDao applicationDao = daoFactory.createApplicationDao(connection);
 
             connection.begin();
+
             applicationDao.get(applicationId)
                     .filter(application -> application.getUser().getId() == userId)
                     .orElseThrow(AccessForbiddenException::new);
             applicationDao.delete(applicationId);
+
             connection.commit();
         }
     }
 
     private User getUser(UserDao userDao, int id) {
-        User user = userDao.get(id).orElseThrow(serviceHelper
-                .getResourceNotFoundExceptionSupplier(EXCEPTION_USER_WITH_ID_NOT_FOUND, id));
+        User user = userDao.get(id)
+                .orElseThrow(serviceHelper.getResourceNotFoundExceptionSupplier(EXCEPTION_USER_WITH_ID_NOT_FOUND, id));
 
         if (!user.getRole().equals(User.Role.TENANT)) {
             throw new AccessForbiddenException();
@@ -100,9 +107,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private TypeOfWork getTypeOfWork(TypeOfWorkDao typeOfWorkDao, int id) {
-        return typeOfWorkDao.get(id)
-                .orElseThrow(serviceHelper.getResourceNotFoundExceptionSupplier(
-                        EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND, id));
+        return typeOfWorkDao.get(id).orElseThrow(
+                serviceHelper.getResourceNotFoundExceptionSupplier(EXCEPTION_TYPE_OF_WORK_WITH_ID_NOT_FOUND, id));
     }
 
     public ServiceHelper getServiceHelper() {

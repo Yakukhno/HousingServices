@@ -1,6 +1,6 @@
 package ua.training.controller.util;
 
-public class Attributes {
+public class AttributeConstants {
     public static final String TYPE_OF_WORK = "typesOfWork";
     public static final String PROBLEM_SCALE = "problemScales";
     public static final String APPLICATION = "application";

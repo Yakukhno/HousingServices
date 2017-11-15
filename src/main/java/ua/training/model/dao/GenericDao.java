@@ -5,8 +5,12 @@ import java.util.Optional;
 
 public interface GenericDao<T> {
     Optional<T> get(int id);
+
     List<T> getAll();
+
     void add(T t);
+
     void delete(int id);
+
     void update(T t);
 }

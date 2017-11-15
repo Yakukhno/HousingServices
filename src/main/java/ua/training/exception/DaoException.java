@@ -1,6 +1,7 @@
 package ua.training.exception;
 
 public class DaoException extends ApplicationException {
+
     public DaoException() {
         super();
     }

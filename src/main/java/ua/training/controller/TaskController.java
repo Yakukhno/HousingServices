@@ -6,6 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import ua.training.controller.util.ExceptionConstants;
 import ua.training.controller.validator.DateTimeValidator;
 import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
@@ -15,6 +17,7 @@ import ua.training.model.service.TaskService;
 import ua.training.model.service.WorkerService;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,19 +25,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ua.training.controller.util.Attributes.*;
-import static ua.training.controller.util.Routes.APPLICATION_ROUTE;
-import static ua.training.controller.util.Routes.NEW_TASK_ROUTE;
-import static ua.training.controller.util.Routes.REDIRECT;
-import static ua.training.controller.util.Views.NEW_TASK_VIEW;
-import static ua.training.controller.util.Views.TASKS_VIEW;
+import static ua.training.controller.util.AttributeConstants.*;
+import static ua.training.controller.util.RouteConstants.APPLICATION_ROUTE;
+import static ua.training.controller.util.RouteConstants.NEW_TASK_ROUTE;
+import static ua.training.controller.util.RouteConstants.REDIRECT;
+import static ua.training.controller.util.ViewConstants.NEW_TASK_VIEW;
+import static ua.training.controller.util.ViewConstants.TASKS_VIEW;
 
 @Controller
 @RequestMapping("/web")
 public class TaskController {
-
-    private static final String EXCEPTION_INCORRECT_DATE = "exception.date";
-    private static final String EXCEPTION_NULL_MANAGER = "exception.manager";
 
     private Validator dateTimeValidator = new DateTimeValidator();
 
@@ -42,8 +42,7 @@ public class TaskController {
     private WorkerService workerService;
 
     @Autowired
-    public TaskController(TaskService taskService,
-                          WorkerService workerService) {
+    public TaskController(TaskService taskService, WorkerService workerService) {
         this.taskService = taskService;
         this.workerService = workerService;
     }
@@ -56,12 +55,8 @@ public class TaskController {
 
     @PostMapping("/task")
     public String addTask(@RequestParam("application") int applicationId,
-                          @RequestParam(
-                                  value = "workers",
-                                  required = false) String[] paramWorkers,
-                          @RequestParam(
-                                  value = "manager",
-                                  required = false) String paramManager,
+                          @RequestParam(value = "workers", required = false) String[] paramWorkers,
+                          @RequestParam(value = "manager", required = false) String paramManager,
                           @RequestParam LocalDateTime dateTime) {
         TaskDto taskDto = new TaskDto.Builder()
                 .setApplicationId(applicationId)
@@ -76,8 +71,7 @@ public class TaskController {
     private List<Integer> getWorkersIds(String[] paramWorkers) {
         List<Integer> workersIdsList = new ArrayList<>();
         if (paramWorkers != null) {
-            workersIdsList = Arrays.stream(paramWorkers)
-                    .map(Integer::parseInt).collect(Collectors.toList());
+            workersIdsList = Arrays.stream(paramWorkers).map(Integer::parseInt).collect(Collectors.toList());
         }
         return workersIdsList;
     }
@@ -86,8 +80,7 @@ public class TaskController {
         if (managerId != null) {
             return Integer.parseInt(managerId);
         } else {
-            throw new ValidationException()
-                    .setUserMessage(EXCEPTION_NULL_MANAGER);
+            throw new ValidationException().setUserMessage(ExceptionConstants.EXCEPTION_NULL_MANAGER);
         }
     }
 
@@ -105,8 +98,7 @@ public class TaskController {
     }
 
     @ExceptionHandler(ApplicationException.class)
-    public String handleApplicationException(ApplicationException e,
-                                             RedirectAttributes model,
+    public String handleApplicationException(ApplicationException e, RedirectAttributes model,
                                              HttpServletRequest request) {
         if (!e.isUserMessage()) {
             throw e;
@@ -129,8 +121,7 @@ public class TaskController {
                     dateTimeValidator.validate(s);
                     setValue(LocalDateTime.parse(s));
                 } else {
-                    throw new ValidationException()
-                            .setUserMessage(EXCEPTION_INCORRECT_DATE);
+                    throw new ValidationException().setUserMessage(ExceptionConstants.EXCEPTION_INCORRECT_DATE);
                 }
             }
         });

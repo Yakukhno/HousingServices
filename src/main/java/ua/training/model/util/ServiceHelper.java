@@ -1,12 +1,13 @@
 package ua.training.model.util;
 
+import java.util.function.Supplier;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+
 import ua.training.exception.ApplicationException;
 import ua.training.exception.ResourceNotFoundException;
 import ua.training.exception.ServiceException;
-
-import java.util.function.Supplier;
 
 @Component
 public class ServiceHelper {
@@ -21,8 +22,7 @@ public class ServiceHelper {
         };
     }
 
-    public Supplier<ResourceNotFoundException> getResourceNotFoundExceptionSupplier(String message,
-                                                                                    int id) {
+    public Supplier<ResourceNotFoundException> getResourceNotFoundExceptionSupplier(String message, int id) {
         return () -> {
             ResourceNotFoundException e = new ResourceNotFoundException();
             String fullMessage = String.format(message, id);

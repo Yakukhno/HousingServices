@@ -10,16 +10,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-public class MethodSecurityConfiguration
-        extends GlobalMethodSecurityConfiguration {
+public class MethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
 
     private UserDetailsService userDetailsService;
     private PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder);
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
     @Autowired

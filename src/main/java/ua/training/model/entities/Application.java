@@ -1,8 +1,8 @@
 package ua.training.model.entities;
 
-import ua.training.model.entities.person.User;
-
 import java.time.LocalDateTime;
+
+import ua.training.model.entities.person.User;
 
 public class Application {
     private int id;
@@ -17,7 +17,7 @@ public class Application {
         NEW, CONSIDERED
     }
 
-    public int getId()  {
+    public int getId() {
         return id;
     }
 

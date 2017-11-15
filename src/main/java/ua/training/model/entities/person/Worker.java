@@ -1,8 +1,10 @@
 package ua.training.model.entities.person;
 
-import ua.training.model.entities.TypeOfWork;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
-import java.util.*;
+import ua.training.model.entities.TypeOfWork;
 
 public class Worker extends Person {
 

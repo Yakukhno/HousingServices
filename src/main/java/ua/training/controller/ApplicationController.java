@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import ua.training.controller.validator.DateTimeValidator;
 import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
@@ -22,13 +23,13 @@ import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ua.training.controller.util.Attributes.*;
-import static ua.training.controller.util.Routes.NEW_APPLICATION_ROUTE;
-import static ua.training.controller.util.Routes.REDIRECT;
-import static ua.training.controller.util.Routes.USER_APPLICATIONS_ROUTE;
-import static ua.training.controller.util.Views.ALL_APPLICATIONS_VIEW;
-import static ua.training.controller.util.Views.NEW_APPLICATION_VIEW;
-import static ua.training.controller.util.Views.USER_APPLICATIONS_VIEW;
+import static ua.training.controller.util.AttributeConstants.*;
+import static ua.training.controller.util.RouteConstants.NEW_APPLICATION_ROUTE;
+import static ua.training.controller.util.RouteConstants.REDIRECT;
+import static ua.training.controller.util.RouteConstants.USER_APPLICATIONS_ROUTE;
+import static ua.training.controller.util.ViewConstants.ALL_APPLICATIONS_VIEW;
+import static ua.training.controller.util.ViewConstants.NEW_APPLICATION_VIEW;
+import static ua.training.controller.util.ViewConstants.USER_APPLICATIONS_VIEW;
 
 @Controller
 @RequestMapping("/web")
@@ -40,8 +41,7 @@ public class ApplicationController {
     private TypeOfWorkService typeOfWorkService;
 
     @Autowired
-    public ApplicationController(ApplicationService applicationService,
-                                 TypeOfWorkService typeOfWorkService) {
+    public ApplicationController(ApplicationService applicationService, TypeOfWorkService typeOfWorkService) {
         this.applicationService = applicationService;
         this.typeOfWorkService = typeOfWorkService;
     }
@@ -54,16 +54,12 @@ public class ApplicationController {
     }
 
     @PostMapping("/application")
-    public String addApplication(@RequestParam TypeOfWork typeOfWork,
-                                 @RequestParam ProblemScale problemScale,
-                                 @RequestParam LocalDateTime dateTime,
-                                 @RequestParam String address,
+    public String addApplication(@RequestParam TypeOfWork typeOfWork, @RequestParam ProblemScale problemScale,
+                                 @RequestParam LocalDateTime dateTime, @RequestParam String address,
                                  Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Application application = new Application.Builder()
-                .setUser(new User.Builder()
-                        .setId(userDetails.getUser().getId())
-                        .build())
+                .setUser(new User.Builder().setId(userDetails.getUser().getId()).build())
                 .setTypeOfWork(typeOfWork)
                 .setProblemScale(problemScale)
                 .setDesiredTime(dateTime)
@@ -77,8 +73,7 @@ public class ApplicationController {
     public String getUserApplication(Authentication authentication, Model model) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         model.addAttribute(STATUS_NEW, Application.Status.NEW);
-        model.addAttribute(APPLICATIONS,
-                applicationService.getApplicationsByUserId(userDetails.getUser().getId()));
+        model.addAttribute(APPLICATIONS, applicationService.getApplicationsByUserId(userDetails.getUser().getId()));
         return USER_APPLICATIONS_VIEW;
     }
 
@@ -90,17 +85,14 @@ public class ApplicationController {
     }
 
     @PostMapping("/application/{applicationId}/delete")
-    public String deleteApplication(@PathVariable int applicationId,
-                                    Authentication authentication) {
+    public String deleteApplication(@PathVariable int applicationId, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         applicationService.deleteApplication(applicationId, userDetails.getUser().getId());
         return REDIRECT + USER_APPLICATIONS_ROUTE;
     }
 
     @ExceptionHandler(ApplicationException.class)
-    public String handleApplicationException(ApplicationException e,
-                                             RedirectAttributes model) {
-
+    public String handleApplicationException(ApplicationException e, RedirectAttributes model) {
         if (!e.isUserMessage()) {
             throw e;
         }

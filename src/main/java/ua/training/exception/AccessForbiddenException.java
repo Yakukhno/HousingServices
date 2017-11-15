@@ -2,8 +2,7 @@ package ua.training.exception;
 
 public class AccessForbiddenException extends ApplicationException {
 
-    private static final String EXCEPTION_ACCESS_IS_FORBIDDEN_FOUND
-            = "Access is forbidden";
+    private static final String EXCEPTION_ACCESS_IS_FORBIDDEN_FOUND = "Access is forbidden";
 
     public AccessForbiddenException() {
         super(EXCEPTION_ACCESS_IS_FORBIDDEN_FOUND);

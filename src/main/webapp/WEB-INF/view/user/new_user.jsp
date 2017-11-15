@@ -29,8 +29,8 @@
         <label for="role" class="control-label col-md-4"><fmt:message key="role"/></label>
         <div class="col-md-8">
             <select id="role" name="role" class="form-control">
-                <option>${applicationScope[Attributes.TENANT]}</option>
-                <option>${applicationScope[Attributes.DISPATCHER]}</option>
+                <option>${applicationScope[AttributeConstants.TENANT]}</option>
+                <option>${applicationScope[AttributeConstants.DISPATCHER]}</option>
             </select>
         </div>
     </div>
@@ -40,12 +40,12 @@
             <button class="btn btn-default" type="submit"><fmt:message key="send"/></button>
         </div>
     </div>
-    <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
+    <c:if test="${not empty requestScope[AttributeConstants.MESSAGE]}">
         <div class="row">
             <div class="alert alert-danger" align="center" role="alert">
-                <fmt:message key="${requestScope[Attributes.MESSAGE]}">
-                    <c:if test="${not empty requestScope[Attributes.PARAMS]}">
-                        <c:forEach var="parameter" items="${requestScope[Attributes.PARAMS]}">
+                <fmt:message key="${requestScope[AttributeConstants.MESSAGE]}">
+                    <c:if test="${not empty requestScope[AttributeConstants.PARAMS]}">
+                        <c:forEach var="parameter" items="${requestScope[AttributeConstants.PARAMS]}">
                             <fmt:param value="${parameter}"/>
                         </c:forEach>
                     </c:if>

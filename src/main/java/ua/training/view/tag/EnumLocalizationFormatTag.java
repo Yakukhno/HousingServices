@@ -1,9 +1,10 @@
 package ua.training.view.tag;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.IOException;
 import java.io.StringWriter;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class EnumLocalizationFormatTag extends SimpleTagSupport {
 
@@ -21,8 +22,7 @@ public class EnumLocalizationFormatTag extends SimpleTagSupport {
     }
 
     private String formBundleString(String string) {
-        return enumClass.substring(0, 1).toLowerCase() +
-                enumClass.substring(1) + "." + string.trim().toLowerCase();
+        return enumClass.substring(0, 1).toLowerCase() + enumClass.substring(1) + "." + string.trim().toLowerCase();
     }
 
 }

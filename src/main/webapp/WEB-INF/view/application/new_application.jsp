@@ -13,7 +13,7 @@
             </label>
             <div class="col-md-8">
                 <select id="typeOfWork" name="typeOfWork" class="form-control">
-                    <c:forEach var="typeOfWork" items="${requestScope[Attributes.TYPE_OF_WORK]}">
+                    <c:forEach var="typeOfWork" items="${requestScope[AttributeConstants.TYPE_OF_WORK]}">
                         <option value="${typeOfWork.id}">
                             <fmt:message>
                                 ${typeOfWork.description}
@@ -30,7 +30,7 @@
             <div class="col-md-8">
                 <select id="problemScale" name="problemScale" class="form-control">
                     <c:forEach var="problemScale"
-                               items="${requestScope[Attributes.PROBLEM_SCALE]}">
+                               items="${requestScope[AttributeConstants.PROBLEM_SCALE]}">
                         <option value="${problemScale}">
                             <fmt:message>
                                 <custom:enumLocale enumClass="${problemScale.getClass().getSimpleName()}">
@@ -64,13 +64,13 @@
                 <button class="btn btn-default" type="submit"><fmt:message key="send"/></button>
             </div>
         </div>
-        <c:if test="${not empty requestScope[Attributes.MESSAGE]}">
+        <c:if test="${not empty requestScope[AttributeConstants.MESSAGE]}">
             <div class="row">
                 <div class="alert alert-danger" align="center" role="alert">
-                    <fmt:message key="${requestScope[Attributes.MESSAGE]}">
-                        <c:if test="${not empty requestScope[Attributes.PARAMS]}">
+                    <fmt:message key="${requestScope[AttributeConstants.MESSAGE]}">
+                        <c:if test="${not empty requestScope[AttributeConstants.PARAMS]}">
                             <c:forEach var="parameter"
-                                       items="${requestScope[Attributes.PARAMS]}">
+                                       items="${requestScope[AttributeConstants.PARAMS]}">
                                 <fmt:param>
                                     <custom:dateTime>${parameter}</custom:dateTime>
                                 </fmt:param>
