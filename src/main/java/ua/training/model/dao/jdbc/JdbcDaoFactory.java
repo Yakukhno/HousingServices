@@ -1,13 +1,21 @@
 package ua.training.model.dao.jdbc;
 
-import ua.training.model.dao.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
+
+import ua.training.model.dao.ApplicationDao;
+import ua.training.model.dao.BrigadeDao;
+import ua.training.model.dao.DaoConnection;
+import ua.training.model.dao.DaoFactory;
+import ua.training.model.dao.TaskDao;
+import ua.training.model.dao.TypeOfWorkDao;
+import ua.training.model.dao.UserDao;
+import ua.training.model.dao.WorkerDao;
 
 public class JdbcDaoFactory extends DaoFactory {
 
@@ -16,9 +24,7 @@ public class JdbcDaoFactory extends DaoFactory {
     public JdbcDaoFactory() {
         try {
             Context context = new InitialContext();
-            dataSource = (DataSource) context.lookup(
-                    "java:comp/env/jdbc/housing_services"
-            );
+            dataSource = (DataSource) context.lookup("java:comp/env/jdbc/housing_services");
         } catch (NamingException e) {
             throw new RuntimeException(e);
         }

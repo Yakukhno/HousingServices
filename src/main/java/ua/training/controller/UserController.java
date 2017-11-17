@@ -1,14 +1,14 @@
 package ua.training.controller;
 
-import static ua.training.controller.util.AttributeConstants.MESSAGE;
-import static ua.training.controller.util.AttributeConstants.PARAMS;
-import static ua.training.controller.util.AttributeConstants.USER;
-import static ua.training.controller.util.RouteConstants.LOGIN_ROUTE;
-import static ua.training.controller.util.RouteConstants.NEW_USER_ROUTE;
-import static ua.training.controller.util.RouteConstants.REDIRECT;
-import static ua.training.controller.util.RouteConstants.WEB;
-import static ua.training.controller.util.ViewConstants.NEW_USER_VIEW;
-import static ua.training.controller.util.ViewConstants.USER_VIEW;
+import static ua.training.util.AttributeConstants.MESSAGE;
+import static ua.training.util.AttributeConstants.PARAMS;
+import static ua.training.util.AttributeConstants.USER;
+import static ua.training.util.RouteConstants.LOGIN_ROUTE;
+import static ua.training.util.RouteConstants.NEW_USER_ROUTE;
+import static ua.training.util.RouteConstants.REDIRECT;
+import static ua.training.util.RouteConstants.WEB;
+import static ua.training.util.ViewConstants.NEW_USER_VIEW;
+import static ua.training.util.ViewConstants.USER_VIEW;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package ua.training.configuration;
 
-import static ua.training.controller.util.AttributeConstants.DISPATCHER;
-import static ua.training.controller.util.AttributeConstants.TENANT;
+import static ua.training.util.AttributeConstants.DISPATCHER;
+import static ua.training.util.AttributeConstants.TENANT;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;

@@ -1,6 +1,6 @@
 package ua.training.controller.validator;
 
-import static ua.training.controller.util.ExceptionConstants.EXCEPTION_VALIDATION_INCORRECT_EMAIL;
+import static ua.training.util.ExceptionConstants.EXCEPTION_VALIDATION_INCORRECT_EMAIL;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

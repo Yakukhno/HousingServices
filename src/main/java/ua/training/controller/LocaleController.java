@@ -1,7 +1,7 @@
 package ua.training.controller;
 
-import static ua.training.controller.util.AttributeConstants.LOCALE;
-import static ua.training.controller.util.RouteConstants.REDIRECT;
+import static ua.training.util.AttributeConstants.LOCALE;
+import static ua.training.util.RouteConstants.REDIRECT;
 
 import java.util.Locale;
 

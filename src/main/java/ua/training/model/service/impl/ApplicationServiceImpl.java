@@ -1,7 +1,7 @@
 package ua.training.model.service.impl;
 
-import static ua.training.controller.util.RoleConstants.ROLE_DISPATCHER;
-import static ua.training.controller.util.RoleConstants.ROLE_TENANT;
+import static ua.training.util.RoleConstants.ROLE_DISPATCHER;
+import static ua.training.util.RoleConstants.ROLE_TENANT;
 
 import java.util.List;
 

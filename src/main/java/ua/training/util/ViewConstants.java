@@ -1,4 +1,4 @@
-package ua.training.controller.util;
+package ua.training.util;
 
 public class ViewConstants {
     public static final String HOME_VIEW = "index";

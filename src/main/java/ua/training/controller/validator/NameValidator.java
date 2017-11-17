@@ -1,6 +1,6 @@
 package ua.training.controller.validator;
 
-import static ua.training.controller.util.ExceptionConstants.EXCEPTION_VALIDATION_INCORRECT_NAME;
+import static ua.training.util.ExceptionConstants.EXCEPTION_VALIDATION_INCORRECT_NAME;
 
 import ua.training.exception.ValidationException;
 

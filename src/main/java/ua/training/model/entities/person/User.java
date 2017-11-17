@@ -2,9 +2,19 @@ package ua.training.model.entities.person;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+@Entity
 public class User extends Person {
+
     private String email;
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "enum('TENANT','DISPATCHER')")
     private Role role;
 
     public enum Role {
@@ -37,8 +47,8 @@ public class User extends Person {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
+        if (this == o) { return true; }
+        if (!(o instanceof User)) { return false; }
         User user = (User) o;
         return id == user.id &&
                 Objects.equals(name, user.name) &&
@@ -63,7 +73,7 @@ public class User extends Person {
                 '}';
     }
 
-    public static class Builder  {
+    public static class Builder {
         private User user = new User();
 
         public Builder setId(int id) {

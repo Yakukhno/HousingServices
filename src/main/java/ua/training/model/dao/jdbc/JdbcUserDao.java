@@ -1,36 +1,35 @@
 package ua.training.model.dao.jdbc;
 
-import org.apache.log4j.Logger;
-import ua.training.exception.DaoException;
-import ua.training.model.dao.UserDao;
-import ua.training.model.entities.person.User;
+import static ua.training.util.RepositoryConstants.USER_TABLE;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.log4j.Logger;
+
+import ua.training.exception.DaoException;
+import ua.training.model.dao.UserDao;
+import ua.training.model.entities.person.User;
 
 public class JdbcUserDao extends AbstractJdbcDao implements UserDao {
 
     private static final String SELECT = "SELECT * FROM user ";
 
     private static final String SELECT_ALL = SELECT;
-    private static final String SELECT_BY_ID = SELECT +
-            "WHERE id_user = ?";
-    private static final String SELECT_BY_EMAIL = SELECT +
-            "WHERE email = ?";
-    private static final String SELECT_BY_ROLE = SELECT +
-            "WHERE role = ?";
+    private static final String SELECT_BY_ID = SELECT + "WHERE id_user = ?";
+    private static final String SELECT_BY_EMAIL = SELECT + "WHERE email = ?";
+    private static final String SELECT_BY_ROLE = SELECT + "WHERE role = ?";
 
-    private static final String INSERT =
-            "INSERT INTO user (name, email, password, role) " +
-                    "VALUES (?, ?, ?, ?)";
-    private static final String DELETE_BY_ID =
-            "DELETE FROM user WHERE id_user = ?";
+    private static final String INSERT = "INSERT INTO user (name, email, password, role) VALUES (?, ?, ?, ?)";
+    private static final String DELETE_BY_ID = "DELETE FROM user WHERE id_user = ?";
     private static final String UPDATE =
-            "UPDATE user " +
-                    "SET name = ?, email = ?, password = ?, role = ?" +
-                    "WHERE id_user = ?";
+            "UPDATE user SET name = ?, email = ?, password = ?, role = ? WHERE id_user = ?";
 
     private static final String EXCEPTION_GET_BY_ID
             = "Failed select from 'user' with id = %d";
@@ -48,13 +47,6 @@ public class JdbcUserDao extends AbstractJdbcDao implements UserDao {
             = "exception.email_exists";
     private static final int ERROR_CODE_DUPLICATE_FIELD = 1062;
 
-    static final String USER_TABLE = "user";
-    static final String USER_ID = "id_user";
-    static final String USER_NAME = "name";
-    static final String USER_EMAIL = "email";
-    static final String USER_PASSWORD = "password";
-    static final String USER_ROLE = "role";
-
     JdbcUserDao(Connection connection) {
         this.connection = connection;
         logger = Logger.getLogger(JdbcUserDao.class);
@@ -63,8 +55,7 @@ public class JdbcUserDao extends AbstractJdbcDao implements UserDao {
     @Override
     public Optional<User> get(int id) {
         Optional<User> user = Optional.empty();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
@@ -82,7 +73,7 @@ public class JdbcUserDao extends AbstractJdbcDao implements UserDao {
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
         try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
+                ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             while (resultSet.next()) {
                 users.add(helper.getUserFromResultSet(resultSet));
             }
@@ -94,8 +85,7 @@ public class JdbcUserDao extends AbstractJdbcDao implements UserDao {
 
     @Override
     public void add(User user) {
-        try (PreparedStatement statement = connection.prepareStatement(INSERT,
-                Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
             setStatementFromUser(statement, user);
             statement.execute();
 
@@ -116,8 +106,7 @@ public class JdbcUserDao extends AbstractJdbcDao implements UserDao {
 
     @Override
     public void update(User user) {
-        try (PreparedStatement statement =
-                     connection.prepareStatement(UPDATE)) {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             setStatementFromUser(statement, user);
             statement.setInt(5, user.getId());
             statement.execute();
@@ -130,8 +119,7 @@ public class JdbcUserDao extends AbstractJdbcDao implements UserDao {
     @Override
     public Optional<User> getUserByEmail(String email) {
         Optional<User> user = Optional.empty();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_EMAIL)) {
+        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_EMAIL)) {
             statement.setString(1, email);
 
             ResultSet resultSet = statement.executeQuery();
@@ -148,8 +136,7 @@ public class JdbcUserDao extends AbstractJdbcDao implements UserDao {
     @Override
     public List<User> getUsersByRole(User.Role role) {
         List<User> users = new ArrayList<>();
-        try (PreparedStatement statement
-                     = connection.prepareStatement(SELECT_BY_ROLE)) {
+        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_ROLE)) {
             statement.setString(1, role.name());
 
             ResultSet resultSet = statement.executeQuery();
@@ -163,21 +150,17 @@ public class JdbcUserDao extends AbstractJdbcDao implements UserDao {
         return users;
     }
 
-    private void setStatementFromUser(PreparedStatement statement,
-                                      User user)
-            throws SQLException {
+    private void setStatementFromUser(PreparedStatement statement, User user) throws SQLException {
         statement.setString(1, user.getName());
         statement.setString(2, user.getEmail());
         statement.setString(3, user.getPassword());
         statement.setString(4, user.getRole().name());
     }
 
-    private DaoException getDaoException(String message, SQLException e,
-                                         User user) {
+    private DaoException getDaoException(String message, SQLException e, User user) {
         DaoException daoException = new DaoException(e);
         if (e.getErrorCode() == ERROR_CODE_DUPLICATE_FIELD) {
-            daoException.setUserMessage(EXCEPTION_DUPLICATE_EMAIL)
-                    .addParameter(user.getEmail());
+            daoException.setUserMessage(EXCEPTION_DUPLICATE_EMAIL).addParameter(user.getEmail());
             logger.info(message, e);
         } else {
             logger.error(message, e);

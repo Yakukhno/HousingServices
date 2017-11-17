@@ -1,4 +1,4 @@
-package ua.training.controller.util;
+package ua.training.util;
 
 public class RouteConstants {
     public static final String REDIRECT = "redirect:";

@@ -1,6 +1,6 @@
 package ua.training.controller.validator;
 
-import static ua.training.controller.util.ExceptionConstants.EXCEPTION_VALIDATION_INCORRECT_DATE;
+import static ua.training.util.ExceptionConstants.EXCEPTION_VALIDATION_INCORRECT_DATE;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;

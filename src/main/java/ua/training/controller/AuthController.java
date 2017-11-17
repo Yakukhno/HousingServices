@@ -1,6 +1,6 @@
 package ua.training.controller;
 
-import static ua.training.controller.util.ViewConstants.LOGIN_VIEW;
+import static ua.training.util.ViewConstants.LOGIN_VIEW;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

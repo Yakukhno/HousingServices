@@ -7,7 +7,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ua.training.controller.util.ExceptionConstants;
+import ua.training.util.ExceptionConstants;
 import ua.training.controller.validator.DateTimeValidator;
 import ua.training.controller.validator.Validator;
 import ua.training.exception.ApplicationException;
@@ -25,12 +25,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ua.training.controller.util.AttributeConstants.*;
-import static ua.training.controller.util.RouteConstants.APPLICATION_ROUTE;
-import static ua.training.controller.util.RouteConstants.NEW_TASK_ROUTE;
-import static ua.training.controller.util.RouteConstants.REDIRECT;
-import static ua.training.controller.util.ViewConstants.NEW_TASK_VIEW;
-import static ua.training.controller.util.ViewConstants.TASKS_VIEW;
+import static ua.training.util.AttributeConstants.*;
+import static ua.training.util.RouteConstants.APPLICATION_ROUTE;
+import static ua.training.util.RouteConstants.NEW_TASK_ROUTE;
+import static ua.training.util.RouteConstants.REDIRECT;
+import static ua.training.util.ViewConstants.NEW_TASK_VIEW;
+import static ua.training.util.ViewConstants.TASKS_VIEW;
 
 @Controller
 @RequestMapping("/web")

@@ -1,12 +1,40 @@
 package ua.training.model.entities;
 
+import static ua.training.util.RepositoryConstants.TASK_APPLICATION_ID;
+import static ua.training.util.RepositoryConstants.TASK_BRIGADE_ID;
+import static ua.training.util.RepositoryConstants.TASK_ID;
+import static ua.training.util.RepositoryConstants.TASK_IS_ACTIVE;
+import static ua.training.util.RepositoryConstants.TASK_SCHEDULED_TIME;
+
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+
+@Entity
 public class Task {
+
+    @Id
+    @GeneratedValue
+    @Column(name = TASK_ID)
     private int id;
+
+    @OneToOne
+    @JoinColumn(name = TASK_APPLICATION_ID)
     private Application application;
+
+    @OneToOne
+    @JoinColumn(name = TASK_BRIGADE_ID)
     private Brigade brigade;
+
+    @Column(name = TASK_SCHEDULED_TIME)
     private LocalDateTime scheduledTime;
+
+    @Column(name = TASK_IS_ACTIVE)
     private boolean isActive;
 
     public int getId() {

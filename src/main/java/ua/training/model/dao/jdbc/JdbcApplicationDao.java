@@ -1,33 +1,35 @@
 package ua.training.model.dao.jdbc;
 
-import org.apache.log4j.Logger;
-import ua.training.model.dao.ApplicationDao;
-import ua.training.model.entities.Application;
+import static ua.training.util.RepositoryConstants.APPLICATION_TABLE;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class JdbcApplicationDao extends AbstractJdbcDao
-        implements ApplicationDao {
+import org.apache.log4j.Logger;
+
+import ua.training.model.dao.ApplicationDao;
+import ua.training.model.entities.Application;
+
+public class JdbcApplicationDao extends AbstractJdbcDao implements ApplicationDao {
 
     private static final String SELECT =
             "SELECT * FROM application " +
                     "JOIN type_of_work USING (id_type_of_work) " +
                     "LEFT JOIN user USING (id_user) ";
-    private static final String ORDER_BY =
-            "ORDER BY application.status, application.desired_time DESC";
+    private static final String ORDER_BY = "ORDER BY application.status, application.desired_time DESC";
 
     private static final String SELECT_ALL = SELECT + ORDER_BY;
-    private static final String SELECT_BY_ID = SELECT +
-            "WHERE id_application = ?";
-    private static final String SELECT_BY_TYPE_OF_WORK = SELECT +
-            "WHERE type_of_work.description LIKE ?";
-    private static final String SELECT_BY_TENANT = SELECT +
-            "WHERE id_user = ?";
-    private static final String SELECT_BY_STATUS = SELECT +
-            "WHERE status = ?";
+    private static final String SELECT_BY_ID = SELECT + "WHERE id_application = ?";
+    private static final String SELECT_BY_TYPE_OF_WORK = SELECT + "WHERE type_of_work.description LIKE ?";
+    private static final String SELECT_BY_TENANT = SELECT + "WHERE id_user = ?";
+    private static final String SELECT_BY_STATUS = SELECT + "WHERE status = ?";
 
     private static final String INSERT =
             "INSERT INTO application " +
@@ -42,27 +44,14 @@ public class JdbcApplicationDao extends AbstractJdbcDao
                     "address = ? " +
                     "WHERE id_application = ?";
 
-    private static final String EXCEPTION_GET_BY_ID
-            = "Failed select from 'application' with id = %d";
-    private static final String EXCEPTION_GET_BY_TYPE_OF_WORK
-            = "Failed select from 'application' with type_of_work like %s";
-    private static final String EXCEPTION_GET_BY_USER_ID
-            = "Failed select from 'application' with id_user = %d";
-    private static final String EXCEPTION_GET_BY_STATUS
-            = "Failed select from 'application' with status = %s";
-    private static final String EXCEPTION_GET_ALL
-            = "Failed select from 'application'";
-    private static final String EXCEPTION_ADD
-            = "Failed insert into 'application' value = %s";
-    private static final String EXCEPTION_UPDATE
-            = "Failed update 'application' value = %s";
-
-    static final String APPLICATION_TABLE = "application";
-    static final String APPLICATION_ID = "id_application";
-    static final String APPLICATION_SCALE_OF_PROBLEM = "scale_of_problem";
-    static final String APPLICATION_DESIRED_TIME = "desired_time";
-    static final String APPLICATION_STATUS = "status";
-    static final String APPLICATION_ADDRESS = "address";
+    private static final String EXCEPTION_GET_BY_ID = "Failed select from 'application' with id = %d";
+    private static final String EXCEPTION_GET_BY_TYPE_OF_WORK =
+            "Failed select from 'application' with type_of_work like %s";
+    private static final String EXCEPTION_GET_BY_USER_ID = "Failed select from 'application' with id_user = %d";
+    private static final String EXCEPTION_GET_BY_STATUS = "Failed select from 'application' with status = %s";
+    private static final String EXCEPTION_GET_ALL = "Failed select from 'application'";
+    private static final String EXCEPTION_ADD = "Failed insert into 'application' value = %s";
+    private static final String EXCEPTION_UPDATE = "Failed update 'application' value = %s";
 
     JdbcApplicationDao(Connection connection) {
         this.connection = connection;
@@ -72,15 +61,12 @@ public class JdbcApplicationDao extends AbstractJdbcDao
     @Override
     public Optional<Application> get(int id) {
         Optional<Application> application = Optional.empty();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                application = Optional.of(
-                        helper.getApplicationFromResultSet(resultSet)
-                );
+                application = Optional.of(helper.getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -93,7 +79,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
     public List<Application> getAll() {
         List<Application> applications = new ArrayList<>();
         try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
+                ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             while (resultSet.next()) {
                 applications.add(helper.getApplicationFromResultSet(resultSet));
             }
@@ -105,8 +91,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
 
     @Override
     public void add(Application application) {
-        try (PreparedStatement statement = connection.prepareStatement(INSERT,
-                Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
             setStatementFromApplication(statement, application);
             statement.execute();
 
@@ -127,8 +112,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
 
     @Override
     public void update(Application application) {
-        try (PreparedStatement statement =
-                     connection.prepareStatement(UPDATE)) {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             setStatementFromApplication(statement, application);
             statement.setInt(7, application.getId());
             statement.execute();
@@ -141,8 +125,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
     @Override
     public List<Application> getApplicationsByTypeOfWork(String typeOfWork) {
         List<Application> applications = new ArrayList<>();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_TYPE_OF_WORK)) {
+        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_TYPE_OF_WORK)) {
             statement.setString(1, '%' + typeOfWork + '%');
 
             ResultSet resultSet = statement.executeQuery();
@@ -161,7 +144,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
     public List<Application> getApplicationsByUserId(int userId) {
         List<Application> applications = new ArrayList<>();
         try (PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_TENANT)) {
+                connection.prepareStatement(SELECT_BY_TENANT)) {
             statement.setInt(1, userId);
 
             ResultSet resultSet = statement.executeQuery();
@@ -178,8 +161,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
     @Override
     public List<Application> getApplicationsByStatus(Application.Status status) {
         List<Application> applications = new ArrayList<>();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_STATUS)) {
+        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_STATUS)) {
             statement.setString(1, status.name());
 
             ResultSet resultSet = statement.executeQuery();
@@ -193,9 +175,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao
         return applications;
     }
 
-    private void setStatementFromApplication(PreparedStatement statement,
-                                            Application application)
-            throws SQLException {
+    private void setStatementFromApplication(PreparedStatement statement, Application application) throws SQLException {
         Timestamp timestamp = (application.getDesiredTime() != null)
                 ? Timestamp.valueOf(application.getDesiredTime())
                 : null;

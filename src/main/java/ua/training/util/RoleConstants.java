@@ -1,4 +1,4 @@
-package ua.training.controller.util;
+package ua.training.util;
 
 public class RoleConstants {
     public static final String TENANT = "TENANT";

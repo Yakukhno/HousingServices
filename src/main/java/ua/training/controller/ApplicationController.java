@@ -23,13 +23,13 @@ import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ua.training.controller.util.AttributeConstants.*;
-import static ua.training.controller.util.RouteConstants.NEW_APPLICATION_ROUTE;
-import static ua.training.controller.util.RouteConstants.REDIRECT;
-import static ua.training.controller.util.RouteConstants.USER_APPLICATIONS_ROUTE;
-import static ua.training.controller.util.ViewConstants.ALL_APPLICATIONS_VIEW;
-import static ua.training.controller.util.ViewConstants.NEW_APPLICATION_VIEW;
-import static ua.training.controller.util.ViewConstants.USER_APPLICATIONS_VIEW;
+import static ua.training.util.AttributeConstants.*;
+import static ua.training.util.RouteConstants.NEW_APPLICATION_ROUTE;
+import static ua.training.util.RouteConstants.REDIRECT;
+import static ua.training.util.RouteConstants.USER_APPLICATIONS_ROUTE;
+import static ua.training.util.ViewConstants.ALL_APPLICATIONS_VIEW;
+import static ua.training.util.ViewConstants.NEW_APPLICATION_VIEW;
+import static ua.training.util.ViewConstants.USER_APPLICATIONS_VIEW;
 
 @Controller
 @RequestMapping("/web")

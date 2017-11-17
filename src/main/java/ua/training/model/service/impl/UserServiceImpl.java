@@ -1,6 +1,6 @@
 package ua.training.model.service.impl;
 
-import static ua.training.controller.util.RoleConstants.ROLE_DISPATCHER;
+import static ua.training.util.RoleConstants.ROLE_DISPATCHER;
 
 import java.sql.Connection;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import ua.training.controller.util.ExceptionConstants;
+import ua.training.util.ExceptionConstants;
 import ua.training.model.dao.DaoConnection;
 import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.UserDao;

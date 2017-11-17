@@ -1,7 +1,7 @@
 package ua.training.controller;
 
-import static ua.training.controller.util.AttributeConstants.BRIGADE;
-import static ua.training.controller.util.ViewConstants.BRIGADE_VIEW;
+import static ua.training.util.AttributeConstants.BRIGADE;
+import static ua.training.util.ViewConstants.BRIGADE_VIEW;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

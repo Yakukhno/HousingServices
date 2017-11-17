@@ -1,4 +1,4 @@
-package ua.training.controller.util;
+package ua.training.util;
 
 public class ExceptionConstants {
     public static final String INCORRECT_EMAIL_OR_PASSWORD = "exception.email_password";

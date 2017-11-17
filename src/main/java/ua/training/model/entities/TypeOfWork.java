@@ -1,8 +1,23 @@
 package ua.training.model.entities;
 
+import static ua.training.util.RepositoryConstants.TYPE_OF_WORK_ID;
+import static ua.training.util.RepositoryConstants.TYPE_OF_WORK_TABLE;
+
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = TYPE_OF_WORK_TABLE)
 public class TypeOfWork {
+
+    @Id
+    @GeneratedValue
+    @Column(name = TYPE_OF_WORK_ID)
     private int id;
     private String description;
 
@@ -24,8 +39,8 @@ public class TypeOfWork {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         TypeOfWork that = (TypeOfWork) o;
         return Objects.equals(description, that.description);
     }

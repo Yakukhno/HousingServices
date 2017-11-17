@@ -1,14 +1,14 @@
 package ua.training.controller;
 
-import static ua.training.controller.util.AttributeConstants.MESSAGE;
-import static ua.training.controller.util.AttributeConstants.PARAMS;
-import static ua.training.controller.util.AttributeConstants.TYPE_OF_WORK;
-import static ua.training.controller.util.AttributeConstants.WORKERS;
-import static ua.training.controller.util.RouteConstants.NEW_WORKER_ROUTE;
-import static ua.training.controller.util.RouteConstants.REDIRECT;
-import static ua.training.controller.util.RouteConstants.WORKER_ROUTE;
-import static ua.training.controller.util.ViewConstants.NEW_WORKER_VIEW;
-import static ua.training.controller.util.ViewConstants.WORKERS_VIEW;
+import static ua.training.util.AttributeConstants.MESSAGE;
+import static ua.training.util.AttributeConstants.PARAMS;
+import static ua.training.util.AttributeConstants.TYPE_OF_WORK;
+import static ua.training.util.AttributeConstants.WORKERS;
+import static ua.training.util.RouteConstants.NEW_WORKER_ROUTE;
+import static ua.training.util.RouteConstants.REDIRECT;
+import static ua.training.util.RouteConstants.WORKER_ROUTE;
+import static ua.training.util.ViewConstants.NEW_WORKER_VIEW;
+import static ua.training.util.ViewConstants.WORKERS_VIEW;
 
 import java.util.List;
 

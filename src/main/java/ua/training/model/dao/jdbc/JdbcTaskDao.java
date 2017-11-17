@@ -1,13 +1,21 @@
 package ua.training.model.dao.jdbc;
 
-import org.apache.log4j.Logger;
-import ua.training.model.dao.TaskDao;
-import ua.training.model.entities.Task;
+import static ua.training.util.RepositoryConstants.TASK_TABLE;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.log4j.Logger;
+
+import ua.training.model.dao.TaskDao;
+import ua.training.model.entities.Task;
 
 public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
 
@@ -32,38 +40,20 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
     private static final String ORDER_BY = "ORDER BY scheduled_time, id_task, id_worker";
 
     private static final String SELECT_ALL = SELECT + ORDER_BY;
-    private static final String SELECT_BY_ACTIVE = SELECT +
-            "WHERE is_active = TRUE " + ORDER_BY;
-    private static final String SELECT_BY_ID = SELECT +
-            "WHERE id_task = ? " + ORDER_BY;
+    private static final String SELECT_BY_ACTIVE = SELECT + "WHERE is_active = TRUE " + ORDER_BY;
+    private static final String SELECT_BY_ID = SELECT + "WHERE id_task = ? " + ORDER_BY;
 
-    private static final String INSERT =
-            "INSERT INTO task " +
-                    "(id_application, id_brigade, scheduled_time, is_active) " +
-                    "VALUES (?, ?, ?, ?)";
-    private static final String DELETE_BY_ID =
-            "DELETE FROM task WHERE id_task = ?";
-    private static final String UPDATE =
-            "UPDATE task " +
-                    "SET id_application = ?, id_brigade = ?, " +
-                    "scheduled_time = ?, is_active = ? " +
-                    "WHERE id_task = ?";
+    private static final String INSERT = "INSERT INTO task (id_application, id_brigade, scheduled_time, is_active) " +
+            "VALUES (?, ?, ?, ?)";
+    private static final String DELETE_BY_ID = "DELETE FROM task WHERE id_task = ?";
+    private static final String UPDATE = "UPDATE task SET id_application = ?, id_brigade = ?, scheduled_time = ?, "
+            + "is_active = ? WHERE id_task = ?";
 
-    private static final String EXCEPTION_GET_BY_ID
-            = "Failed select from 'task' with id = %d";
-    private static final String EXCEPTION_GET_BY_ACTIVE
-            = "Failed select from 'task' with is_active = true";
-    private static final String EXCEPTION_GET_ALL
-            = "Failed select from 'task'";
-    private static final String EXCEPTION_ADD
-            = "Failed insert into 'task' value = %s";
-    private static final String EXCEPTION_UPDATE
-            = "Failed update 'task' value = %s";
-
-    static final String TASK_TABLE = "task";
-    static final String TASK_ID = "id_task";
-    static final String TASK_SCHEDULED_TIME = "scheduled_time";
-    static final String TASK_IS_ACTIVE = "is_active";
+    private static final String EXCEPTION_GET_BY_ID = "Failed select from 'task' with id = %d";
+    private static final String EXCEPTION_GET_BY_ACTIVE = "Failed select from 'task' with is_active = true";
+    private static final String EXCEPTION_GET_ALL = "Failed select from 'task'";
+    private static final String EXCEPTION_ADD = "Failed insert into 'task' value = %s";
+    private static final String EXCEPTION_UPDATE = "Failed update 'task' value = %s";
 
     JdbcTaskDao(Connection connection) {
         this.connection = connection;
@@ -73,8 +63,7 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
     @Override
     public Optional<Task> get(int id) {
         Optional<Task> task = Optional.empty();
-        try (PreparedStatement statement =
-                     connection.prepareStatement(SELECT_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
@@ -104,8 +93,7 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
 
     @Override
     public void add(Task task) {
-        try (PreparedStatement statement = connection.prepareStatement(INSERT,
-                Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
             setStatementFromTask(statement, task);
             statement.execute();
 
@@ -126,8 +114,7 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
 
     @Override
     public void update(Task task) {
-        try (PreparedStatement statement =
-                     connection.prepareStatement(UPDATE)) {
+        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
             setStatementFromTask(statement, task);
             statement.setInt(5, task.getId());
             statement.execute();
@@ -152,9 +139,7 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
         return tasks;
     }
 
-    private void setStatementFromTask(PreparedStatement statement,
-                                        Task task)
-            throws SQLException {
+    private void setStatementFromTask(PreparedStatement statement, Task task) throws SQLException {
         statement.setInt(1, task.getApplication().getId());
         statement.setInt(2, task.getBrigade().getId());
         statement.setTimestamp(3, Timestamp.valueOf(task.getScheduledTime()));

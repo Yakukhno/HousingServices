@@ -1,4 +1,4 @@
-package ua.training.controller.util;
+package ua.training.util;
 
 public class AttributeConstants {
     public static final String TYPE_OF_WORK = "typesOfWork";

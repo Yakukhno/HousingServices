@@ -13,8 +13,8 @@ import ua.training.model.entities.TypeOfWork;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 
-import static ua.training.controller.util.AttributeConstants.MESSAGE;
-import static ua.training.controller.util.ViewConstants.ERROR_VIEW;
+import static ua.training.util.AttributeConstants.MESSAGE;
+import static ua.training.util.ViewConstants.ERROR_VIEW;
 
 @org.springframework.web.bind.annotation.ControllerAdvice
 public class ControllerAdvice {

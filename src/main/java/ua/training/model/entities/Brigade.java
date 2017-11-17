@@ -1,13 +1,40 @@
 package ua.training.model.entities;
 
+import static ua.training.util.RepositoryConstants.BRIGADE_HAS_WORKER_TABLE;
+import static ua.training.util.RepositoryConstants.BRIGADE_ID;
+import static ua.training.util.RepositoryConstants.BRIGADE_MANAGER;
+import static ua.training.util.RepositoryConstants.WORKER_ID;
+
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+
 import ua.training.model.entities.person.Worker;
 
+@Entity
 public class Brigade {
+
+    @Id
+    @GeneratedValue
+    @Column(name = BRIGADE_ID)
     private int id;
+
+    @ManyToOne
+    @JoinColumn(name = BRIGADE_MANAGER)
     private Worker manager;
+
+    @ManyToMany
+    @JoinTable(name = BRIGADE_HAS_WORKER_TABLE,
+            joinColumns = @JoinColumn(name = BRIGADE_ID),
+            inverseJoinColumns = @JoinColumn(name = WORKER_ID))
     private Set<Worker> workers = new HashSet<>();
 
     public int getId() {
