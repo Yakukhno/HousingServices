@@ -2,7 +2,6 @@ package ua.training.model.dao.jdbc;
 
 import static ua.training.util.RepositoryConstants.TASK_TABLE;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,11 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import ua.training.model.dao.TaskDao;
 import ua.training.model.entities.Task;
 
+@Repository("taskDao")
+@Transactional
 public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
 
     private static final String SELECT =
@@ -55,20 +57,15 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
     private static final String EXCEPTION_ADD = "Failed insert into 'task' value = %s";
     private static final String EXCEPTION_UPDATE = "Failed update 'task' value = %s";
 
-    JdbcTaskDao(Connection connection) {
-        this.connection = connection;
-        logger = Logger.getLogger(JdbcTaskDao.class);
-    }
-
     @Override
     public Optional<Task> get(int id) {
         Optional<Task> task = Optional.empty();
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                task = Optional.of(helper.getTaskFromResultSet(resultSet));
+                task = Optional.of(jdbcHelper.getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -80,10 +77,10 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
     @Override
     public List<Task> getAll() {
         List<Task> tasks = new ArrayList<>();
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
+        try (Statement statement = getConnection().createStatement();
+                ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             while (resultSet.next()) {
-                tasks.add(helper.getTaskFromResultSet(resultSet));
+                tasks.add(jdbcHelper.getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_ALL, e);
@@ -93,7 +90,7 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
 
     @Override
     public void add(Task task) {
-        try (PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
             setStatementFromTask(statement, task);
             statement.execute();
 
@@ -114,7 +111,7 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
 
     @Override
     public void update(Task task) {
-        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(UPDATE)) {
             setStatementFromTask(statement, task);
             statement.setInt(5, task.getId());
             statement.execute();
@@ -127,11 +124,11 @@ public class JdbcTaskDao extends AbstractJdbcDao implements TaskDao {
     @Override
     public List<Task> getActiveTasks() {
         List<Task> tasks = new ArrayList<>();
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SELECT_BY_ACTIVE)) {
+        try (Statement statement = getConnection().createStatement();
+                ResultSet resultSet = statement.executeQuery(SELECT_BY_ACTIVE)) {
             resultSet.next();
             while (!resultSet.isAfterLast()) {
-                tasks.add(helper.getTaskFromResultSet(resultSet));
+                tasks.add(jdbcHelper.getTaskFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_BY_ACTIVE, e);

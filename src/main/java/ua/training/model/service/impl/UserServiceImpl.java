@@ -2,7 +2,6 @@ package ua.training.model.service.impl;
 
 import static ua.training.util.RoleConstants.ROLE_DISPATCHER;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,14 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import ua.training.util.ExceptionConstants;
-import ua.training.model.dao.DaoConnection;
-import ua.training.model.dao.DaoFactory;
 import ua.training.model.dao.UserDao;
 import ua.training.model.entities.person.User;
 import ua.training.model.service.UserService;
 import ua.training.model.util.ServiceHelper;
+import ua.training.util.ExceptionConstants;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -26,70 +24,41 @@ public class UserServiceImpl implements UserService {
     private static final String EXCEPTION_USER_WITH_ID_NOT_FOUND = "User with id = %d not found";
     private static final int PASS_MAX_LENGTH = 64;
 
-    private DaoFactory daoFactory;
+    private UserDao userDao;
     private ServiceHelper serviceHelper;
-
-    public UserServiceImpl() {
-        daoFactory = DaoFactory.getInstance();
-    }
-
-    UserServiceImpl(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
-    }
 
     @Override
     @Secured("IS_AUTHENTICATED_FULLY")
     @PreAuthorize("#id == principal.user.id")
     public User getUserById(int id) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            UserDao userDao = daoFactory.createUserDao(connection);
-            return userDao.get(id).orElseThrow(
-                    serviceHelper.getResourceNotFoundExceptionSupplier(EXCEPTION_USER_WITH_ID_NOT_FOUND, id));
-        }
-    }
-
-    @Override
-    public User loginEmail(String email, String password) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            UserDao userDao = daoFactory.createUserDao(connection);
-            String hashedPassword = DigestUtils.sha256Hex(password);
-            return userDao.getUserByEmail(email)
-                    .filter(user -> hashedPassword.equals(user.getPassword()))
-                    .orElseThrow(
-                            serviceHelper.getServiceExceptionSupplier(ExceptionConstants.INCORRECT_EMAIL_OR_PASSWORD));
-        }
+        return userDao.get(id)
+                .orElseThrow(serviceHelper.getResourceNotFoundExceptionSupplier(EXCEPTION_USER_WITH_ID_NOT_FOUND, id));
     }
 
     @Override
     @Secured(ROLE_DISPATCHER)
     public List<User> getAllUsers() {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            UserDao userDao = daoFactory.createUserDao(connection);
-            return userDao.getAll();
-        }
+        return userDao.getAll();
+    }
+
+    public UserServiceImpl() {
+        super();
     }
 
     @Override
     @Secured("IS_AUTHENTICATED_FULLY")
     @PreAuthorize("#user.id == principal.user.id")
+    @Transactional
     public void updateUser(User user, String password) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            UserDao userDao = daoFactory.createUserDao(connection);
-            String hashedPassword = DigestUtils.sha256Hex(password);
-            hashNewPassword(user);
+        String hashedPassword = DigestUtils.sha256Hex(password);
+        hashNewPassword(user);
 
-            connection.setIsolationLevel(Connection.TRANSACTION_READ_COMMITTED);
-            connection.begin();
-
-            Optional<User> userFromDao = userDao.get(user.getId());
-            userFromDao.orElseThrow(
-                    serviceHelper.getResourceNotFoundExceptionSupplier(EXCEPTION_USER_WITH_ID_NOT_FOUND, user.getId()));
-            userFromDao.filter(user1 -> hashedPassword.equals(user1.getPassword()))
-                    .orElseThrow(serviceHelper.getServiceExceptionSupplier(ExceptionConstants.INCORRECT_PASSWORD));
-            userDao.update(user);
-
-            connection.commit();
-        }
+        Optional<User> userFromDao = userDao.get(user.getId());
+        userFromDao.orElseThrow(
+                serviceHelper.getResourceNotFoundExceptionSupplier(EXCEPTION_USER_WITH_ID_NOT_FOUND, user.getId()));
+        userFromDao.filter(user1 -> hashedPassword.equals(user1.getPassword()))
+                .orElseThrow(serviceHelper.getServiceExceptionSupplier(ExceptionConstants.INCORRECT_PASSWORD));
+        userDao.update(user);
     }
 
     private void hashNewPassword(User user) {
@@ -101,11 +70,17 @@ public class UserServiceImpl implements UserService {
     @Override
     @Secured("IS_AUTHENTICATED_ANONYMOUSLY")
     public void createNewUser(User user) {
-        try (DaoConnection connection = daoFactory.getConnection()) {
-            UserDao userDao = daoFactory.createUserDao(connection);
-            user.setPassword(DigestUtils.sha256Hex(user.getPassword()));
-            userDao.add(user);
-        }
+        user.setPassword(DigestUtils.sha256Hex(user.getPassword()));
+        userDao.add(user);
+    }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    @Autowired
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public ServiceHelper getServiceHelper() {

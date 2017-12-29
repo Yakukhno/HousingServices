@@ -2,16 +2,22 @@ package ua.training.model.dao.jdbc;
 
 import static ua.training.util.RepositoryConstants.TYPE_OF_WORK_TABLE;
 
-import org.apache.log4j.Logger;
-
-import ua.training.model.dao.TypeOfWorkDao;
-import ua.training.model.entities.TypeOfWork;
-
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import ua.training.model.dao.TypeOfWorkDao;
+import ua.training.model.entities.TypeOfWork;
+
+@Repository("typeOfWorkDao")
+@Transactional
 public class JdbcTypeOfWorkDao extends AbstractJdbcDao implements TypeOfWorkDao {
 
     private static final String SELECT = "SELECT * FROM type_of_work ";
@@ -31,20 +37,15 @@ public class JdbcTypeOfWorkDao extends AbstractJdbcDao implements TypeOfWorkDao 
     private static final String EXCEPTION_ADD = "Failed insert into 'type_of_work' value = %s";
     private static final String EXCEPTION_UPDATE = "Failed update 'type_of_work' value = %s";
 
-    JdbcTypeOfWorkDao(Connection connection) {
-        this.connection = connection;
-        logger = Logger.getLogger(JdbcTypeOfWorkDao.class);
-    }
-
     @Override
     public Optional<TypeOfWork> get(int id) {
         Optional<TypeOfWork> typeOfWork = Optional.empty();
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                typeOfWork = Optional.of(helper.getTypeOfWorkFromResultSet(resultSet));
+                typeOfWork = Optional.of(jdbcHelper.getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -56,10 +57,10 @@ public class JdbcTypeOfWorkDao extends AbstractJdbcDao implements TypeOfWorkDao 
     @Override
     public List<TypeOfWork> getAll() {
         List<TypeOfWork> typesOfWork = new ArrayList<>();
-        try (Statement statement = connection.createStatement();
+        try (Statement statement = getConnection().createStatement();
                 ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             while (resultSet.next()) {
-                typesOfWork.add(helper.getTypeOfWorkFromResultSet(resultSet));
+                typesOfWork.add(jdbcHelper.getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_ALL, e);
@@ -69,7 +70,7 @@ public class JdbcTypeOfWorkDao extends AbstractJdbcDao implements TypeOfWorkDao 
 
     @Override
     public void add(TypeOfWork typeOfWork) {
-        try (PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, typeOfWork.getDescription());
             statement.execute();
 
@@ -90,7 +91,7 @@ public class JdbcTypeOfWorkDao extends AbstractJdbcDao implements TypeOfWorkDao 
 
     @Override
     public void update(TypeOfWork typeOfWork) {
-        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(UPDATE)) {
             statement.setString(1, typeOfWork.getDescription());
             statement.setInt(2, typeOfWork.getId());
             statement.execute();
@@ -103,12 +104,12 @@ public class JdbcTypeOfWorkDao extends AbstractJdbcDao implements TypeOfWorkDao 
     @Override
     public List<TypeOfWork> getByDescription(String description) {
         List<TypeOfWork> typesOfWork = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_DESCRIPTION)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(SELECT_BY_DESCRIPTION)) {
             statement.setString(1, '%' + description + '%');
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                typesOfWork.add(helper.getTypeOfWorkFromResultSet(resultSet));
+                typesOfWork.add(jdbcHelper.getTypeOfWorkFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_DESCRIPTION, description);

@@ -2,7 +2,6 @@ package ua.training.model.dao.jdbc;
 
 import static ua.training.util.RepositoryConstants.WORKER_TABLE;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,12 +11,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import ua.training.model.dao.WorkerDao;
 import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.Worker;
 
+@Repository("workerDao")
+@Transactional
 public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
 
     private static final String SELECT =
@@ -28,8 +30,7 @@ public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
 
     private static final String SELECT_ALL = SELECT + ORDER_BY;
     private static final String SELECT_BY_ID = SELECT + "WHERE id_worker = ?";
-    private static final String SELECT_BY_TYPE =
-            "SELECT id_worker FROM worker_has_type_of_work " +
+    private static final String SELECT_BY_TYPE = "SELECT id_worker FROM worker_has_type_of_work " +
                     "WHERE id_type_of_work = ?";
 
     private static final String INSERT = "INSERT INTO worker (name) VALUES (?);";
@@ -46,20 +47,15 @@ public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
     private static final String EXCEPTION_ADD = "Failed insert into 'worker' value = %s";
     private static final String EXCEPTION_UPDATE = "Failed update 'worker' value = %s";
 
-    JdbcWorkerDao(Connection connection) {
-        this.connection = connection;
-        logger = Logger.getLogger(JdbcWorkerDao.class);
-    }
-
     @Override
     public Optional<Worker> get(int id) {
         Optional<Worker> worker = Optional.empty();
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.first()) {
-                worker = Optional.of(helper.getWorkerFromResultSet(resultSet));
+                worker = Optional.of(jdbcHelper.getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -71,11 +67,11 @@ public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
     @Override
     public List<Worker> getAll() {
         List<Worker> workers = new ArrayList<>();
-        try (Statement statement = connection.createStatement();
+        try (Statement statement = getConnection().createStatement();
                 ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             resultSet.next();
             while (!resultSet.isAfterLast()) {
-                workers.add(helper.getWorkerFromResultSet(resultSet));
+                workers.add(jdbcHelper.getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_ALL, e);
@@ -85,8 +81,7 @@ public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
 
     @Override
     public void add(Worker worker) {
-        try (PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
-            connection.setAutoCommit(false);
+        try (PreparedStatement statement = getConnection().prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, worker.getName());
             statement.execute();
 
@@ -95,8 +90,6 @@ public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
                 worker.setId(resultSet.getInt(1));
             }
             insertTypesOfWork(worker);
-
-            connection.commit();
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_ADD, worker);
             throw getDaoException(message, e);
@@ -110,15 +103,13 @@ public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
 
     @Override
     public void update(Worker worker) {
-        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
-            connection.setAutoCommit(false);
+        try (PreparedStatement statement = getConnection().prepareStatement(UPDATE)) {
             statement.setString(1, worker.getName());
             statement.setInt(2, worker.getId());
             statement.setInt(3, worker.getId());
             statement.execute();
 
             insertTypesOfWork(worker);
-            connection.commit();
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_UPDATE, worker);
             throw getDaoException(message, e);
@@ -128,16 +119,15 @@ public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
     @Override
     public List<Worker> getWorkersByTypeOfWork(int typeOfWorkId) {
         List<Worker> workers = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_TYPE)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(SELECT_BY_TYPE)) {
             statement.setInt(1, typeOfWorkId);
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                workers.add(helper.getWorkerFromResultSet(resultSet));
+                workers.add(jdbcHelper.getWorkerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            String message = String.format(EXCEPTION_GET_BY_TYPE_OF_WORK_ID,
-                    typeOfWorkId);
+            String message = String.format(EXCEPTION_GET_BY_TYPE_OF_WORK_ID, typeOfWorkId);
             throw getDaoException(message, e);
         }
         return workers;
@@ -148,7 +138,7 @@ public class JdbcWorkerDao extends AbstractJdbcDao implements WorkerDao {
         if (!typesOfWorks.isEmpty()) {
             StringBuilder query = new StringBuilder();
             typesOfWorks.forEach(typeOfWork -> query.append(INSERT_TYPE_OF_WORK));
-            try (PreparedStatement statement = connection.prepareStatement(query.toString())) {
+            try (PreparedStatement statement = getConnection().prepareStatement(query.toString())) {
                 int count = 1;
                 for (TypeOfWork typeOfWork : typesOfWorks) {
                     statement.setInt(count++, worker.getId());

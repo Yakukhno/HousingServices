@@ -1,4 +1,4 @@
-package ua.training.model.dao.jdbc;
+package ua.training.model.dao.jdbc.util;
 
 import static ua.training.util.RepositoryConstants.APPLICATION_ADDRESS;
 import static ua.training.util.RepositoryConstants.APPLICATION_DESIRED_TIME;
@@ -24,6 +24,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
+import org.springframework.stereotype.Component;
+
 import ua.training.model.entities.Application;
 import ua.training.model.entities.Brigade;
 import ua.training.model.entities.ProblemScale;
@@ -32,6 +34,7 @@ import ua.training.model.entities.TypeOfWork;
 import ua.training.model.entities.person.User;
 import ua.training.model.entities.person.Worker;
 
+@Component
 public class JdbcHelper {
 
     private static final String TASK_WORKER_NAME = "worker_name";
@@ -71,7 +74,7 @@ public class JdbcHelper {
         return getTypeOfWorkFromResultSet(resultSet, TYPE_OF_WORK_ID, TYPE_OF_WORK_DESCRIPTION);
     }
 
-    Worker getWorkerFromResultSet(ResultSet resultSet) throws SQLException {
+    public Worker getWorkerFromResultSet(ResultSet resultSet) throws SQLException {
         int currentId = resultSet.getInt(WORKER_ID);
         Worker.Builder builder = new Worker.Builder()
                 .setId(resultSet.getInt(WORKER_ID))
@@ -83,7 +86,7 @@ public class JdbcHelper {
         return builder.build();
     }
 
-    Brigade getBrigadeFromResultSet(ResultSet resultSet) throws SQLException {
+    public Brigade getBrigadeFromResultSet(ResultSet resultSet) throws SQLException {
         int currentId = resultSet.getInt(BRIGADE_ID);
         Brigade.Builder builderBrigade = new Brigade.Builder().setId(currentId);
         Worker.Builder builderManager = new Worker.Builder()
@@ -96,9 +99,8 @@ public class JdbcHelper {
             setBrigadeWorkers(resultSet, currentId, builderBrigade, builderManager);
         } else {
             while (resultSet.next() && (resultSet.getInt(BRIGADE_ID) == currentId)) {
-                builderManager.addTypeOfWork(
-                        getTypeOfWorkFromResultSet(resultSet, BRIGADE_MANAGER_TYPE_ID, BRIGADE_MANAGER_TYPE_DESCRIPTION)
-                );
+                builderManager.addTypeOfWork(getTypeOfWorkFromResultSet(resultSet, BRIGADE_MANAGER_TYPE_ID,
+                        BRIGADE_MANAGER_TYPE_DESCRIPTION));
             }
         }
         return builderBrigade.setManager(builderManager.build()).build();
@@ -112,7 +114,7 @@ public class JdbcHelper {
         }
     }
 
-    Task getTaskFromResultSet(ResultSet resultSet) throws SQLException {
+    public Task getTaskFromResultSet(ResultSet resultSet) throws SQLException {
         int taskId = resultSet.getInt(TASK_ID);
         boolean isActive = resultSet.getBoolean(TASK_IS_ACTIVE);
         LocalDateTime dateTime = resultSet.getTimestamp(TASK_SCHEDULED_TIME).toLocalDateTime();

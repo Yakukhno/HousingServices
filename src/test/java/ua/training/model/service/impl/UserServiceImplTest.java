@@ -1,186 +1,142 @@
 package ua.training.model.service.impl;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import ua.training.exception.ResourceNotFoundException;
-import ua.training.exception.ServiceException;
-import ua.training.model.dao.DaoConnection;
-import ua.training.model.dao.DaoFactory;
-import ua.training.model.dao.UserDao;
-import ua.training.model.entities.person.User;
-import ua.training.model.util.ServiceHelper;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import com.google.common.collect.Lists;
+
+import ua.training.exception.ResourceNotFoundException;
+import ua.training.exception.ServiceException;
+import ua.training.model.dao.UserDao;
+import ua.training.model.entities.person.User;
+import ua.training.model.util.ServiceHelper;
+
+@RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
 
     private static final int USER_ID = 3;
-    private static final String EMAIL = "a@a.com";
-    private static final String NOT_EXISTING_EMAIL = "a1@a.com";
     private static final String PASSWORD = "qwerty";
     private static final String WRONG_PASSWORD = "wrong";
     private static final String NEW_PASSWORD = "newPass";
 
     @Mock
-    private DaoFactory daoFactory;
+    private UserDao userDaoMock;
     @Mock
-    private DaoConnection daoConnection;
-    @Mock
-    private UserDao userDao;
-    @Mock
-    private ServiceHelper serviceHelper;
+    private ServiceHelper serviceHelperMock;
 
+    @InjectMocks
     private UserServiceImpl userService;
 
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
-        when(daoFactory.getConnection()).thenReturn(daoConnection);
-        when(daoFactory.createUserDao(any())).thenReturn(userDao);
-        when(serviceHelper.getResourceNotFoundExceptionSupplier(any(), anyInt()))
-                .thenReturn(ResourceNotFoundException::new);
-        when(serviceHelper.getServiceExceptionSupplier(any())).thenReturn(ServiceException::new);
-        userService = new UserServiceImpl(daoFactory);
-        userService.setServiceHelper(serviceHelper);
-    }
-
     @Test
-    public void testGetUserById() {
+    public void shouldGetUserById() {
         User userFromDao = new User();
         userFromDao.setId(USER_ID);
-        when(userDao.get(USER_ID)).thenReturn(Optional.of(userFromDao));
+        when(userDaoMock.get(USER_ID)).thenReturn(Optional.of(userFromDao));
 
         User actualUser = userService.getUserById(USER_ID);
 
-        verify(userDao, times(1)).get(USER_ID);
+        verify(userDaoMock).get(USER_ID);
         assertEquals(userFromDao, actualUser);
     }
 
-
     @Test(expected = ResourceNotFoundException.class)
-    public void testGetUserByIdDaoReturnsEmpty() {
-        when(userDao.get(USER_ID)).thenReturn(Optional.empty());
+    public void shouldThrowExceptionWhenGetUserByIdIfUserIsNotFound() {
+        when(userDaoMock.get(USER_ID)).thenReturn(Optional.empty());
+        when(serviceHelperMock.getResourceNotFoundExceptionSupplier(any(), anyInt()))
+                .thenReturn(ResourceNotFoundException::new);
 
         userService.getUserById(USER_ID);
 
-        verify(userDao, times(1)).get(USER_ID);
+        verify(userDaoMock).get(USER_ID);
     }
 
     @Test
-    public void testLoginEmail() {
-        User userFromDao = new User();
-        userFromDao.setEmail(EMAIL);
-        userFromDao.setPassword(DigestUtils.sha256Hex(PASSWORD));
-        when(userDao.getUserByEmail(EMAIL)).thenReturn(Optional.of(userFromDao));
-        User actualUser = userService.loginEmail(EMAIL, PASSWORD);
-
-        verify(userDao, times(1)).getUserByEmail(EMAIL);
-        assertEquals(userFromDao, actualUser);
-    }
-
-    @Test(expected = ServiceException.class)
-    public void testLoginEmailDaoReturnsEmpty() {
-        when(userDao.getUserByEmail(NOT_EXISTING_EMAIL)).thenReturn(Optional.empty());
-
-        userService.loginEmail(NOT_EXISTING_EMAIL, PASSWORD);
-
-        verify(userDao, times(1)).getUserByEmail(NOT_EXISTING_EMAIL);
-    }
-
-    @Test(expected = ServiceException.class)
-    public void testLoginEmailIncorrectPassword() {
-        User userFromDao = new User();
-        userFromDao.setEmail(EMAIL);
-        userFromDao.setPassword(PASSWORD);
-        when(userDao.getUserByEmail(EMAIL)).thenReturn(Optional.of(userFromDao));
-
-        userService.loginEmail(EMAIL, WRONG_PASSWORD);
-    }
-
-    @Test(expected = ServiceException.class)
-    public void testLoginEmailIncorrectEmailAndPassword() {
-        when(userDao.getUserByEmail(NOT_EXISTING_EMAIL)).thenReturn(Optional.empty());
-
-        userService.loginEmail(NOT_EXISTING_EMAIL, WRONG_PASSWORD);
-
-        verify(userDao, times(1)).getUserByEmail(NOT_EXISTING_EMAIL);
-    }
-
-    @Test
-    public void testGetAllUsers() {
-        List<User> usersFromDao = new ArrayList<>();
-        usersFromDao.add(mock(User.class));
-        usersFromDao.add(mock(User.class));
-        usersFromDao.add(mock(User.class));
-        when(userDao.getAll()).thenReturn(usersFromDao);
+    public void shouldGetAllUsers() {
+        ArrayList<User> usersFromDao = Lists.newArrayList(mock(User.class), mock(User.class), mock(User.class));
+        when(userDaoMock.getAll()).thenReturn(usersFromDao);
 
         List<User> actualUsers = userService.getAllUsers();
 
-        verify(userDao, times(1)).getAll();
+        verify(userDaoMock).getAll();
         assertEquals(usersFromDao, actualUsers);
     }
 
     @Test
-    public void testUpdateUser() {
+    public void shouldUpdateUser() {
         User userFromDao = new User();
         userFromDao.setId(USER_ID);
         userFromDao.setPassword(DigestUtils.sha256Hex(PASSWORD));
-        when(userDao.get(USER_ID)).thenReturn(Optional.of(userFromDao));
 
         User paramUser = new User();
         paramUser.setId(USER_ID);
         paramUser.setPassword(NEW_PASSWORD);
         User userCopy = getUserCopy(paramUser);
         userCopy.setPassword(DigestUtils.sha256Hex(NEW_PASSWORD));
+        when(userDaoMock.get(USER_ID)).thenReturn(Optional.of(userFromDao));
 
         userService.updateUser(paramUser, PASSWORD);
 
-        verify(userDao).update(userCopy);
-    }
-
-    @Test(expected = ServiceException.class)
-    public void testUpdateUserIncorrectPassword() {
-        User userFromDao = new User();
-        userFromDao.setId(USER_ID);
-        userFromDao.setPassword(PASSWORD);
-        when(userDao.get(USER_ID)).thenReturn(Optional.of(userFromDao));
-
-        User paramUser = new User();
-        paramUser.setId(USER_ID);
-        paramUser.setPassword(NEW_PASSWORD);
-        User userCopy = getUserCopy(paramUser);
-        userCopy.setPassword(DigestUtils.sha256Hex(NEW_PASSWORD));
-
-        userService.updateUser(paramUser, WRONG_PASSWORD);
-
-        verify(userDao, never()).update(any());
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void testUpdateUserIncorrectUser() {
-        when(userDao.get(USER_ID)).thenReturn(Optional.empty());
-        User paramUser = new User();
-        paramUser.setId(USER_ID);
-        paramUser.setPassword(NEW_PASSWORD);
-        User userCopy = getUserCopy(paramUser);
-        userCopy.setPassword(DigestUtils.sha256Hex(NEW_PASSWORD));
-
-        userService.updateUser(paramUser, PASSWORD);
-
-        verify(userDao, never()).update(any());
+        verify(userDaoMock).update(userCopy);
     }
 
     @Test
-    public void testCreateUser() {
+    public void shouldThrowExceptionWhenUpdateUserIfPasswordIsIncorrect() {
+        User userFromDao = new User();
+        userFromDao.setId(USER_ID);
+        userFromDao.setPassword(PASSWORD);
+
+        User paramUser = new User();
+        paramUser.setId(USER_ID);
+        paramUser.setPassword(NEW_PASSWORD);
+        User userCopy = getUserCopy(paramUser);
+        userCopy.setPassword(DigestUtils.sha256Hex(NEW_PASSWORD));
+        when(userDaoMock.get(USER_ID)).thenReturn(Optional.of(userFromDao));
+        when(serviceHelperMock.getServiceExceptionSupplier(any())).thenReturn(ServiceException::new);
+
+        try {
+            userService.updateUser(paramUser, WRONG_PASSWORD);
+            fail();
+        } catch (ServiceException exc) {
+            verify(userDaoMock, never()).update(any());
+        }
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenUpdateUserIfUserIsNotFound() {
+        User paramUser = new User();
+        paramUser.setId(USER_ID);
+        paramUser.setPassword(PASSWORD);
+        when(userDaoMock.get(USER_ID)).thenReturn(Optional.empty());
+        when(serviceHelperMock.getResourceNotFoundExceptionSupplier(any(), anyInt()))
+                .thenReturn(ResourceNotFoundException::new);
+
+        try {
+            userService.updateUser(paramUser, PASSWORD);
+            fail();
+        } catch (ResourceNotFoundException exc) {
+            verify(userDaoMock, never()).update(any());
+        }
+    }
+
+    @Test
+    public void shouldCreateUser() {
         User paramUser = new User();
         paramUser.setId(USER_ID);
         paramUser.setPassword(PASSWORD);
@@ -189,7 +145,7 @@ public class UserServiceImplTest {
 
         userService.createNewUser(paramUser);
 
-        verify(userDao, times(1)).add(userCopy);
+        verify(userDaoMock).add(userCopy);
     }
 
     private User getUserCopy(User user) {

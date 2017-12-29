@@ -7,10 +7,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
-@ComponentScan("ua.training.model.dao.spring_jdbc")
+@ComponentScan({"ua.training.model.dao.jdbc.util", "ua.training.model.dao.jdbc.template"})
 @PropertySource("classpath:db.properties")
 public class RepositoryConfiguration {
 
@@ -31,5 +32,10 @@ public class RepositoryConfiguration {
         dataSource.setUsername(user);
         dataSource.setPassword(password);
         return dataSource;
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate() {
+        return new JdbcTemplate(dataSource());
     }
 }

@@ -2,7 +2,6 @@ package ua.training.model.dao.jdbc;
 
 import static ua.training.util.RepositoryConstants.APPLICATION_TABLE;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,11 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import ua.training.model.dao.ApplicationDao;
 import ua.training.model.entities.Application;
 
+@Repository("applicationDao")
+@Transactional
 public class JdbcApplicationDao extends AbstractJdbcDao implements ApplicationDao {
 
     private static final String SELECT =
@@ -31,18 +33,12 @@ public class JdbcApplicationDao extends AbstractJdbcDao implements ApplicationDa
     private static final String SELECT_BY_TENANT = SELECT + "WHERE id_user = ?";
     private static final String SELECT_BY_STATUS = SELECT + "WHERE status = ?";
 
-    private static final String INSERT =
-            "INSERT INTO application " +
-                    "(id_user, id_type_of_work, scale_of_problem, " +
-                    "desired_time, status, address) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
-    private static final String DELETE_BY_ID =
-            "DELETE FROM application WHERE id_application = ?";
-    private static final String UPDATE =
-            "UPDATE application SET id_user = ?, id_type_of_work = ?, " +
-                    "scale_of_problem = ?, desired_time = ?, status = ?, " +
-                    "address = ? " +
-                    "WHERE id_application = ?";
+    private static final String INSERT = "INSERT INTO application (id_user, id_type_of_work, scale_of_problem, " +
+            "desired_time, status, address) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String DELETE_BY_ID = "DELETE FROM application WHERE id_application = ?";
+    private static final String UPDATE = "UPDATE application SET id_user = ?, id_type_of_work = ?, " +
+            "scale_of_problem = ?, desired_time = ?, status = ?, address = ? " +
+            "WHERE id_application = ?";
 
     private static final String EXCEPTION_GET_BY_ID = "Failed select from 'application' with id = %d";
     private static final String EXCEPTION_GET_BY_TYPE_OF_WORK =
@@ -53,20 +49,15 @@ public class JdbcApplicationDao extends AbstractJdbcDao implements ApplicationDa
     private static final String EXCEPTION_ADD = "Failed insert into 'application' value = %s";
     private static final String EXCEPTION_UPDATE = "Failed update 'application' value = %s";
 
-    JdbcApplicationDao(Connection connection) {
-        this.connection = connection;
-        logger = Logger.getLogger(JdbcApplicationDao.class);
-    }
-
     @Override
     public Optional<Application> get(int id) {
         Optional<Application> application = Optional.empty();
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                application = Optional.of(helper.getApplicationFromResultSet(resultSet));
+                application = Optional.of(jdbcHelper.getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -78,10 +69,10 @@ public class JdbcApplicationDao extends AbstractJdbcDao implements ApplicationDa
     @Override
     public List<Application> getAll() {
         List<Application> applications = new ArrayList<>();
-        try (Statement statement = connection.createStatement();
+        try (Statement statement = getConnection().createStatement();
                 ResultSet resultSet = statement.executeQuery(SELECT_ALL)) {
             while (resultSet.next()) {
-                applications.add(helper.getApplicationFromResultSet(resultSet));
+                applications.add(jdbcHelper.getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_ALL, e);
@@ -91,7 +82,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao implements ApplicationDa
 
     @Override
     public void add(Application application) {
-        try (PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
             setStatementFromApplication(statement, application);
             statement.execute();
 
@@ -112,7 +103,7 @@ public class JdbcApplicationDao extends AbstractJdbcDao implements ApplicationDa
 
     @Override
     public void update(Application application) {
-        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(UPDATE)) {
             setStatementFromApplication(statement, application);
             statement.setInt(7, application.getId());
             statement.execute();
@@ -125,12 +116,12 @@ public class JdbcApplicationDao extends AbstractJdbcDao implements ApplicationDa
     @Override
     public List<Application> getApplicationsByTypeOfWork(String typeOfWork) {
         List<Application> applications = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_TYPE_OF_WORK)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(SELECT_BY_TYPE_OF_WORK)) {
             statement.setString(1, '%' + typeOfWork + '%');
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                applications.add(helper.getApplicationFromResultSet(resultSet));
+                applications.add(jdbcHelper.getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_TYPE_OF_WORK,
@@ -143,13 +134,12 @@ public class JdbcApplicationDao extends AbstractJdbcDao implements ApplicationDa
     @Override
     public List<Application> getApplicationsByUserId(int userId) {
         List<Application> applications = new ArrayList<>();
-        try (PreparedStatement statement =
-                connection.prepareStatement(SELECT_BY_TENANT)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(SELECT_BY_TENANT)) {
             statement.setInt(1, userId);
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                applications.add(helper.getApplicationFromResultSet(resultSet));
+                applications.add(jdbcHelper.getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_USER_ID, userId);
@@ -161,12 +151,12 @@ public class JdbcApplicationDao extends AbstractJdbcDao implements ApplicationDa
     @Override
     public List<Application> getApplicationsByStatus(Application.Status status) {
         List<Application> applications = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_STATUS)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(SELECT_BY_STATUS)) {
             statement.setString(1, status.name());
 
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                applications.add(helper.getApplicationFromResultSet(resultSet));
+                applications.add(jdbcHelper.getApplicationFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_STATUS, status);

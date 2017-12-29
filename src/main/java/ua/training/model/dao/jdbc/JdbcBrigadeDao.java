@@ -2,7 +2,6 @@ package ua.training.model.dao.jdbc;
 
 import static ua.training.util.RepositoryConstants.BRIGADE_TABLE;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,12 +11,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import ua.training.model.dao.BrigadeDao;
 import ua.training.model.entities.Brigade;
 import ua.training.model.entities.person.Worker;
 
+@Repository("brigadeDao")
+@Transactional
 public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
 
     private static final String SELECT = "SELECT * FROM brigade " +
@@ -36,8 +38,7 @@ public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
 
     private static final String SELECT_ALL = SELECT + ORDER_BY;
     private static final String SELECT_BY_ID = SELECT + "WHERE id_brigade = ? " + ORDER_BY;
-    private static final String SELECT_MANAGER =
-            "SELECT * FROM worker " +
+    private static final String SELECT_MANAGER = "SELECT * FROM worker " +
                     "JOIN worker_has_type_of_work USING (id_worker)" +
                     "JOIN type_of_work USING (id_type_of_work) " +
                     "WHERE id_worker = ?";
@@ -53,20 +54,15 @@ public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
     private static final String EXCEPTION_ADD = "Failed insert into 'brigade' value = %s";
     private static final String EXCEPTION_UPDATE = "Failed update 'brigade' value = %s";
 
-    JdbcBrigadeDao(Connection connection) {
-        this.connection = connection;
-        logger = Logger.getLogger(JdbcBrigadeDao.class);
-    }
-
     @Override
     public Optional<Brigade> get(int id) {
         Optional<Brigade> brigade = Optional.empty();
-        try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(SELECT_BY_ID)) {
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.first()) {
-                brigade = Optional.of(helper.getBrigadeFromResultSet(resultSet));
+                brigade = Optional.of(jdbcHelper.getBrigadeFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_GET_BY_ID, id);
@@ -78,12 +74,11 @@ public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
     @Override
     public List<Brigade> getAll() {
         List<Brigade> brigades = new ArrayList<>();
-        try (Statement statement = connection.createStatement();
+        try (Statement statement = getConnection().createStatement();
                 ResultSet brigadeResultSet = statement.executeQuery(SELECT_ALL)) {
-
             brigadeResultSet.next();
             while (!brigadeResultSet.isAfterLast()) {
-                brigades.add(helper.getBrigadeFromResultSet(brigadeResultSet));
+                brigades.add(jdbcHelper.getBrigadeFromResultSet(brigadeResultSet));
             }
         } catch (SQLException e) {
             throw getDaoException(EXCEPTION_GET_ALL, e);
@@ -93,8 +88,7 @@ public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
 
     @Override
     public void add(Brigade brigade) {
-        try (PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
-            connection.setAutoCommit(false);
+        try (PreparedStatement statement = getConnection().prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, brigade.getManager().getId());
             statement.execute();
 
@@ -105,8 +99,6 @@ public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
             if (!brigade.getWorkers().isEmpty()) {
                 insertWorkers(brigade);
             }
-
-            connection.commit();
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_ADD, brigade);
             throw getDaoException(message, e);
@@ -120,15 +112,13 @@ public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
 
     @Override
     public void update(Brigade brigade) {
-        try (PreparedStatement statement = connection.prepareStatement(UPDATE)) {
-            connection.setAutoCommit(false);
+        try (PreparedStatement statement = getConnection().prepareStatement(UPDATE)) {
             statement.setInt(1, brigade.getManager().getId());
             statement.setInt(2, brigade.getId());
             statement.setInt(3, brigade.getId());
             statement.execute();
 
             insertWorkers(brigade);
-            connection.commit();
         } catch (SQLException e) {
             String message = String.format(EXCEPTION_UPDATE, brigade);
             throw getDaoException(message, e);
@@ -139,7 +129,7 @@ public class JdbcBrigadeDao extends AbstractJdbcDao implements BrigadeDao {
         StringBuilder query = new StringBuilder();
         Set<Worker> workers = brigade.getWorkers();
         workers.forEach(typeOfWork -> query.append(INSERT_WORKER));
-        try (PreparedStatement statement = connection.prepareStatement(query.toString())) {
+        try (PreparedStatement statement = getConnection().prepareStatement(query.toString())) {
             int count = 1;
             for (Worker worker : brigade.getWorkers()) {
                 statement.setInt(count++, brigade.getId());
