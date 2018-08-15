@@ -1,4 +1,3 @@
-<%@page isErrorPage="true" %>
 <html>
 <head>
     <title>Housing services</title>
@@ -15,7 +14,7 @@
             <tbody>
             <tr>
                 <td>Status code</td>
-                <td>${pageContext.errorData.statusCode}</td>
+                <td>${pageContext.response.status}</td>
             </tr>
             <tr>
                 <td>URI</td>
