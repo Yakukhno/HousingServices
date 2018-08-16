@@ -9,11 +9,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 
 @Configuration
-@ComponentScan({"ua.training.model.dao.jdbc.util", "ua.training.model.dao.jdbc.template"})
+@ComponentScan({"ua.training.model.dao.jdbc.util", "ua.training.model.dao.jpa"})
 @PropertySource("classpath:db.properties")
 public class RepositoryConfiguration {
+
+    private static final String PERSISTENCE_UNIT_NAME = "Unit";
 
     @Value("${driver.class}")
     private String driverClassName;
@@ -37,5 +40,12 @@ public class RepositoryConfiguration {
     @Bean
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(dataSource());
+    }
+
+    @Bean
+    public LocalEntityManagerFactoryBean entityManagerFactory() {
+        LocalEntityManagerFactoryBean entityManagerFactory = new LocalEntityManagerFactoryBean();
+        entityManagerFactory.setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
+        return entityManagerFactory;
     }
 }

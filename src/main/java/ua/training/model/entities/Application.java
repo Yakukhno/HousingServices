@@ -16,10 +16,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import ua.training.model.entities.person.User;
+import ua.training.util.JpaConstants;
 
 @Entity
+@NamedQueries({
+        @NamedQuery(name = JpaConstants.APPLICATION_FIND_BY_TYPE_OF_WORK,
+                query = "select a from Application a where a.typeOfWork.description like '%' + :typeOfWork + '%'"),
+        @NamedQuery(name = JpaConstants.APPLICATION_FIND_BY_USER,
+                query = "select a from Application a where a.user.id = :userId"),
+        @NamedQuery(name = JpaConstants.APPLICATION_FIND_BY_STATUS,
+                query = "select a from Application a where a.status = :status"),
+        @NamedQuery(name = JpaConstants.APPLICATION_FIND_ALL, query = "select a from Application a"),
+        @NamedQuery(name = JpaConstants.APPLICATION_DELETE_BY_ID, query = "delete from Application a where a.id = :id")
+})
 public class Application {
 
     @Id

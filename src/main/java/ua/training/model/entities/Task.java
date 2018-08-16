@@ -13,9 +13,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 
+import ua.training.util.JpaConstants;
+
 @Entity
+@NamedQueries({
+        @NamedQuery(name = JpaConstants.TASK_FIND_ACTIVE, query = "select t from Task t where t.isActive = true"),
+        @NamedQuery(name = JpaConstants.TASK_FIND_ALL, query = "select t from Task t"),
+        @NamedQuery(name = JpaConstants.TASK_DELETE_BY_ID, query = "delete from Task t where t.id = :id")
+})
 public class Task {
 
     @Id

@@ -6,8 +6,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+
+import ua.training.util.JpaConstants;
 
 @Entity
+@NamedQueries({
+        @NamedQuery(name = JpaConstants.USER_FIND_BY_EMAIL, query = "select u from User u where u.email = :email"),
+        @NamedQuery(name = JpaConstants.USER_FIND_BY_ROLE, query = "select u from User u where u.role = :role"),
+        @NamedQuery(name = JpaConstants.USER_FIND_ALL, query = "select u from User u"),
+        @NamedQuery(name = JpaConstants.USER_DELETE_BY_ID, query = "delete from User u where u.id = :id")
+})
 public class User extends Person {
 
     private String email;

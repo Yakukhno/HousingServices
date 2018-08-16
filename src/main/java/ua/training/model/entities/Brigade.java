@@ -10,16 +10,24 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import ua.training.model.entities.person.Worker;
+import ua.training.util.JpaConstants;
 
 @Entity
+@NamedQueries({
+        @NamedQuery(name = JpaConstants.BRIGADE_FIND_ALL, query = "select b from Brigade b"),
+        @NamedQuery(name = JpaConstants.BRIGADE_DELETE_BY_ID, query = "delete from Brigade b where b.id = :id")
+})
 public class Brigade {
 
     @Id
@@ -31,7 +39,7 @@ public class Brigade {
     @JoinColumn(name = BRIGADE_MANAGER)
     private Worker manager;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = BRIGADE_HAS_WORKER_TABLE,
             joinColumns = @JoinColumn(name = BRIGADE_ID),
             inverseJoinColumns = @JoinColumn(name = WORKER_ID))

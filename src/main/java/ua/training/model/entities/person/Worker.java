@@ -11,17 +11,27 @@ import java.util.Set;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import ua.training.model.entities.TypeOfWork;
+import ua.training.util.JpaConstants;
 
 @Entity
 @AttributeOverride(name = "id", column = @Column(name = WORKER_ID))
+@NamedQueries({
+        @NamedQuery(name = JpaConstants.WORKER_FIND_BY_TYPE_OF_WORK,
+                query = "select w from Worker w, in (w.typesOfWork) t where t.id = :id"),
+        @NamedQuery(name = JpaConstants.WORKER_FIND_ALL, query = "select w from Worker w"),
+        @NamedQuery(name = JpaConstants.WORKER_DELETE_BY_ID, query = "delete from Worker w where w.id = :id")
+})
 public class Worker extends Person {
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = WORKER_HAS_TYPE_OF_WORK_TABLE,
             joinColumns = @JoinColumn(name = WORKER_ID),
             inverseJoinColumns = @JoinColumn(name = TYPE_OF_WORK_ID))
