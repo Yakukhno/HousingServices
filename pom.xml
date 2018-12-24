@@ -16,7 +16,7 @@
     <maven.compiler.test>1.8</maven.compiler.test>
     <maven.compiler.target>1.8</maven.compiler.target>
     <spring.version>4.3.7.RELEASE</spring.version>
-    <spring.securuty.version>3.2.10.RELEASE</spring.securuty.version>
+    <spring.securuty.version>4.1.1.RELEASE</spring.securuty.version>
   </properties>
 
   <dependencies>
